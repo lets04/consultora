@@ -1,0 +1,290 @@
+# 🚀 Innova System - Full Stack (Frontend + Backend)
+
+Este proyecto es una aplicación completa para la gestión de:
+
+* Estudiantes
+* Cursos
+* Áreas
+* Inscripciones
+* Pagos
+* Promociones
+
+Stack principal:
+
+* **Frontend:** React + Vite + TypeScript
+* **Backend:** Node.js + Express + Prisma
+* **Base de datos:** PostgreSQL
+
+---
+
+# 📁 Estructura del Proyecto
+
+```
+root/
+ ├── backend/
+ │    ├── prisma/
+ │    │    ├── schema.prisma
+ │    │    ├── seed.ts
+ │    │    └── migrations/
+ │    ├── src/
+ │    │    ├── controllers/
+ │    │    ├── routes/
+ │    │    ├── services/
+ │    │    ├── middleware/
+ │    │    ├── lib/
+ │    │    └── index.ts
+ │    └── package.json
+ │
+ ├── frontend/
+ │    ├── src/
+ │    └── package.json
+ │
+ └── package.json (scripts globales)
+```
+
+---
+
+# ⚙️ Requisitos Previos
+
+* Node.js >= 18
+* PostgreSQL instalado
+* npm o yarn
+
+---
+
+# 🧠 Configuración de Base de Datos
+
+## 1. Crear base de datos en PostgreSQL
+
+```sql
+CREATE DATABASE innova_db;
+```
+
+---
+
+## 2. Configurar variables de entorno
+
+En `backend/.env`:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/innova_db"
+PORT=3001
+JWT_SECRET=super_secret
+```
+
+---
+
+# 🔄 Migraciones y Seed (PRISMA)
+
+Ir a la carpeta backend:
+
+```bash
+cd backend
+```
+
+---
+
+## 1. Instalar dependencias
+
+```bash
+npm install
+```
+
+---
+
+## 2. Generar cliente Prisma
+
+```bash
+npx prisma generate
+```
+
+---
+
+## 3. Ejecutar migraciones
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Esto:
+
+* Crea las tablas
+* Sincroniza el schema
+* Guarda historial en `/migrations`
+
+---
+
+## 4. Ejecutar seed
+
+```bash
+npx ts-node prisma/seed.ts
+```
+
+Esto insertará:
+
+* Usuarios
+* Áreas
+* Cursos
+* Datos iniciales
+
+---
+
+## 🧪 Ver base de datos
+
+```bash
+npx prisma studio
+```
+
+---
+
+# ▶️ Ejecutar Backend
+
+```bash
+npm run dev
+```
+
+Servidor:
+
+```
+http://localhost:3001
+```
+
+---
+
+# 🎨 Ejecutar Frontend
+
+Ir a frontend:
+
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+
+Frontend:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 🔗 Conexión Frontend → Backend
+
+En `frontend/.env`:
+
+```env
+VITE_API_URL=http://localhost:3001
+```
+
+Ejemplo:
+
+```ts
+fetch(`${import.meta.env.VITE_API_URL}/api/students`)
+```
+
+---
+
+# 🚀 Ejecutar TODO con un solo comando
+
+Desde la raíz:
+
+```bash
+npm run start
+```
+
+Esto usa `concurrently` para levantar:
+
+* Backend → puerto 3001
+* Frontend → puerto 5173
+
+---
+
+# 🔐 Autenticación
+
+El sistema incluye:
+
+* Registro de usuarios
+* Login
+* Roles:
+
+  * administrador
+  * gerente
+
+Las contraseñas se almacenan encriptadas.
+
+---
+
+# 🧱 Arquitectura Backend
+
+* **Controllers**
+  → Manejan request/response
+
+* **Services**
+  → Lógica de negocio
+
+* **Prisma**
+  → Acceso a base de datos
+
+* **Middleware**
+  → Auth, errores, validaciones
+
+---
+
+# ⚠️ Buenas Prácticas
+
+* No usar `models/` si usas Prisma
+* No mezclar lógica en controllers
+* Usar services para reglas de negocio
+* Validar inputs (recomendado: Zod)
+
+---
+
+# 🛠️ Scripts útiles
+
+```json
+"scripts": {
+  "dev": "ts-node-dev --respawn src/index.ts",
+  "build": "tsc",
+  "start": "node dist/index.js",
+  "prisma:migrate": "prisma migrate dev",
+  "prisma:generate": "prisma generate",
+  "prisma:seed": "ts-node prisma/seed.ts"
+}
+```
+
+---
+
+# 🧨 Problemas comunes
+
+## ❌ Error conexión DB
+
+→ revisar `.env`
+
+## ❌ Prisma no detecta cambios
+
+```bash
+npx prisma generate
+```
+
+## ❌ Seed falla
+
+→ revisar imports de Prisma Client
+
+---
+
+# 🎯 Estado del Proyecto
+
+✅ Backend funcional
+✅ Base de datos relacional correcta
+✅ Arquitectura escalable
+⚠️ Pendiente:
+
+* Validaciones
+* Manejo de errores global
+
+---
+
+# 👨‍💻 Autor
+
+Proyecto desarrollado como sistema de gestión académica con arquitectura profesional.

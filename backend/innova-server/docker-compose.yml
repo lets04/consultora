@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: innova
+      POSTGRES_PASSWORD: innova
+      POSTGRES_DB: innova
+    ports:
+      - '5432:5432'
+    volumes:
+      - innova_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U innova -d innova']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  innova_pg_data:

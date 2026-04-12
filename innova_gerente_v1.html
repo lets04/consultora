@@ -1,0 +1,926 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app { display: flex; height: 720px; border-radius: 12px; overflow: hidden; border: 0.5px solid #1a3a5c; font-family: var(--font-sans); font-size: 13px; }
+
+.sidebar { width: 225px; background: #0B2A4A; display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-logo { padding: 18px 16px 14px; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+.sidebar-logo .brand { font-size: 17px; font-weight: 500; color: #fff; letter-spacing: 1.5px; }
+.sidebar-logo .sub { font-size: 10.5px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+.nav-section-label { padding: 10px 16px 3px; font-size: 10px; color: rgba(255,255,255,0.28); letter-spacing: 1px; text-transform: uppercase; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 16px; cursor: pointer; color: rgba(255,255,255,0.7); font-size: 13px; user-select: none; }
+.nav-item:hover { background: #1E4BB8; color: #fff; }
+.nav-item.active { background: #2F5FD0; color: #fff; font-weight: 500; }
+.nav-item .ni { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; }
+.nav-item .nl { flex: 1; }
+.nav-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 5px 0; }
+.sub-item { display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 42px; cursor: pointer; color: rgba(255,255,255,0.52); font-size: 12px; }
+.sub-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.88); }
+.sub-item.active { color: #fff; background: rgba(47,95,208,0.35); }
+.sub-item .dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.25); flex-shrink: 0; }
+.sub-item.active .dot { background: #FFC107; }
+.sidebar-footer { padding: 12px 10px; border-top: 0.5px solid rgba(255,255,255,0.08); }
+.logout-btn { width: 100%; background: #FFC107; border: none; color: #1a1a1a; font-size: 12.5px; font-weight: 500; padding: 8px 0; border-radius: 7px; cursor: pointer; }
+.logout-btn:hover { background: #e6ac00; }
+
+.main { flex: 1; background: #f0f4f8; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: #fff; border-bottom: 0.5px solid #dde3ea; padding: 0 20px; height: 48px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-title { font-size: 14px; font-weight: 500; color: #0B2A4A; }
+.avatar-circle { width: 30px; height: 30px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 500; }
+.content { flex: 1; overflow-y: auto; padding: 18px 20px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* Cards & Stats */
+.stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
+.stat-card { background: #fff; border-radius: 8px; border: 0.5px solid #dde3ea; padding: 10px 12px; }
+.stat-card .sl { font-size: 11px; color: #64748b; margin-bottom: 3px; }
+.stat-card .sn { font-size: 20px; font-weight: 500; color: #0B2A4A; }
+.stat-card .sn.blue { color: #2F5FD0; }
+.stat-card .sn.green { color: #16a34a; }
+.stat-card .sn.amber { color: #d97706; }
+.stat-card .sn.purple { color: #7c3aed; }
+
+.card { background: #fff; border-radius: 10px; border: 0.5px solid #dde3ea; padding: 20px 22px; }
+.card + .card { margin-top: 12px; }
+
+.sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sec-header h2 { font-size: 14px; font-weight: 500; color: #0B2A4A; }
+.btn-primary { background: #2F5FD0; color: #fff; border: none; font-size: 12px; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn-primary:hover { background: #1E4BB8; }
+.btn-secondary { background: #fff; color: #334155; border: 0.5px solid #dde3ea; font-size: 12px; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn-secondary:hover { background: #f1f5f9; }
+.btn-danger { background: #fee2e2; color: #dc2626; border: 0.5px solid #fca5a5; font-size: 12px; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn-danger:hover { background: #fecaca; }
+.btn-success { background: #dcfce7; color: #15803d; border: 0.5px solid #86efac; font-size: 12px; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn-success:hover { background: #bbf7d0; }
+
+.search-bar { display: flex; align-items: center; background: #fff; border: 0.5px solid #dde3ea; border-radius: 8px; padding: 6px 11px; gap: 7px; margin-bottom: 12px; }
+.search-bar input { border: none; outline: none; background: transparent; font-size: 12.5px; color: #334155; width: 100%; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; border: 0.5px solid #dde3ea; }
+thead th { background: #f8fafc; color: #64748b; font-weight: 500; padding: 9px 12px; text-align: left; border-bottom: 0.5px solid #dde3ea; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+tbody td { padding: 9px 12px; border-bottom: 0.5px solid #f0f4f8; color: #334155; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #f8fafc; }
+.bs { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.bs.pagado { background: #dcfce7; color: #15803d; }
+.bs.pendiente { background: #fee2e2; color: #dc2626; }
+.bs.parcial { background: #fef9c3; color: #b45309; }
+.bs.activo { background: #dcfce7; color: #15803d; }
+.bs.inactivo { background: #f1f5f9; color: #64748b; }
+.ab { background: none; border: 0.5px solid #dde3ea; color: #64748b; font-size: 11px; padding: 2px 8px; border-radius: 5px; cursor: pointer; margin-right: 3px; }
+.ab:hover { background: #f1f5f9; color: #2F5FD0; border-color: #2F5FD0; }
+.ab.del:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+.form-section-title { font-size: 13px; font-weight: 500; color: #0B2A4A; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid #edf2f7; display: flex; align-items: center; gap: 8px; }
+.form-section-title .fs-icon { width: 24px; height: 24px; border-radius: 6px; background: #eef3ff; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #2F5FD0; }
+.form-grid { display: grid; gap: 12px; }
+.form-grid.cols2 { grid-template-columns: 1fr 1fr; }
+.form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field label { font-size: 11.5px; color: #64748b; font-weight: 500; }
+.form-field input, .form-field select, .form-field textarea { border: 0.5px solid #dde3ea; border-radius: 7px; padding: 7px 10px; font-size: 12.5px; color: #334155; background: #fff; outline: none; width: 100%; font-family: var(--font-sans); }
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: #2F5FD0; box-shadow: 0 0 0 2px rgba(47,95,208,0.1); }
+.form-actions { display: flex; gap: 10px; padding-top: 12px; }
+.pago-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 0.5px solid #f0f4f8; gap: 8px; }
+.pago-row:last-child { border-bottom: none; }
+.success-box { text-align: center; padding: 24px 0 10px; }
+.success-icon { width: 52px; height: 52px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 24px; color: #16a34a; }
+
+/* ====== PROMOCIONES ====== */
+.promo-week-header { display: flex; align-items: center; justify-content: space-between; background: #eef3ff; border: 0.5px solid #b5cef4; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+.promo-week-title { font-size: 14px; font-weight: 500; color: #0B2A4A; }
+.promo-week-sub { font-size: 11.5px; color: #64748b; margin-top: 2px; }
+.promo-week-badge { background: #2F5FD0; color: #fff; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+
+.area-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.area-tab { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 12px; border-radius: 20px; font-weight: 500; cursor: pointer; border: 1px solid #dde3ea; background: #f8fafc; color: #64748b; user-select: none; transition: all 0.12s; }
+.area-tab:hover { border-color: #2F5FD0; color: #1E4BB8; background: #f0f5ff; }
+.area-tab.active { background: #eef3ff; border-color: #2F5FD0; color: #1E4BB8; }
+.area-tab .at-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.area-tab .at-del { margin-left: 4px; opacity: 0.4; font-size: 13px; }
+.area-tab .at-del:hover { opacity: 1; color: #dc2626; }
+
+.course-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.course-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #fff; border-radius: 8px; border: 1px solid #dde3ea; cursor: pointer; transition: all 0.12s; }
+.course-item:hover { border-color: #93c5fd; background: #f0f7ff; }
+.course-item.selected { border-color: #2F5FD0; background: #eef3ff; }
+.course-item input[type=checkbox] { accent-color: #2F5FD0; width: 14px; height: 14px; flex-shrink: 0; }
+.course-item .ci-name { flex: 1; font-size: 12.5px; color: #334155; font-weight: 500; }
+.course-item.selected .ci-name { color: #1E4BB8; }
+.course-item .ci-hrs { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+.course-item .ci-area { font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 500; }
+
+.promo-summary { background: #f8fafc; border-radius: 8px; border: 0.5px solid #dde3ea; padding: 14px 16px; margin-top: 14px; }
+.promo-summary-title { font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.promo-chip { display: inline-flex; align-items: center; gap: 5px; background: #eef3ff; border: 0.5px solid #b5cef4; color: #1E4BB8; font-size: 11.5px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin: 3px; }
+.promo-chip .chip-x { cursor: pointer; opacity: 0.5; }
+.promo-chip .chip-x:hover { opacity: 1; }
+
+/* Modal overlay */
+.modal-overlay { position: absolute; inset: 0; background: rgba(11,42,74,0.45); display: flex; align-items: center; justify-content: center; z-index: 100; border-radius: 12px; }
+.modal-box { background: #fff; border-radius: 12px; padding: 24px; width: 360px; border: 0.5px solid #dde3ea; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+.modal-title { font-size: 14px; font-weight: 500; color: #0B2A4A; margin-bottom: 6px; }
+.modal-sub { font-size: 12.5px; color: #64748b; margin-bottom: 18px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+
+/* Student detail panel */
+.student-profile { display: flex; align-items: center; gap: 14px; background: #f8fafc; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; border: 0.5px solid #dde3ea; }
+.student-avatar { width: 46px; height: 46px; border-radius: 50%; background: #2F5FD0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 500; flex-shrink: 0; }
+.student-name { font-size: 14px; font-weight: 500; color: #0B2A4A; }
+.student-ci { font-size: 12px; color: #64748b; margin-top: 1px; }
+.student-status { margin-left: auto; }
+
+.detail-tabs { display: flex; gap: 2px; background: #f1f5f9; border-radius: 8px; padding: 3px; margin-bottom: 16px; }
+.detail-tab { flex: 1; text-align: center; padding: 6px 8px; border-radius: 6px; font-size: 12px; color: #64748b; cursor: pointer; font-weight: 500; }
+.detail-tab.active { background: #fff; color: #0B2A4A; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.detail-pane { display: none; }
+.detail-pane.active { display: block; }
+
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 0.5px solid #f0f4f8; }
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 11.5px; color: #94a3b8; }
+.info-value { font-size: 12.5px; color: #334155; font-weight: 500; }
+
+/* Course management */
+.area-section { margin-bottom: 18px; }
+.area-section-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 0.5px solid #e2e8f0; margin-bottom: 8px; }
+.area-section-name { font-size: 13px; font-weight: 500; color: #0B2A4A; display: flex; align-items: center; gap: 8px; }
+.area-color-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.area-section-actions { display: flex; gap: 6px; }
+.course-row { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-bottom: 0.5px solid #f0f4f8; }
+.course-row:last-child { border-bottom: none; }
+.course-row .cr-name { flex: 1; font-size: 12.5px; color: #334155; }
+.course-row .cr-hrs { font-size: 11.5px; color: #94a3b8; }
+.course-row .cr-actions { display: flex; gap: 4px; }
+
+.inline-input { border: 0.5px solid #dde3ea; border-radius: 7px; padding: 5px 8px; font-size: 12px; color: #334155; outline: none; width: 100%; }
+.inline-input:focus { border-color: #2F5FD0; }
+
+.empty-state { text-align: center; padding: 30px 20px; color: #94a3b8; font-size: 12.5px; }
+.empty-icon { font-size: 28px; margin-bottom: 8px; }
+</style>
+
+<div class="app" style="position:relative">
+  <!-- MODAL (hidden by default) -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none">
+    <div class="modal-box" id="modal-box">
+      <div class="modal-title" id="modal-title">Confirmar acción</div>
+      <div class="modal-sub" id="modal-sub">¿Está seguro de continuar?</div>
+      <div id="modal-body"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button id="modal-confirm-btn" class="btn-danger" onclick="">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">INNOVA</div>
+      <div class="sub">Panel de gerencia</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item" id="ni-dash" onclick="goPage('dashboard')">
+        <span class="ni">⊞</span><span class="nl">Dashboard</span>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">Catálogo</div>
+      <div class="nav-item" id="ni-promo" onclick="goPage('promociones')">
+        <span class="ni">★</span><span class="nl">Promociones</span>
+      </div>
+      <div class="nav-item" id="ni-areas" onclick="goPage('areas')">
+        <span class="ni">◈</span><span class="nl">Áreas y cursos</span>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">Estudiantes</div>
+      <div class="nav-item" id="ni-est" onclick="goPage('estudiantes')">
+        <span class="ni">◎</span><span class="nl">Gestión de estudiantes</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px;padding:0 6px">Gerente de operaciones</div>
+      <button class="logout-btn">⏻ Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <span class="topbar-title" id="page-title">Dashboard</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:11.5px;color:#64748b">Gerente</span>
+        <div class="avatar-circle">GR</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══════════════════════════════════════════
+           DASHBOARD
+      ══════════════════════════════════════════ -->
+      <div class="page" id="page-dashboard">
+        <div class="stats-row">
+          <div class="stat-card"><div class="sl">Estudiantes activos</div><div class="sn green">26</div></div>
+          <div class="stat-card"><div class="sl">Promoción actual</div><div class="sn blue">Sem. 15</div></div>
+          <div class="stat-card"><div class="sl">Áreas activas</div><div class="sn purple">5</div></div>
+          <div class="stat-card"><div class="sl">Cursos en catálogo</div><div class="sn">18</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+          <div class="card">
+            <div class="form-section-title">Promoción semana actual</div>
+            <div class="pago-row"><span style="color:#64748b;font-size:12px">Tecnología</span><span style="color:#334155;font-weight:500;font-size:12px">Excel Avanzado</span></div>
+            <div class="pago-row"><span style="color:#64748b;font-size:12px">Diseño</span><span style="color:#334155;font-weight:500;font-size:12px">Diseño Gráfico</span></div>
+            <div class="pago-row"><span style="color:#64748b;font-size:12px">Comunicación</span><span style="color:#334155;font-weight:500;font-size:12px">Oratoria y Liderazgo</span></div>
+            <div class="pago-row"><span style="color:#64748b;font-size:12px">Administración</span><span style="color:#334155;font-weight:500;font-size:12px">Contabilidad Básica</span></div>
+            <div class="pago-row"><span style="color:#64748b;font-size:12px">Tecnología</span><span style="color:#334155;font-weight:500;font-size:12px">Programación Web</span></div>
+            <div style="margin-top:12px"><button class="btn-primary" style="width:100%" onclick="goPage('promociones')">Gestionar promoción</button></div>
+          </div>
+          <div class="card">
+            <div class="form-section-title">Resumen de estudiantes</div>
+            <div class="pago-row"><span style="color:#64748b">Total registrados</span><span style="color:#0B2A4A;font-weight:500">34</span></div>
+            <div class="pago-row"><span style="color:#64748b">Con pago pendiente</span><span style="color:#dc2626;font-weight:500">5</span></div>
+            <div class="pago-row"><span style="color:#64748b">Inscripciones activas</span><span style="color:#16a34a;font-weight:500">26</span></div>
+            <div class="pago-row"><span style="color:#64748b">Nuevos este mes</span><span style="color:#2F5FD0;font-weight:500">8</span></div>
+            <div style="margin-top:12px"><button class="btn-secondary" style="width:100%" onclick="goPage('estudiantes')">Ver estudiantes</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PROMOCIONES SEMANALES
+      ══════════════════════════════════════════ -->
+      <div class="page" id="page-promociones">
+        <div class="sec-header">
+          <h2>Promociones semanales</h2>
+          <button class="btn-primary" onclick="nuevaPromo()">+ Nueva promoción</button>
+        </div>
+
+        <!-- Vista lista de promociones -->
+        <div id="promo-list-view">
+          <div class="card" style="margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:#0B2A4A">Semana 15 — Abril 2025</div>
+                <div style="font-size:11.5px;color:#64748b;margin-top:2px">Del 7 al 12 de abril · 5 cursos seleccionados</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="bs activo">Activa</span>
+                <button class="ab" onclick="editPromo(15)">Editar</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="promo-chip">Excel Avanzado</span>
+              <span class="promo-chip">Diseño Gráfico</span>
+              <span class="promo-chip">Oratoria y Liderazgo</span>
+              <span class="promo-chip">Contabilidad Básica</span>
+              <span class="promo-chip">Programación Web</span>
+            </div>
+          </div>
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:#0B2A4A">Semana 14 — Marzo 2025</div>
+                <div style="font-size:11.5px;color:#64748b;margin-top:2px">Del 31 mar al 5 abr · 5 cursos seleccionados</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="bs inactivo">Finalizada</span>
+                <button class="ab" onclick="editPromo(14)">Ver</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="promo-chip" style="background:#f1f5f9;border-color:#dde3ea;color:#64748b">Python Básico</span>
+              <span class="promo-chip" style="background:#f1f5f9;border-color:#dde3ea;color:#64748b">Base de Datos</span>
+              <span class="promo-chip" style="background:#f1f5f9;border-color:#dde3ea;color:#64748b">Inglés Básico</span>
+              <span class="promo-chip" style="background:#f1f5f9;border-color:#dde3ea;color:#64748b">Marketing Digital</span>
+              <span class="promo-chip" style="background:#f1f5f9;border-color:#dde3ea;color:#64748b">Diseño 3D</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editor de promoción -->
+        <div id="promo-editor-view" style="display:none">
+          <div class="promo-week-header">
+            <div>
+              <div class="promo-week-title" id="promo-editor-title">Nueva Promoción Semanal</div>
+              <div class="promo-week-sub">Selecciona exactamente 5 cursos de cualquier área</div>
+            </div>
+            <span class="promo-week-badge" id="promo-count-badge">0 / 5 cursos</span>
+          </div>
+
+          <div class="card">
+            <div class="form-grid cols2" style="margin-bottom:16px">
+              <div class="form-field">
+                <label>Nombre de la promoción</label>
+                <input id="promo-nombre" placeholder="Ej: Semana 16 — Abril 2025" />
+              </div>
+              <div class="form-field">
+                <label>Semana / Período</label>
+                <input id="promo-periodo" placeholder="Ej: 14 al 19 de abril" />
+              </div>
+            </div>
+
+            <div class="form-section-title" style="margin-bottom:12px">
+              <span class="fs-icon">◈</span> Filtrar por área
+            </div>
+            <div class="area-tabs" id="promo-area-tabs">
+              <div class="area-tab active" onclick="filterPromoArea('todas',this)">
+                <span class="at-dot" style="background:#94a3b8"></span> Todas
+              </div>
+              <div class="area-tab" onclick="filterPromoArea('Tecnología',this)">
+                <span class="at-dot" style="background:#2F5FD0"></span> Tecnología
+              </div>
+              <div class="area-tab" onclick="filterPromoArea('Diseño',this)">
+                <span class="at-dot" style="background:#7c3aed"></span> Diseño
+              </div>
+              <div class="area-tab" onclick="filterPromoArea('Administración',this)">
+                <span class="at-dot" style="background:#d97706"></span> Administración
+              </div>
+              <div class="area-tab" onclick="filterPromoArea('Comunicación',this)">
+                <span class="at-dot" style="background:#16a34a"></span> Comunicación
+              </div>
+              <div class="area-tab" onclick="filterPromoArea('Idiomas',this)">
+                <span class="at-dot" style="background:#db2777"></span> Idiomas
+              </div>
+            </div>
+
+            <div class="course-grid" id="promo-courses-grid">
+              <!-- populated by JS -->
+            </div>
+
+            <div class="promo-summary" id="promo-summary">
+              <div class="promo-summary-title">Cursos seleccionados para la promoción</div>
+              <div id="promo-chips">
+                <span style="font-size:12px;color:#94a3b8">Ningún curso seleccionado aún</span>
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top:16px">
+              <button class="btn-secondary" onclick="cancelEditPromo()">← Volver</button>
+              <button class="btn-primary" onclick="savePromo()">Guardar promoción</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirmación guardado -->
+        <div id="promo-confirm-view" style="display:none">
+          <div class="card">
+            <div class="success-box">
+              <div class="success-icon">★</div>
+              <div style="font-size:15px;font-weight:500;color:#0B2A4A;margin-bottom:6px">Promoción guardada</div>
+              <div style="font-size:12.5px;color:#64748b;margin-bottom:18px">La promoción semanal fue configurada correctamente con 5 cursos.</div>
+              <div style="display:flex;gap:10px;justify-content:center">
+                <button class="btn-primary" onclick="showPromoList()">Ver promociones</button>
+                <button class="btn-secondary" onclick="nuevaPromo()">Crear otra</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           ÁREAS Y CURSOS
+      ══════════════════════════════════════════ -->
+      <div class="page" id="page-areas">
+        <div class="sec-header">
+          <h2>Áreas y cursos</h2>
+          <button class="btn-primary" onclick="showModalAddArea()">+ Nueva área</button>
+        </div>
+
+        <div id="areas-container">
+          <!-- Tecnología -->
+          <div class="card area-section" id="area-tecnologia">
+            <div class="area-section-header">
+              <div class="area-section-name">
+                <span class="area-color-dot" style="background:#2F5FD0"></span>
+                Tecnología
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">(4 cursos)</span>
+              </div>
+              <div class="area-section-actions">
+                <button class="ab" onclick="showModalAddCourse('Tecnología')">+ Curso</button>
+                <button class="ab del" onclick="confirmDeleteArea('Tecnología')">Eliminar área</button>
+              </div>
+            </div>
+            <div id="courses-tecnologia">
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#2F5FD0;flex-shrink:0"></span><span class="cr-name">Excel Avanzado</span><span class="cr-hrs">40 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Excel Avanzado','40')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Excel Avanzado','Tecnología')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#2F5FD0;flex-shrink:0"></span><span class="cr-name">Programación Web</span><span class="cr-hrs">80 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Programación Web','80')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Programación Web','Tecnología')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#2F5FD0;flex-shrink:0"></span><span class="cr-name">Base de Datos</span><span class="cr-hrs">60 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Base de Datos','60')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Base de Datos','Tecnología')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#2F5FD0;flex-shrink:0"></span><span class="cr-name">Python Básico</span><span class="cr-hrs">50 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Python Básico','50')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Python Básico','Tecnología')">✕</button></div></div>
+            </div>
+          </div>
+
+          <!-- Diseño -->
+          <div class="card area-section" id="area-diseno">
+            <div class="area-section-header">
+              <div class="area-section-name">
+                <span class="area-color-dot" style="background:#7c3aed"></span>
+                Diseño
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">(3 cursos)</span>
+              </div>
+              <div class="area-section-actions">
+                <button class="ab" onclick="showModalAddCourse('Diseño')">+ Curso</button>
+                <button class="ab del" onclick="confirmDeleteArea('Diseño')">Eliminar área</button>
+              </div>
+            </div>
+            <div id="courses-diseno">
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#7c3aed;flex-shrink:0"></span><span class="cr-name">Diseño Gráfico</span><span class="cr-hrs">60 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Diseño Gráfico','60')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Diseño Gráfico','Diseño')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#7c3aed;flex-shrink:0"></span><span class="cr-name">Diseño 3D</span><span class="cr-hrs">70 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Diseño 3D','70')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Diseño 3D','Diseño')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#7c3aed;flex-shrink:0"></span><span class="cr-name">Edición de Video</span><span class="cr-hrs">45 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Edición de Video','45')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Edición de Video','Diseño')">✕</button></div></div>
+            </div>
+          </div>
+
+          <!-- Administración -->
+          <div class="card area-section" id="area-administracion">
+            <div class="area-section-header">
+              <div class="area-section-name">
+                <span class="area-color-dot" style="background:#d97706"></span>
+                Administración
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">(3 cursos)</span>
+              </div>
+              <div class="area-section-actions">
+                <button class="ab" onclick="showModalAddCourse('Administración')">+ Curso</button>
+                <button class="ab del" onclick="confirmDeleteArea('Administración')">Eliminar área</button>
+              </div>
+            </div>
+            <div id="courses-administracion">
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0"></span><span class="cr-name">Contabilidad Básica</span><span class="cr-hrs">50 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Contabilidad Básica','50')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Contabilidad Básica','Administración')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0"></span><span class="cr-name">Marketing Digital</span><span class="cr-hrs">40 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Marketing Digital','40')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Marketing Digital','Administración')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0"></span><span class="cr-name">Gestión Empresarial</span><span class="cr-hrs">55 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Gestión Empresarial','55')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Gestión Empresarial','Administración')">✕</button></div></div>
+            </div>
+          </div>
+
+          <!-- Comunicación -->
+          <div class="card area-section" id="area-comunicacion">
+            <div class="area-section-header">
+              <div class="area-section-name">
+                <span class="area-color-dot" style="background:#16a34a"></span>
+                Comunicación
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">(2 cursos)</span>
+              </div>
+              <div class="area-section-actions">
+                <button class="ab" onclick="showModalAddCourse('Comunicación')">+ Curso</button>
+                <button class="ab del" onclick="confirmDeleteArea('Comunicación')">Eliminar área</button>
+              </div>
+            </div>
+            <div id="courses-comunicacion">
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#16a34a;flex-shrink:0"></span><span class="cr-name">Oratoria y Liderazgo</span><span class="cr-hrs">30 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Oratoria y Liderazgo','30')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Oratoria y Liderazgo','Comunicación')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#16a34a;flex-shrink:0"></span><span class="cr-name">Redacción Profesional</span><span class="cr-hrs">25 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Redacción Profesional','25')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Redacción Profesional','Comunicación')">✕</button></div></div>
+            </div>
+          </div>
+
+          <!-- Idiomas -->
+          <div class="card area-section" id="area-idiomas">
+            <div class="area-section-header">
+              <div class="area-section-name">
+                <span class="area-color-dot" style="background:#db2777"></span>
+                Idiomas
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">(2 cursos)</span>
+              </div>
+              <div class="area-section-actions">
+                <button class="ab" onclick="showModalAddCourse('Idiomas')">+ Curso</button>
+                <button class="ab del" onclick="confirmDeleteArea('Idiomas')">Eliminar área</button>
+              </div>
+            </div>
+            <div id="courses-idiomas">
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#db2777;flex-shrink:0"></span><span class="cr-name">Inglés Básico</span><span class="cr-hrs">40 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Inglés Básico','40')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Inglés Básico','Idiomas')">✕</button></div></div>
+              <div class="course-row"><span class="course-row-dot" style="width:6px;height:6px;border-radius:50%;background:#db2777;flex-shrink:0"></span><span class="cr-name">Inglés Intermedio</span><span class="cr-hrs">50 hrs</span><div class="cr-actions"><button class="ab" onclick="editCourse(this,'Inglés Intermedio','50')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('Inglés Intermedio','Idiomas')">✕</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           ESTUDIANTES
+      ══════════════════════════════════════════ -->
+      <div class="page" id="page-estudiantes">
+        <div id="est-list-view">
+          <div class="stats-row">
+            <div class="stat-card"><div class="sl">Total</div><div class="sn blue">34</div></div>
+            <div class="stat-card"><div class="sl">Activos</div><div class="sn green">26</div></div>
+            <div class="stat-card"><div class="sl">Pago pendiente</div><div class="sn amber">5</div></div>
+            <div class="stat-card"><div class="sl">Nuevos mes</div><div class="sn">8</div></div>
+          </div>
+          <div class="sec-header">
+            <h2>Gestión de estudiantes</h2>
+          </div>
+          <div class="search-bar">
+            <span style="color:#94a3b8;font-size:13px">⌕</span>
+            <input type="text" placeholder="Buscar por nombre, CI o curso..." id="search-est" oninput="filterEstudiantes()" />
+          </div>
+          <table id="est-table">
+            <thead><tr><th>#</th><th>Nombre</th><th>Curso actual</th><th>Inscripción</th><th>Pago</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="est-tbody">
+              <tr class="est-row" data-search="ana torres 7845231 excel avanzado"><td style="color:#94a3b8">01</td><td><span style="font-weight:500;color:#0B2A4A">Ana Torres</span><br><span style="font-size:11px;color:#94a3b8">CI: 7845231</span></td><td>Excel Avanzado</td><td>12/03/2025</td><td><span class="bs pagado">Pagado</span></td><td><span class="bs activo">Activo</span></td><td><button class="ab" onclick="verEstudiante('Ana Torres','7845231','Excel Avanzado','12/03/2025','pagado','activo')">Ver</button><button class="ab del" onclick="confirmDeleteEst('Ana Torres','7845231')">Eliminar</button></td></tr>
+              <tr class="est-row" data-search="carlos rivas 6123445 diseño gráfico"><td style="color:#94a3b8">02</td><td><span style="font-weight:500;color:#0B2A4A">Carlos Rivas</span><br><span style="font-size:11px;color:#94a3b8">CI: 6123445</span></td><td>Diseño Gráfico</td><td>18/03/2025</td><td><span class="bs parcial">Parcial</span></td><td><span class="bs activo">Activo</span></td><td><button class="ab" onclick="verEstudiante('Carlos Rivas','6123445','Diseño Gráfico','18/03/2025','parcial','activo')">Ver</button><button class="ab del" onclick="confirmDeleteEst('Carlos Rivas','6123445')">Eliminar</button></td></tr>
+              <tr class="est-row" data-search="maría quispe 9032187 oratoria"><td style="color:#94a3b8">03</td><td><span style="font-weight:500;color:#0B2A4A">María Quispe</span><br><span style="font-size:11px;color:#94a3b8">CI: 9032187</span></td><td>Oratoria y Liderazgo</td><td>22/03/2025</td><td><span class="bs pendiente">Pendiente</span></td><td><span class="bs activo">Activo</span></td><td><button class="ab" onclick="verEstudiante('María Quispe','9032187','Oratoria y Liderazgo','22/03/2025','pendiente','activo')">Ver</button><button class="ab del" onclick="confirmDeleteEst('María Quispe','9032187')">Eliminar</button></td></tr>
+              <tr class="est-row" data-search="jorge mamani 5547891 excel avanzado"><td style="color:#94a3b8">04</td><td><span style="font-weight:500;color:#0B2A4A">Jorge Mamani</span><br><span style="font-size:11px;color:#94a3b8">CI: 5547891</span></td><td>Excel Avanzado</td><td>01/04/2025</td><td><span class="bs pagado">Pagado</span></td><td><span class="bs activo">Activo</span></td><td><button class="ab" onclick="verEstudiante('Jorge Mamani','5547891','Excel Avanzado','01/04/2025','pagado','activo')">Ver</button><button class="ab del" onclick="confirmDeleteEst('Jorge Mamani','5547891')">Eliminar</button></td></tr>
+              <tr class="est-row" data-search="lucía flores 8812034 contabilidad"><td style="color:#94a3b8">05</td><td><span style="font-weight:500;color:#0B2A4A">Lucía Flores</span><br><span style="font-size:11px;color:#94a3b8">CI: 8812034</span></td><td>Contabilidad Básica</td><td>03/04/2025</td><td><span class="bs parcial">Parcial</span></td><td><span class="bs inactivo">Inactivo</span></td><td><button class="ab" onclick="verEstudiante('Lucía Flores','8812034','Contabilidad Básica','03/04/2025','parcial','inactivo')">Ver</button><button class="ab del" onclick="confirmDeleteEst('Lucía Flores','8812034')">Eliminar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Detalle de estudiante -->
+        <div id="est-detail-view" style="display:none">
+          <div class="sec-header">
+            <h2>Detalle del estudiante</h2>
+            <button class="btn-secondary" onclick="backToList()">← Volver</button>
+          </div>
+
+          <div class="student-profile">
+            <div class="student-avatar" id="det-avatar">AT</div>
+            <div>
+              <div class="student-name" id="det-name">Ana Torres</div>
+              <div class="student-ci" id="det-ci">CI: 7845231</div>
+            </div>
+            <div class="student-status" id="det-status"><span class="bs activo">Activo</span></div>
+            <button class="btn-danger" id="det-delete-btn" style="margin-left:8px" onclick="">Eliminar estudiante</button>
+          </div>
+
+          <div class="detail-tabs">
+            <div class="detail-tab active" onclick="switchTab('info')">Información</div>
+            <div class="detail-tab" onclick="switchTab('cursos')">Cursos</div>
+            <div class="detail-tab" onclick="switchTab('pagos')">Pagos</div>
+            <div class="detail-tab" onclick="switchTab('gestionar')">Gestionar</div>
+          </div>
+
+          <!-- Tab: Info -->
+          <div class="detail-pane active card" id="tab-info">
+            <div class="info-row"><span class="info-label">Nombre completo</span><span class="info-value" id="info-nombre">—</span></div>
+            <div class="info-row"><span class="info-label">Cédula de identidad</span><span class="info-value" id="info-ci">—</span></div>
+            <div class="info-row"><span class="info-label">Fecha de inscripción</span><span class="info-value" id="info-fecha">—</span></div>
+            <div class="info-row"><span class="info-label">Estado de pago</span><span class="info-value" id="info-pago">—</span></div>
+            <div class="info-row"><span class="info-label">Curso actual</span><span class="info-value" id="info-curso">—</span></div>
+            <div class="info-row"><span class="info-label">Teléfono</span><span class="info-value">+591 70000000</span></div>
+            <div class="info-row"><span class="info-label">Correo</span><span class="info-value">estudiante@email.com</span></div>
+          </div>
+
+          <!-- Tab: Cursos -->
+          <div class="detail-pane card" id="tab-cursos" style="display:none">
+            <div class="form-section-title" style="margin-bottom:12px"><span class="fs-icon">✎</span> Cursos inscritos</div>
+            <table>
+              <thead><tr><th>Curso</th><th>Área</th><th>Modalidad</th><th>Inicio</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:500" id="ct-curso1">—</td><td>Tecnología</td><td>Con examen</td><td>12/03/2025</td><td><span class="bs activo">En curso</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab: Pagos -->
+          <div class="detail-pane card" id="tab-pagos" style="display:none">
+            <div class="form-section-title" style="margin-bottom:12px"><span class="fs-icon">◈</span> Historial de pagos</div>
+            <table>
+              <thead><tr><th>Concepto</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td id="pago-concepto1">—</td><td>Bs. 200</td><td>12/03/2025</td><td id="pago-estado1"><span class="bs pagado">Pagado</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab: Gestionar -->
+          <div class="detail-pane card" id="tab-gestionar" style="display:none">
+            <div class="form-section-title" style="margin-bottom:14px"><span class="fs-icon">⚙</span> Gestionar estudiante</div>
+            <div class="form-grid cols2" style="margin-bottom:14px">
+              <div class="form-field">
+                <label>Estado del estudiante</label>
+                <select id="gest-estado">
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                  <option value="suspendido">Suspendido</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Estado de pago</label>
+                <select id="gest-pago">
+                  <option value="pagado">Pagado</option>
+                  <option value="parcial">Pago parcial</option>
+                  <option value="pendiente">Pendiente</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field" style="margin-bottom:14px">
+              <label>Nota / Observación</label>
+              <textarea placeholder="Agregar una nota sobre este estudiante..." style="min-height:60px"></textarea>
+            </div>
+            <div class="form-actions">
+              <button class="btn-primary" onclick="saveGestion()">Guardar cambios</button>
+              <button class="btn-danger" onclick="">Eliminar estudiante</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<script>
+/* ─── Navigation ─── */
+const pageMap = { 'dashboard':'ni-dash','promociones':'ni-promo','areas':'ni-areas','estudiantes':'ni-est' };
+const titles  = { 'dashboard':'Dashboard','promociones':'Promociones semanales','areas':'Áreas y cursos','estudiantes':'Gestión de estudiantes' };
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-'+id); if (pg) pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const ni = pageMap[id]; if (ni && document.getElementById(ni)) document.getElementById(ni).classList.add('active');
+  document.getElementById('page-title').textContent = titles[id] || id;
+}
+
+/* ─── Modal ─── */
+let modalCallback = null;
+function openModal(title, sub, body, confirmLabel, confirmClass, cb) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-sub').textContent = sub;
+  document.getElementById('modal-body').innerHTML = body || '';
+  const btn = document.getElementById('modal-confirm-btn');
+  btn.textContent = confirmLabel || 'Confirmar';
+  btn.className = confirmClass || 'btn-danger';
+  modalCallback = cb;
+  btn.onclick = () => { if(modalCallback) modalCallback(); closeModal(); };
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+/* ─── PROMOCIONES ─── */
+const allCourses = [
+  { name:'Excel Avanzado',     hrs:'40', area:'Tecnología'    },
+  { name:'Programación Web',   hrs:'80', area:'Tecnología'    },
+  { name:'Base de Datos',      hrs:'60', area:'Tecnología'    },
+  { name:'Python Básico',      hrs:'50', area:'Tecnología'    },
+  { name:'Diseño Gráfico',     hrs:'60', area:'Diseño'        },
+  { name:'Diseño 3D',          hrs:'70', area:'Diseño'        },
+  { name:'Edición de Video',   hrs:'45', area:'Diseño'        },
+  { name:'Contabilidad Básica',hrs:'50', area:'Administración'},
+  { name:'Marketing Digital',  hrs:'40', area:'Administración'},
+  { name:'Gestión Empresarial',hrs:'55', area:'Administración'},
+  { name:'Oratoria y Liderazgo',hrs:'30',area:'Comunicación'  },
+  { name:'Redacción Profesional',hrs:'25',area:'Comunicación' },
+  { name:'Inglés Básico',      hrs:'40', area:'Idiomas'       },
+  { name:'Inglés Intermedio',  hrs:'50', area:'Idiomas'       },
+];
+const areaColors = { 'Tecnología':'#2F5FD0','Diseño':'#7c3aed','Administración':'#d97706','Comunicación':'#16a34a','Idiomas':'#db2777' };
+let selectedCourses = new Set();
+let currentPromoFilter = 'todas';
+
+function renderPromoGrid() {
+  const grid = document.getElementById('promo-courses-grid');
+  const filtered = currentPromoFilter === 'todas' ? allCourses : allCourses.filter(c => c.area === currentPromoFilter);
+  grid.innerHTML = filtered.map(c => {
+    const sel = selectedCourses.has(c.name);
+    const color = areaColors[c.area] || '#64748b';
+    return `<div class="course-item ${sel?'selected':''}" id="ci-${c.name.replace(/\s/g,'_')}" onclick="togglePromoCourse('${c.name}')">
+      <input type="checkbox" ${sel?'checked':''} onclick="event.stopPropagation()">
+      <div style="flex:1;min-width:0">
+        <div class="ci-name">${c.name}</div>
+        <span class="ci-area" style="background:${color}22;color:${color}">${c.area}</span>
+      </div>
+      <span class="ci-hrs">${c.hrs}h</span>
+    </div>`;
+  }).join('');
+  updatePromoSummary();
+}
+
+function togglePromoCourse(name) {
+  if (selectedCourses.has(name)) { selectedCourses.delete(name); }
+  else { if (selectedCourses.size >= 5) { alert('Solo puedes seleccionar 5 cursos para la promoción.'); return; } selectedCourses.add(name); }
+  renderPromoGrid();
+}
+
+function updatePromoSummary() {
+  const badge = document.getElementById('promo-count-badge');
+  const chips = document.getElementById('promo-chips');
+  badge.textContent = selectedCourses.size + ' / 5 cursos';
+  badge.style.background = selectedCourses.size === 5 ? '#16a34a' : '#2F5FD0';
+  if (selectedCourses.size === 0) { chips.innerHTML = '<span style="font-size:12px;color:#94a3b8">Ningún curso seleccionado aún</span>'; return; }
+  chips.innerHTML = [...selectedCourses].map(n => `<span class="promo-chip">${n} <span class="chip-x" onclick="togglePromoCourse('${n}')">×</span></span>`).join('');
+}
+
+function filterPromoArea(area, el) {
+  currentPromoFilter = area;
+  document.querySelectorAll('.area-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderPromoGrid();
+}
+
+function nuevaPromo() {
+  selectedCourses.clear();
+  document.getElementById('promo-nombre').value = '';
+  document.getElementById('promo-periodo').value = '';
+  currentPromoFilter = 'todas';
+  document.querySelectorAll('.area-tab').forEach((t,i) => { t.classList.toggle('active', i===0); });
+  document.getElementById('promo-editor-title').textContent = 'Nueva Promoción Semanal';
+  renderPromoGrid();
+  document.getElementById('promo-list-view').style.display = 'none';
+  document.getElementById('promo-editor-view').style.display = 'block';
+  document.getElementById('promo-confirm-view').style.display = 'none';
+}
+
+function editPromo(week) {
+  selectedCourses.clear();
+  if(week===15) { ['Excel Avanzado','Diseño Gráfico','Oratoria y Liderazgo','Contabilidad Básica','Programación Web'].forEach(c=>selectedCourses.add(c)); }
+  document.getElementById('promo-nombre').value = week===15 ? 'Semana 15 — Abril 2025' : 'Semana 14 — Marzo 2025';
+  document.getElementById('promo-periodo').value = week===15 ? '7 al 12 de abril' : '31 mar al 5 abr';
+  document.getElementById('promo-editor-title').textContent = 'Editar Promoción — Semana ' + week;
+  currentPromoFilter = 'todas';
+  document.querySelectorAll('.area-tab').forEach((t,i) => { t.classList.toggle('active', i===0); });
+  renderPromoGrid();
+  document.getElementById('promo-list-view').style.display = 'none';
+  document.getElementById('promo-editor-view').style.display = 'block';
+  document.getElementById('promo-confirm-view').style.display = 'none';
+}
+
+function savePromo() {
+  if (selectedCourses.size !== 5) { alert('Debes seleccionar exactamente 5 cursos para la promoción.'); return; }
+  document.getElementById('promo-editor-view').style.display = 'none';
+  document.getElementById('promo-confirm-view').style.display = 'block';
+}
+
+function cancelEditPromo() { showPromoList(); }
+function showPromoList() {
+  document.getElementById('promo-list-view').style.display = 'block';
+  document.getElementById('promo-editor-view').style.display = 'none';
+  document.getElementById('promo-confirm-view').style.display = 'none';
+}
+
+/* ─── ÁREAS ─── */
+function showModalAddArea() {
+  openModal('Nueva área', 'Ingresa el nombre de la nueva área de estudio.', `
+    <div class="form-grid cols2" style="gap:10px">
+      <div class="form-field"><label>Nombre del área</label><input class="inline-input" id="new-area-name" placeholder="Ej: Salud" /></div>
+      <div class="form-field"><label>Color identificador</label><input type="color" id="new-area-color" value="#2F5FD0" style="height:34px;border-radius:7px;border:0.5px solid #dde3ea;padding:2px;width:100%;cursor:pointer"/></div>
+    </div>`, 'Agregar área', 'btn-primary', addArea);
+}
+
+function addArea() {
+  const name = document.getElementById('new-area-name').value.trim();
+  const color = document.getElementById('new-area-color').value;
+  if (!name) return;
+  const id = 'area-' + name.toLowerCase().replace(/\s/g,'-');
+  const coursesId = 'courses-' + name.toLowerCase().replace(/\s/g,'-');
+  const html = `<div class="card area-section" id="${id}">
+    <div class="area-section-header">
+      <div class="area-section-name">
+        <span class="area-color-dot" style="background:${color}"></span>${name}
+        <span style="font-size:11px;color:#94a3b8;font-weight:400">(0 cursos)</span>
+      </div>
+      <div class="area-section-actions">
+        <button class="ab" onclick="showModalAddCourse('${name}')">+ Curso</button>
+        <button class="ab del" onclick="confirmDeleteArea('${name}')">Eliminar área</button>
+      </div>
+    </div>
+    <div id="${coursesId}"><div class="empty-state"><div class="empty-icon">📚</div>No hay cursos en esta área aún</div></div>
+  </div>`;
+  document.getElementById('areas-container').insertAdjacentHTML('beforeend', html);
+}
+
+function confirmDeleteArea(name) {
+  openModal('Eliminar área', `¿Seguro que deseas eliminar el área "${name}" y todos sus cursos? Esta acción no se puede deshacer.`, '', 'Eliminar área', 'btn-danger', () => {
+    const id = 'area-' + name.toLowerCase().replace(/\s/g,'-');
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+}
+
+function showModalAddCourse(area) {
+  openModal('Nuevo curso', `Agrega un nuevo curso al área de ${area}.`, `
+    <div class="form-grid" style="gap:10px">
+      <div class="form-field"><label>Nombre del curso</label><input class="inline-input" id="new-course-name" placeholder="Ej: Photoshop Avanzado"/></div>
+      <div class="form-field"><label>Duración (horas)</label><input class="inline-input" id="new-course-hrs" type="number" placeholder="Ej: 40" min="1"/></div>
+    </div>`, 'Agregar curso', 'btn-primary', () => addCourse(area));
+}
+
+function addCourse(area) {
+  const name = document.getElementById('new-course-name').value.trim();
+  const hrs  = document.getElementById('new-course-hrs').value.trim();
+  if (!name) return;
+  const containerId = 'courses-' + area.toLowerCase().replace(/\s/g,'-');
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const empty = container.querySelector('.empty-state'); if (empty) empty.remove();
+  const color = areaColors[area] || '#64748b';
+  const row = document.createElement('div');
+  row.className = 'course-row';
+  row.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+    <span class="cr-name">${name}</span><span class="cr-hrs">${hrs || '?'} hrs</span>
+    <div class="cr-actions"><button class="ab" onclick="editCourse(this,'${name}','${hrs}')">Editar</button><button class="ab del" onclick="confirmDeleteCourse('${name}','${area}')">✕</button></div>`;
+  container.appendChild(row);
+  updateAreaCount(area);
+  // also add to allCourses
+  allCourses.push({ name, hrs: hrs||'?', area });
+}
+
+function updateAreaCount(area) {
+  const id = 'area-' + area.toLowerCase().replace(/\s/g,'-');
+  const el = document.getElementById(id);
+  if (!el) return;
+  const count = el.querySelectorAll('.course-row').length;
+  const countEl = el.querySelector('.area-section-name span');
+  if (countEl) countEl.textContent = `(${count} cursos)`;
+}
+
+function confirmDeleteCourse(name, area) {
+  openModal('Eliminar curso', `¿Eliminar el curso "${name}" del área de ${area}?`, '', 'Eliminar curso', 'btn-danger', () => {
+    document.querySelectorAll('.course-row').forEach(r => {
+      if (r.querySelector('.cr-name') && r.querySelector('.cr-name').textContent === name) r.remove();
+    });
+    updateAreaCount(area);
+    const idx = allCourses.findIndex(c => c.name === name);
+    if (idx > -1) allCourses.splice(idx,1);
+  });
+}
+
+function editCourse(btn, origName, origHrs) {
+  const row = btn.closest('.course-row');
+  const nameEl = row.querySelector('.cr-name');
+  const hrsEl  = row.querySelector('.cr-hrs');
+  if (btn.textContent === 'Editar') {
+    nameEl.innerHTML = `<input class="inline-input" value="${origName}" style="width:120px"/>`;
+    hrsEl.innerHTML  = `<input class="inline-input" type="number" value="${origHrs.replace(' hrs','')}" style="width:50px"/> hrs`;
+    btn.textContent = 'Guardar';
+  } else {
+    const newName = nameEl.querySelector('input').value.trim() || origName;
+    const newHrs  = hrsEl.querySelector('input').value.trim() || origHrs;
+    nameEl.textContent = newName;
+    hrsEl.textContent  = newHrs + ' hrs';
+    btn.textContent = 'Editar';
+    btn.onclick = () => editCourse(btn, newName, newHrs);
+    const delBtn = row.querySelector('.ab.del');
+    if(delBtn) {
+      const area = row.closest('.area-section').querySelector('.area-section-name').childNodes[1].textContent.trim();
+      delBtn.onclick = () => confirmDeleteCourse(newName, area);
+    }
+  }
+}
+
+/* ─── ESTUDIANTES ─── */
+let currentStudent = null;
+function filterEstudiantes() {
+  const q = document.getElementById('search-est').value.toLowerCase();
+  document.querySelectorAll('.est-row').forEach(r => {
+    r.style.display = r.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+
+function verEstudiante(name, ci, curso, fecha, pago, estado) {
+  currentStudent = { name, ci, curso, fecha, pago, estado };
+  document.getElementById('det-avatar').textContent = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('det-name').textContent = name;
+  document.getElementById('det-ci').textContent = 'CI: ' + ci;
+  document.getElementById('det-status').innerHTML = `<span class="bs ${estado}">${estado.charAt(0).toUpperCase()+estado.slice(1)}</span>`;
+  document.getElementById('info-nombre').textContent = name;
+  document.getElementById('info-ci').textContent = ci;
+  document.getElementById('info-fecha').textContent = fecha;
+  document.getElementById('info-pago').innerHTML = `<span class="bs ${pago}">${pago.charAt(0).toUpperCase()+pago.slice(1)}</span>`;
+  document.getElementById('info-curso').textContent = curso;
+  document.getElementById('ct-curso1').textContent = curso;
+  document.getElementById('pago-concepto1').textContent = curso;
+  document.getElementById('pago-estado1').innerHTML = `<span class="bs ${pago}">${pago.charAt(0).toUpperCase()+pago.slice(1)}</span>`;
+  document.getElementById('gest-estado').value = estado;
+  document.getElementById('gest-pago').value = pago;
+  document.getElementById('det-delete-btn').onclick = () => confirmDeleteEst(name, ci);
+  document.querySelectorAll('#tab-gestionar .btn-danger').forEach(b => b.onclick = () => confirmDeleteEst(name, ci));
+  switchTab('info');
+  document.getElementById('est-list-view').style.display = 'none';
+  document.getElementById('est-detail-view').style.display = 'block';
+  document.getElementById('page-title').textContent = name;
+}
+
+function backToList() {
+  document.getElementById('est-list-view').style.display = 'block';
+  document.getElementById('est-detail-view').style.display = 'none';
+  document.getElementById('page-title').textContent = 'Gestión de estudiantes';
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.detail-tab').forEach((t,i) => {
+    const tabs = ['info','cursos','pagos','gestionar'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  ['info','cursos','pagos','gestionar'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if(el) { el.style.display = t===tab ? 'block' : 'none'; el.classList.toggle('active', t===tab); }
+  });
+}
+
+function confirmDeleteEst(name, ci) {
+  openModal('Eliminar estudiante', `¿Seguro que deseas eliminar a ${name} (CI: ${ci})? Se borrarán todos sus datos e inscripciones.`, '', 'Eliminar estudiante', 'btn-danger', () => {
+    // Remove row from table
+    document.querySelectorAll('.est-row').forEach(r => {
+      if(r.dataset.search.includes(ci)) r.remove();
+    });
+    backToList();
+  });
+}
+
+function saveGestion() {
+  const estado = document.getElementById('gest-estado').value;
+  const pago   = document.getElementById('gest-pago').value;
+  document.getElementById('det-status').innerHTML = `<span class="bs ${estado}">${estado.charAt(0).toUpperCase()+estado.slice(1)}</span>`;
+  document.getElementById('info-pago').innerHTML = `<span class="bs ${pago}">${pago.charAt(0).toUpperCase()+pago.slice(1)}</span>`;
+  openModal('Cambios guardados','Los datos del estudiante fueron actualizados correctamente.','','Aceptar','btn-primary',()=>{});
+}
+
+goPage('dashboard');
+</script>

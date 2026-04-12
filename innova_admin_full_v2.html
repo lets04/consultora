@@ -1,0 +1,845 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app { display: flex; height: 720px; border-radius: 12px; overflow: hidden; border: 0.5px solid #1a3a5c; font-family: var(--font-sans); font-size: 13px; }
+
+.sidebar { width: 225px; background: #0B2A4A; display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-logo { padding: 18px 16px 14px; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+.sidebar-logo .brand { font-size: 17px; font-weight: 500; color: #fff; letter-spacing: 1.5px; }
+.sidebar-logo .sub { font-size: 10.5px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+.nav-section-label { padding: 10px 16px 3px; font-size: 10px; color: rgba(255,255,255,0.28); letter-spacing: 1px; text-transform: uppercase; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 16px; cursor: pointer; color: rgba(255,255,255,0.7); font-size: 13px; user-select: none; }
+.nav-item:hover { background: #1E4BB8; color: #fff; }
+.nav-item.active { background: #2F5FD0; color: #fff; font-weight: 500; }
+.nav-item .ni { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; }
+.nav-item .nl { flex: 1; }
+.nav-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 5px 0; }
+.sub-item { display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 42px; cursor: pointer; color: rgba(255,255,255,0.52); font-size: 12px; }
+.sub-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.88); }
+.sub-item.active { color: #fff; background: rgba(47,95,208,0.35); }
+.sub-item .dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.25); flex-shrink: 0; }
+.sub-item.active .dot { background: #FFC107; }
+.sb { margin-left: auto; font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 8px; }
+.sb.red { background: rgba(239,68,68,0.25); color: #f87171; }
+.sb.yellow { background: rgba(251,191,36,0.25); color: #fbbf24; }
+.sb.green { background: rgba(74,222,128,0.25); color: #4ade80; }
+.sidebar-footer { padding: 12px 10px; border-top: 0.5px solid rgba(255,255,255,0.08); }
+.logout-btn { width: 100%; background: #FFC107; border: none; color: #1a1a1a; font-size: 12.5px; font-weight: 500; padding: 8px 0; border-radius: 7px; cursor: pointer; }
+.logout-btn:hover { background: #e6ac00; }
+
+.main { flex: 1; background: #f0f4f8; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: #fff; border-bottom: 0.5px solid #dde3ea; padding: 0 20px; height: 48px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-title { font-size: 14px; font-weight: 500; color: #0B2A4A; }
+.avatar-circle { width: 30px; height: 30px; border-radius: 50%; background: #2F5FD0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 500; }
+.content { flex: 1; overflow-y: auto; padding: 18px 20px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
+.stat-card { background: #fff; border-radius: 8px; border: 0.5px solid #dde3ea; padding: 10px 12px; }
+.stat-card .sl { font-size: 11px; color: #64748b; margin-bottom: 3px; }
+.stat-card .sn { font-size: 20px; font-weight: 500; color: #0B2A4A; }
+.stat-card .sn.blue { color: #2F5FD0; }
+.stat-card .sn.green { color: #16a34a; }
+.stat-card .sn.amber { color: #d97706; }
+
+.sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sec-header h2 { font-size: 14px; font-weight: 500; color: #0B2A4A; }
+.btn-primary { background: #2F5FD0; color: #fff; border: none; font-size: 12px; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn-primary:hover { background: #1E4BB8; }
+.btn-secondary { background: #fff; color: #334155; border: 0.5px solid #dde3ea; font-size: 12px; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.btn-secondary:hover { background: #f1f5f9; }
+.search-bar { display: flex; align-items: center; background: #fff; border: 0.5px solid #dde3ea; border-radius: 8px; padding: 6px 11px; gap: 7px; margin-bottom: 12px; }
+.search-bar input { border: none; outline: none; background: transparent; font-size: 12.5px; color: #334155; width: 100%; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; border: 0.5px solid #dde3ea; }
+thead th { background: #f8fafc; color: #64748b; font-weight: 500; padding: 9px 12px; text-align: left; border-bottom: 0.5px solid #dde3ea; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+tbody td { padding: 9px 12px; border-bottom: 0.5px solid #f0f4f8; color: #334155; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #f8fafc; }
+.bs { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.bs.pagado { background: #dcfce7; color: #15803d; }
+.bs.pendiente { background: #fee2e2; color: #dc2626; }
+.bs.parcial { background: #fef9c3; color: #b45309; }
+.ab { background: none; border: 0.5px solid #dde3ea; color: #64748b; font-size: 11px; padding: 2px 8px; border-radius: 5px; cursor: pointer; margin-right: 3px; }
+.ab:hover { background: #f1f5f9; color: #2F5FD0; border-color: #2F5FD0; }
+
+.card { background: #fff; border-radius: 10px; border: 0.5px solid #dde3ea; padding: 20px 22px; }
+.form-section { margin-bottom: 22px; }
+.form-section:last-child { margin-bottom: 0; }
+.form-section-title { font-size: 13px; font-weight: 500; color: #0B2A4A; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid #edf2f7; display: flex; align-items: center; gap: 8px; }
+.form-section-title .fs-icon { width: 24px; height: 24px; border-radius: 6px; background: #eef3ff; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #2F5FD0; }
+.form-grid { display: grid; gap: 12px; }
+.form-grid.cols2 { grid-template-columns: 1fr 1fr; }
+.form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.cols12 { grid-template-columns: 1fr 2fr; }
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field label { font-size: 11.5px; color: #64748b; font-weight: 500; }
+.form-field input, .form-field select, .form-field textarea { border: 0.5px solid #dde3ea; border-radius: 7px; padding: 7px 10px; font-size: 12.5px; color: #334155; background: #fff; outline: none; width: 100%; font-family: var(--font-sans); }
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: #2F5FD0; box-shadow: 0 0 0 2px rgba(47,95,208,0.1); }
+.form-field textarea { resize: vertical; min-height: 64px; }
+.form-field .field-hint { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.form-actions { display: flex; gap: 10px; padding-top: 4px; }
+
+.avatar-upload { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.avatar-preview { width: 56px; height: 56px; border-radius: 50%; background: #2F5FD0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 500; flex-shrink: 0; }
+.avatar-upload-btn { font-size: 12px; color: #2F5FD0; border: 0.5px solid #b5cef4; background: #eef3ff; padding: 6px 12px; border-radius: 7px; cursor: pointer; }
+
+.tipo-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.tipo-card { border: 1.5px solid #dde3ea; border-radius: 10px; padding: 14px 16px; cursor: pointer; background: #fff; }
+.tipo-card:hover { border-color: #2F5FD0; background: #f0f5ff; }
+.tipo-card.selected { border-color: #2F5FD0; background: #eef3ff; }
+.tipo-card .tc-title { font-size: 13px; font-weight: 500; color: #0B2A4A; margin-bottom: 3px; }
+.tipo-card .tc-sub { font-size: 11.5px; color: #64748b; }
+.tipo-card .tc-icon { font-size: 18px; margin-bottom: 7px; }
+.tipo-card.selected .tc-title { color: #2F5FD0; }
+
+.promo-box { background: #f0f5ff; border: 0.5px solid #b5cef4; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+.promo-label { font-size: 11.5px; font-weight: 500; color: #2F5FD0; margin-bottom: 10px; }
+.promo-courses { display: flex; flex-direction: column; gap: 6px; }
+.promo-course { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #fff; border-radius: 7px; border: 0.5px solid #dde3ea; cursor: pointer; }
+.promo-course:hover { border-color: #2F5FD0; }
+.promo-course.checked { border-color: #2F5FD0; background: #eef3ff; }
+.promo-course input[type=checkbox] { accent-color: #2F5FD0; width: 14px; height: 14px; flex-shrink: 0; }
+.promo-course .pc-name { flex: 1; font-size: 12.5px; color: #334155; }
+.promo-course.checked .pc-name { color: #1E4BB8; font-weight: 500; }
+.promo-course .pc-hrs { font-size: 11px; color: #94a3b8; }
+
+.eval-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.eval-card { border: 1.5px solid #dde3ea; border-radius: 8px; padding: 11px 14px; cursor: pointer; background: #fff; display: flex; align-items: center; gap: 10px; }
+.eval-card:hover { border-color: #2F5FD0; }
+.eval-card.selected { border-color: #2F5FD0; background: #eef3ff; }
+.eval-card input[type=radio] { accent-color: #2F5FD0; flex-shrink: 0; }
+.eval-card .ec-title { font-size: 12.5px; font-weight: 500; color: #334155; }
+.eval-card .ec-sub { font-size: 11px; color: #94a3b8; }
+.eval-card.selected .ec-title { color: #1E4BB8; }
+
+.step-indicator { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.step { display: flex; align-items: center; gap: 5px; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.step-dot.done { background: #2F5FD0; color: #fff; }
+.step-dot.current { background: #2F5FD0; color: #fff; }
+.step-dot.pending { background: #e2e8f0; color: #94a3b8; }
+.step-label { font-size: 11.5px; color: #64748b; }
+.step-label.current { color: #2F5FD0; font-weight: 500; }
+.step-sep { height: 1px; width: 16px; background: #dde3ea; }
+
+.inscr-step { display: none; }
+.inscr-step.active { display: block; }
+
+.area-badge { display: inline-flex; align-items: center; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; margin-right: 5px; margin-bottom: 5px; cursor: pointer; border: 1px solid #dde3ea; background: #f8fafc; color: #64748b; }
+.area-badge.sel { background: #eef3ff; border-color: #2F5FD0; color: #1E4BB8; }
+
+.pago-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 0.5px solid #f0f4f8; gap: 8px; }
+.pago-row:last-child { border-bottom: none; }
+
+.success-box { text-align: center; padding: 24px 0 10px; }
+.success-icon { width: 52px; height: 52px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 24px; color: #16a34a; }
+
+.reg-progress { display: flex; align-items: center; gap: 0; margin-bottom: 20px; }
+.reg-step { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; color: #94a3b8; cursor: pointer; }
+.reg-step.active { background: #eef3ff; color: #2F5FD0; font-weight: 500; }
+.reg-step.done { color: #16a34a; }
+.reg-step-num { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; background: #e2e8f0; color: #94a3b8; flex-shrink: 0; }
+.reg-step.active .reg-step-num { background: #2F5FD0; color: #fff; }
+.reg-step.done .reg-step-num { background: #dcfce7; color: #16a34a; }
+.reg-step-sep { flex: 1; height: 1px; background: #dde3ea; min-width: 10px; }
+</style>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">INNOVA</div>
+      <div class="sub">Panel de administración</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item" id="ni-dash" onclick="goPage('dashboard')">
+        <span class="ni">⊞</span><span class="nl">Dashboard</span>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">Gestión</div>
+      <div class="nav-item" id="ni-est" onclick="goPage('estudiantes')">
+        <span class="ni">◎</span><span class="nl">Estudiantes</span>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" id="ni-ins" onclick="goPage('inscripciones')">
+        <span class="ni">✎</span><span class="nl">Inscripciones</span>
+      </div>
+      <div class="sub-item" id="si-nueva" onclick="goPage('nueva-inscripcion')"><span class="dot"></span>Nueva inscripción</div>
+      <div class="sub-item" id="si-curso" onclick="goPage('en-curso')"><span class="dot"></span>En curso</div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" id="ni-pag" onclick="goPage('pagos')">
+        <span class="ni">◈</span><span class="nl">Pagos</span>
+      </div>
+      <div class="sub-item" id="si-todos" onclick="goPage('pagos-todos')"><span class="dot"></span>Todos</div>
+      <div class="sub-item" id="si-pend" onclick="goPage('pagos-pendientes')"><span class="dot"></span>Pendientes <span class="sb red">5</span></div>
+      <div class="sub-item" id="si-parc" onclick="goPage('pagos-parciales')"><span class="dot"></span>Parciales <span class="sb yellow">3</span></div>
+      <div class="sub-item" id="si-pagados" onclick="goPage('pagos-pagados')"><span class="dot"></span>Pagados <span class="sb green">18</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn">⏻ Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <span class="topbar-title" id="page-title">Dashboard</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:11.5px;color:#64748b">Admin</span>
+        <div class="avatar-circle">AD</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page" id="page-dashboard">
+        <div class="stats-row">
+          <div class="stat-card"><div class="sl">Total estudiantes</div><div class="sn blue">34</div></div>
+          <div class="stat-card"><div class="sl">Activos</div><div class="sn green">26</div></div>
+          <div class="stat-card"><div class="sl">Pago pendiente</div><div class="sn amber">5</div></div>
+          <div class="stat-card"><div class="sl">Nuevos este mes</div><div class="sn">8</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+          <div class="card">
+            <div class="form-section-title">Inscripciones recientes</div>
+            <div class="pago-row"><span style="color:#334155;font-weight:500">Ana Torres</span><span style="font-size:11px;color:#64748b">Excel Avanzado</span><span class="bs pagado">Pagado</span></div>
+            <div class="pago-row"><span style="color:#334155;font-weight:500">Carlos Rivas</span><span style="font-size:11px;color:#64748b">Diseño Gráfico</span><span class="bs parcial">Parcial</span></div>
+            <div class="pago-row"><span style="color:#334155;font-weight:500">María Quispe</span><span style="font-size:11px;color:#64748b">Prog. Web</span><span class="bs pendiente">Pendiente</span></div>
+          </div>
+          <div class="card">
+            <div class="form-section-title">Resumen de pagos</div>
+            <div class="pago-row"><span style="color:#64748b">Cobrado este mes</span><span style="color:#0B2A4A;font-weight:500">Bs. 4,200</span></div>
+            <div class="pago-row"><span style="color:#64748b">Pendiente</span><span style="color:#dc2626;font-weight:500">Bs. 1,050</span></div>
+            <div class="pago-row"><span style="color:#64748b">Parcial</span><span style="color:#b45309;font-weight:500">Bs. 630</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESTUDIANTES -->
+      <div class="page" id="page-estudiantes">
+        <div class="stats-row">
+          <div class="stat-card"><div class="sl">Total</div><div class="sn blue">34</div></div>
+          <div class="stat-card"><div class="sl">Activos</div><div class="sn green">26</div></div>
+          <div class="stat-card"><div class="sl">Pago pendiente</div><div class="sn amber">5</div></div>
+          <div class="stat-card"><div class="sl">Nuevos mes</div><div class="sn">8</div></div>
+        </div>
+        <div class="sec-header">
+          <h2>Lista de estudiantes</h2>
+          <button class="btn-primary" onclick="goPage('registrar-estudiante')">+ Nuevo estudiante</button>
+        </div>
+        <div class="search-bar">
+          <span style="color:#94a3b8;font-size:13px">⌕</span>
+          <input type="text" placeholder="Buscar por nombre, CI o curso..." />
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>Nombre</th><th>Curso</th><th>Inscripción</th><th>Estado pago</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#94a3b8">01</td><td><span style="font-weight:500;color:#0B2A4A">Ana Torres</span><br><span style="font-size:11px;color:#94a3b8">CI: 7845231</span></td><td>Excel Avanzado</td><td>12/03/2025</td><td><span class="bs pagado">Pagado</span></td><td><button class="ab">Ver</button><button class="ab">Editar</button></td></tr>
+            <tr><td style="color:#94a3b8">02</td><td><span style="font-weight:500;color:#0B2A4A">Carlos Rivas</span><br><span style="font-size:11px;color:#94a3b8">CI: 6123445</span></td><td>Diseño Gráfico</td><td>18/03/2025</td><td><span class="bs parcial">Parcial</span></td><td><button class="ab">Ver</button><button class="ab">Editar</button></td></tr>
+            <tr><td style="color:#94a3b8">03</td><td><span style="font-weight:500;color:#0B2A4A">María Quispe</span><br><span style="font-size:11px;color:#94a3b8">CI: 9032187</span></td><td>Prog. Web</td><td>22/03/2025</td><td><span class="bs pendiente">Pendiente</span></td><td><button class="ab">Ver</button><button class="ab">Editar</button></td></tr>
+            <tr><td style="color:#94a3b8">04</td><td><span style="font-weight:500;color:#0B2A4A">Jorge Mamani</span><br><span style="font-size:11px;color:#94a3b8">CI: 5547891</span></td><td>Excel Avanzado</td><td>01/04/2025</td><td><span class="bs pagado">Pagado</span></td><td><button class="ab">Ver</button><button class="ab">Editar</button></td></tr>
+            <tr><td style="color:#94a3b8">05</td><td><span style="font-weight:500;color:#0B2A4A">Lucía Flores</span><br><span style="font-size:11px;color:#94a3b8">CI: 8812034</span></td><td>Contabilidad</td><td>03/04/2025</td><td><span class="bs parcial">Parcial</span></td><td><button class="ab">Ver</button><button class="ab">Editar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- REGISTRAR ESTUDIANTE -->
+      <div class="page" id="page-registrar-estudiante">
+        <div class="sec-header">
+          <h2>Registrar nuevo estudiante</h2>
+          <button class="btn-secondary" onclick="goPage('estudiantes')">← Volver</button>
+        </div>
+
+        <div class="reg-progress">
+          <div class="reg-step active" id="rp1"><div class="reg-step-num">1</div>Datos personales</div>
+          <div class="reg-step-sep"></div>
+          <div class="reg-step" id="rp2"><div class="reg-step-num">2</div>Contacto</div>
+          <div class="reg-step-sep"></div>
+          <div class="reg-step" id="rp3"><div class="reg-step-num">3</div>Información adicional</div>
+        </div>
+
+        <div class="card">
+
+          <!-- PASO 1: Datos personales -->
+          <div class="inscr-step active" id="rstep1">
+            <div class="form-section">
+              <div class="form-section-title">
+                <span class="fs-icon">◎</span> Datos personales
+              </div>
+
+              <div class="avatar-upload" style="margin-bottom:18px">
+                <div class="avatar-preview" id="reg-avatar-preview">?</div>
+                <div>
+                  <div style="font-size:12.5px;color:#334155;font-weight:500;margin-bottom:4px">Foto del estudiante</div>
+                  <div style="font-size:11.5px;color:#94a3b8;margin-bottom:8px">Opcional. JPG o PNG hasta 2MB.</div>
+                  <span class="avatar-upload-btn">Subir foto</span>
+                </div>
+              </div>
+
+              <div class="form-grid cols12" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>CI *</label>
+                  <input id="reg-ci" placeholder="Ej: 7845231" oninput="updateAvatar()" />
+                </div>
+                <div class="form-field">
+                  <label>Prefijo / Título</label>
+                  <input id="reg-prefijo" placeholder="Ej: Ing., Lic., Dr., Prof." />
+                </div>
+              </div>
+
+              <div class="form-grid cols2" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Nombres *</label>
+                  <input id="reg-nombres" placeholder="Nombres del estudiante" oninput="updateAvatar()" />
+                </div>
+                <div class="form-field">
+                  <label>Apellidos *</label>
+                  <input id="reg-apellidos" placeholder="Apellidos del estudiante" oninput="updateAvatar()" />
+                </div>
+              </div>
+
+              <div class="form-grid cols2" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Fecha de nacimiento</label>
+                  <input type="date" id="reg-nacimiento" />
+                </div>
+                <div class="form-field">
+                  <label>Género</label>
+                  <select id="reg-genero">
+                    <option value="">Seleccionar...</option>
+                    <option>Masculino</option>
+                    <option>Femenino</option>
+                    <option>Prefiero no indicar</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Profesión / Ocupación</label>
+                  <input id="reg-profesion" placeholder="Profesión u ocupación actual" />
+                </div>
+              </div>
+
+              <div class="form-grid cols2">
+                <div class="form-field">
+                  <label>Nivel de educación</label>
+                  <select>
+                    <option value="">Seleccionar...</option>
+                    <option>Secundaria</option>
+                    <option>Técnico</option>
+                    <option>Universitario en curso</option>
+                    <option>Universitario completo</option>
+                    <option>Postgrado</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>Estado civil</label>
+                  <select>
+                    <option value="">Seleccionar...</option>
+                    <option>Soltero/a</option>
+                    <option>Casado/a</option>
+                    <option>Divorciado/a</option>
+                    <option>Viudo/a</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-primary" onclick="regNext(2)">Siguiente →</button>
+            </div>
+          </div>
+
+          <!-- PASO 2: Contacto -->
+          <div class="inscr-step" id="rstep2">
+            <div class="form-section">
+              <div class="form-section-title">
+                <span class="fs-icon">✆</span> Datos de contacto
+              </div>
+
+              <div class="form-grid cols2" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Teléfono principal *</label>
+                  <input placeholder="Ej: 70012345" />
+                  <span class="field-hint">Número celular o fijo</span>
+                </div>
+                <div class="form-field">
+                  <label>Teléfono alternativo</label>
+                  <input placeholder="Otro número (opcional)" />
+                </div>
+              </div>
+
+              <div class="form-grid" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Correo electrónico</label>
+                  <input type="email" placeholder="correo@ejemplo.com" />
+                </div>
+              </div>
+
+              <div class="form-section-title" style="margin-top:18px">
+                <span class="fs-icon">⌖</span> Dirección
+              </div>
+
+              <div class="form-grid cols3" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Departamento *</label>
+                  <select>
+                    <option value="">Seleccionar...</option>
+                    <option selected>Cochabamba</option>
+                    <option>La Paz</option>
+                    <option>Santa Cruz</option>
+                    <option>Oruro</option>
+                    <option>Potosí</option>
+                    <option>Chuquisaca</option>
+                    <option>Tarija</option>
+                    <option>Beni</option>
+                    <option>Pando</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>Ciudad / Municipio</label>
+                  <input placeholder="Ej: Cochabamba" />
+                </div>
+                <div class="form-field">
+                  <label>Zona / Barrio</label>
+                  <input placeholder="Ej: Queru Queru" />
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>Dirección completa</label>
+                  <input placeholder="Calle, número, referencias..." />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-secondary" onclick="regNext(1)">← Anterior</button>
+              <button class="btn-primary" onclick="regNext(3)">Siguiente →</button>
+            </div>
+          </div>
+
+          <!-- PASO 3: Info adicional -->
+          <div class="inscr-step" id="rstep3">
+            <div class="form-section">
+              <div class="form-section-title">
+                <span class="fs-icon">★</span> Información adicional
+              </div>
+
+              <div class="form-grid cols2" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>¿Cómo se enteró del instituto?</label>
+                  <select>
+                    <option value="">Seleccionar...</option>
+                    <option>Redes sociales</option>
+                    <option>Recomendación</option>
+                    <option>Publicidad en calle</option>
+                    <option>Página web</option>
+                    <option>Otro</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>Tipo de estudiante</label>
+                  <select>
+                    <option>Nuevo</option>
+                    <option>Recurrente</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid" style="margin-bottom:12px">
+                <div class="form-field">
+                  <label>Observaciones / Notas internas</label>
+                  <textarea placeholder="Información adicional relevante sobre el estudiante..."></textarea>
+                </div>
+              </div>
+
+              <div style="background:#f8fafc;border:0.5px solid #dde3ea;border-radius:8px;padding:14px 16px;margin-bottom:4px">
+                <div style="font-size:12.5px;font-weight:500;color:#0B2A4A;margin-bottom:10px">Resumen del registro</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
+                  <div style="font-size:11.5px;color:#64748b">Nombre completo</div>
+                  <div style="font-size:11.5px;color:#334155;font-weight:500" id="summary-nombre">—</div>
+                  <div style="font-size:11.5px;color:#64748b">CI</div>
+                  <div style="font-size:11.5px;color:#334155" id="summary-ci">—</div>
+                  <div style="font-size:11.5px;color:#64748b">Profesión</div>
+                  <div style="font-size:11.5px;color:#334155" id="summary-prof">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-secondary" onclick="regNext(2)">← Anterior</button>
+              <button class="btn-primary" onclick="regConfirm()">Guardar estudiante</button>
+            </div>
+          </div>
+
+          <!-- CONFIRMACIÓN REGISTRO -->
+          <div class="inscr-step" id="rstep-confirm">
+            <div class="success-box">
+              <div class="success-icon">✓</div>
+              <div style="font-size:15px;font-weight:500;color:#0B2A4A;margin-bottom:6px">Estudiante registrado</div>
+              <div style="font-size:12.5px;color:#64748b;margin-bottom:20px" id="confirm-nombre-msg">El estudiante fue guardado correctamente.</div>
+              <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+                <button class="btn-primary" onclick="goPage('nueva-inscripcion')">Inscribir ahora</button>
+                <button class="btn-secondary" onclick="goPage('estudiantes')">Ver lista</button>
+                <button class="btn-secondary" onclick="resetReg()">Registrar otro</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- INSCRIPCIONES -->
+      <div class="page" id="page-inscripciones">
+        <div class="sec-header"><h2>Inscripciones</h2><button class="btn-primary" onclick="goPage('nueva-inscripcion')">+ Nueva inscripción</button></div>
+        <div class="card">
+          <div class="form-section-title">Inscripciones en curso</div>
+          <table>
+            <thead><tr><th>Estudiante</th><th>Curso</th><th>Tipo</th><th>Modalidad</th><th>Fecha</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:500;color:#0B2A4A">Ana Torres</td><td>Excel Avanzado</td><td><span style="background:#eef3ff;color:#1E4BB8;font-size:11px;padding:2px 7px;border-radius:10px">Promoción</span></td><td style="font-size:11.5px">Con examen</td><td>12/03/2025</td><td><span class="bs pagado">Activo</span></td></tr>
+              <tr><td style="font-weight:500;color:#0B2A4A">Carlos Rivas</td><td>Diseño Gráfico</td><td><span style="background:#f0fdf4;color:#15803d;font-size:11px;padding:2px 7px;border-radius:10px">Individual</span></td><td style="font-size:11.5px">Sin examen</td><td>18/03/2025</td><td><span class="bs pagado">Activo</span></td></tr>
+              <tr><td style="font-weight:500;color:#0B2A4A">María Quispe</td><td>Oratoria</td><td><span style="background:#eef3ff;color:#1E4BB8;font-size:11px;padding:2px 7px;border-radius:10px">Promoción</span></td><td style="font-size:11.5px">Con examen</td><td>22/03/2025</td><td><span class="bs parcial">Parcial</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- NUEVA INSCRIPCION -->
+      <div class="page" id="page-nueva-inscripcion">
+        <div class="sec-header"><h2>Nueva inscripción</h2><button class="btn-secondary" onclick="goPage('inscripciones')">← Volver</button></div>
+        <div class="step-indicator">
+          <div class="step"><div class="step-dot current" id="sd1">1</div><span class="step-label current" id="sl1">Estudiante</span></div>
+          <div class="step-sep"></div>
+          <div class="step"><div class="step-dot pending" id="sd2">2</div><span class="step-label" id="sl2">Tipo</span></div>
+          <div class="step-sep"></div>
+          <div class="step"><div class="step-dot pending" id="sd3">3</div><span class="step-label" id="sl3">Cursos</span></div>
+          <div class="step-sep"></div>
+          <div class="step"><div class="step-dot pending" id="sd4">4</div><span class="step-label" id="sl4">Modalidad</span></div>
+        </div>
+        <div class="card">
+          <div class="inscr-step active" id="step1">
+            <div class="form-section-title">Buscar estudiante</div>
+            <div class="form-field" style="margin-bottom:10px">
+              <label>CI o nombre</label>
+              <input id="search-est" placeholder="Escribe CI o nombre..." oninput="filterStudents()" style="margin-bottom:6px" />
+              <div id="est-list" style="border:0.5px solid #dde3ea;border-radius:7px;overflow:hidden;background:#fff;">
+                <div class="pago-row" style="cursor:pointer;padding:8px 12px" onclick="selectStudent('Ana Torres','7845231')" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><span style="color:#94a3b8;font-size:11.5px">7845231</span><span style="flex:1;margin-left:12px;font-weight:500;color:#0B2A4A">Ana Torres</span></div>
+                <div class="pago-row" style="cursor:pointer;padding:8px 12px" onclick="selectStudent('Carlos Rivas','6123445')" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><span style="color:#94a3b8;font-size:11.5px">6123445</span><span style="flex:1;margin-left:12px;font-weight:500;color:#0B2A4A">Carlos Rivas</span></div>
+                <div class="pago-row" style="cursor:pointer;padding:8px 12px" onclick="selectStudent('María Quispe','9032187')" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><span style="color:#94a3b8;font-size:11.5px">9032187</span><span style="flex:1;margin-left:12px;font-weight:500;color:#0B2A4A">María Quispe</span></div>
+                <div class="pago-row" style="cursor:pointer;padding:8px 12px" onclick="selectStudent('Jorge Mamani','5547891')" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><span style="color:#94a3b8;font-size:11.5px">5547891</span><span style="flex:1;margin-left:12px;font-weight:500;color:#0B2A4A">Jorge Mamani</span></div>
+                <div class="pago-row" style="cursor:pointer;padding:8px 12px" onclick="selectStudent('Lucía Flores','8812034')" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><span style="color:#94a3b8;font-size:11.5px">8812034</span><span style="flex:1;margin-left:12px;font-weight:500;color:#0B2A4A">Lucía Flores</span></div>
+              </div>
+            </div>
+            <div id="est-selected" style="display:none;background:#eef3ff;border-radius:8px;padding:10px 14px;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:#2F5FD0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:500" id="est-avatar">AT</div>
+              <div><div style="font-weight:500;color:#0B2A4A;font-size:13px" id="est-name">—</div><div style="font-size:11px;color:#64748b" id="est-ci">—</div></div>
+              <button class="ab" style="margin-left:auto" onclick="clearStudent()">Cambiar</button>
+            </div>
+            <button class="btn-primary" onclick="nextStep(2)">Siguiente →</button>
+          </div>
+
+          <div class="inscr-step" id="step2">
+            <div class="form-section-title">Tipo de inscripción</div>
+            <div class="tipo-selector">
+              <div class="tipo-card" id="tc-promo" onclick="selectTipo('promo')"><div class="tc-icon">★</div><div class="tc-title">Promoción</div><div class="tc-sub">Paquete de 5 cursos. Elige cuáles tomar.</div></div>
+              <div class="tipo-card" id="tc-individual" onclick="selectTipo('individual')"><div class="tc-icon">◎</div><div class="tc-title">Curso individual</div><div class="tc-sub">Un solo curso de un área específica.</div></div>
+            </div>
+            <div style="display:flex;gap:10px"><button class="btn-secondary" onclick="nextStep(1)">← Anterior</button><button class="btn-primary" onclick="nextStep(3)">Siguiente →</button></div>
+          </div>
+
+          <div class="inscr-step" id="step3">
+            <div id="step3-promo">
+              <div class="form-section-title">Seleccionar cursos de la promoción</div>
+              <div class="promo-box">
+                <div class="promo-label">Promoción INNOVA — elige los cursos que desea tomar</div>
+                <div class="promo-courses">
+                  <div class="promo-course" id="pc1" onclick="toggleCourse('pc1')"><input type="checkbox" id="cb1" /><span class="pc-name">Excel Avanzado</span><span class="pc-hrs">40 hrs</span></div>
+                  <div class="promo-course" id="pc2" onclick="toggleCourse('pc2')"><input type="checkbox" id="cb2" /><span class="pc-name">Diseño Gráfico</span><span class="pc-hrs">60 hrs</span></div>
+                  <div class="promo-course" id="pc3" onclick="toggleCourse('pc3')"><input type="checkbox" id="cb3" /><span class="pc-name">Programación Web</span><span class="pc-hrs">80 hrs</span></div>
+                  <div class="promo-course" id="pc4" onclick="toggleCourse('pc4')"><input type="checkbox" id="cb4" /><span class="pc-name">Oratoria y Liderazgo</span><span class="pc-hrs">30 hrs</span></div>
+                  <div class="promo-course" id="pc5" onclick="toggleCourse('pc5')"><input type="checkbox" id="cb5" /><span class="pc-name">Contabilidad Básica</span><span class="pc-hrs">50 hrs</span></div>
+                </div>
+              </div>
+              <div style="font-size:11.5px;color:#64748b;margin-bottom:12px" id="cursos-count">0 de 5 cursos seleccionados</div>
+            </div>
+            <div id="step3-individual" style="display:none">
+              <div class="form-section-title">Seleccionar área y curso</div>
+              <div class="form-field" style="margin-bottom:12px"><label>Área</label>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+                  <span class="area-badge sel" onclick="selArea(this)">Tecnología</span>
+                  <span class="area-badge" onclick="selArea(this)">Diseño</span>
+                  <span class="area-badge" onclick="selArea(this)">Administración</span>
+                  <span class="area-badge" onclick="selArea(this)">Idiomas</span>
+                  <span class="area-badge" onclick="selArea(this)">Otros</span>
+                </div>
+              </div>
+              <div class="form-field"><label>Curso</label>
+                <select><option>Seleccionar curso...</option><option>Excel Avanzado</option><option>Programación Web</option><option>Base de Datos</option><option>Python Básico</option></select>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px">
+              <button class="btn-secondary" onclick="nextStep(2)">← Anterior</button>
+              <button class="btn-primary" onclick="nextStep(4)">Siguiente →</button>
+            </div>
+          </div>
+
+          <div class="inscr-step" id="step4">
+            <div class="form-section-title">Modalidad de evaluación</div>
+            <div style="font-size:12.5px;color:#64748b;margin-bottom:12px">¿El estudiante desea rendir examen al finalizar?</div>
+            <div class="eval-options" style="margin-bottom:18px">
+              <div class="eval-card" id="ec-con" onclick="selectEval('con')"><input type="radio" name="eval" /><div><div class="ec-title">Con examen</div><div class="ec-sub">Recibe calificación y certificado con nota</div></div></div>
+              <div class="eval-card" id="ec-sin" onclick="selectEval('sin')"><input type="radio" name="eval" /><div><div class="ec-title">Sin examen</div><div class="ec-sub">Solo certificado de participación</div></div></div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn-secondary" onclick="nextStep(3)">← Anterior</button>
+              <button class="btn-primary" onclick="confirmarInscripcion()">Confirmar inscripción</button>
+            </div>
+          </div>
+
+          <div class="inscr-step" id="step-confirm">
+            <div class="success-box">
+              <div class="success-icon">✓</div>
+              <div style="font-size:15px;font-weight:500;color:#0B2A4A;margin-bottom:6px">Inscripción registrada</div>
+              <div style="font-size:12.5px;color:#64748b;margin-bottom:18px">El estudiante fue inscrito correctamente.</div>
+              <div style="display:flex;gap:10px;justify-content:center">
+                <button class="btn-primary" onclick="goPage('inscripciones')">Ver inscripciones</button>
+                <button class="btn-secondary" onclick="resetInscripcion()">Nueva inscripción</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EN CURSO -->
+      <div class="page" id="page-en-curso">
+        <div class="sec-header"><h2>En curso</h2></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Estudiante</th><th>Cursos</th><th>Tipo</th><th>Modalidad</th><th>Inicio</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:500;color:#0B2A4A">Ana Torres</td><td>Excel, Oratoria, Web</td><td><span style="background:#eef3ff;color:#1E4BB8;font-size:11px;padding:2px 7px;border-radius:10px">Promoción</span></td><td style="font-size:11.5px">Con examen</td><td>12/03/2025</td><td><span class="bs pagado">Activo</span></td></tr>
+              <tr><td style="font-weight:500;color:#0B2A4A">María Quispe</td><td>Oratoria y Liderazgo</td><td><span style="background:#f0fdf4;color:#15803d;font-size:11px;padding:2px 7px;border-radius:10px">Individual</span></td><td style="font-size:11.5px">Sin examen</td><td>22/03/2025</td><td><span class="bs parcial">Parcial</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGOS -->
+      <div class="page" id="page-pagos">
+        <div class="sec-header"><h2>Pagos</h2></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="sl">Total cobrado</div><div class="sn blue">Bs. 4,200</div></div>
+          <div class="stat-card"><div class="sl">Pendiente</div><div class="sn amber">Bs. 1,050</div></div>
+          <div class="stat-card"><div class="sl">Parcial</div><div class="sn" style="color:#b45309">Bs. 630</div></div>
+          <div class="stat-card"><div class="sl">Pagados completos</div><div class="sn green">18</div></div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Estudiante</th><th>Concepto</th><th>Monto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:500;color:#0B2A4A">Ana Torres</td><td>Promoción INNOVA</td><td>Bs. 350</td><td>12/03/2025</td><td><span class="bs pagado">Pagado</span></td><td><button class="ab">Ver</button></td></tr>
+              <tr><td style="font-weight:500;color:#0B2A4A">Carlos Rivas</td><td>Diseño Gráfico</td><td>Bs. 180</td><td>18/03/2025</td><td><span class="bs parcial">Parcial</span></td><td><button class="ab">Registrar pago</button></td></tr>
+              <tr><td style="font-weight:500;color:#0B2A4A">María Quispe</td><td>Oratoria</td><td>Bs. 120</td><td>22/03/2025</td><td><span class="bs pendiente">Pendiente</span></td><td><button class="ab">Registrar pago</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="page" id="page-pagos-todos"><div class="sec-header"><h2>Todos los pagos</h2></div><div class="card" style="color:#64748b;font-size:13px">Muestra todos los registros de pago.</div></div>
+      <div class="page" id="page-pagos-pendientes">
+        <div class="sec-header"><h2>Pagos pendientes</h2></div>
+        <div class="card"><table><thead><tr><th>Estudiante</th><th>Concepto</th><th>Monto</th><th>Acciones</th></tr></thead><tbody>
+          <tr><td style="font-weight:500;color:#0B2A4A">María Quispe</td><td>Oratoria</td><td>Bs. 120</td><td><button class="ab">Registrar pago</button></td></tr>
+          <tr><td style="font-weight:500;color:#0B2A4A">Lucía Flores</td><td>Contabilidad</td><td>Bs. 140</td><td><button class="ab">Registrar pago</button></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="page" id="page-pagos-parciales">
+        <div class="sec-header"><h2>Pagos parciales</h2></div>
+        <div class="card"><table><thead><tr><th>Estudiante</th><th>Concepto</th><th>Pagado</th><th>Saldo</th><th>Acciones</th></tr></thead><tbody>
+          <tr><td style="font-weight:500;color:#0B2A4A">Carlos Rivas</td><td>Diseño Gráfico</td><td>Bs. 90</td><td style="color:#b45309">Bs. 90</td><td><button class="ab">Completar</button></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="page" id="page-pagos-pagados">
+        <div class="sec-header"><h2>Pagados</h2></div>
+        <div class="card"><table><thead><tr><th>Estudiante</th><th>Concepto</th><th>Monto</th><th>Fecha</th></tr></thead><tbody>
+          <tr><td style="font-weight:500;color:#0B2A4A">Ana Torres</td><td>Promoción INNOVA</td><td>Bs. 350</td><td>12/03/2025</td></tr>
+          <tr><td style="font-weight:500;color:#0B2A4A">Jorge Mamani</td><td>Excel Avanzado</td><td>Bs. 160</td><td>01/04/2025</td></tr>
+        </tbody></table></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const pageMap = {
+  'dashboard':'ni-dash','estudiantes':'ni-est','registrar-estudiante':'ni-est',
+  'inscripciones':'ni-ins','nueva-inscripcion':'ni-ins','en-curso':'ni-ins',
+  'pagos':'ni-pag','pagos-todos':'ni-pag','pagos-pendientes':'ni-pag','pagos-parciales':'ni-pag','pagos-pagados':'ni-pag'
+};
+const subMap = {
+  'nueva-inscripcion':'si-nueva','en-curso':'si-curso',
+  'pagos-todos':'si-todos','pagos-pendientes':'si-pend','pagos-parciales':'si-parc','pagos-pagados':'si-pagados'
+};
+const titles = {
+  'dashboard':'Dashboard','estudiantes':'Estudiantes','registrar-estudiante':'Registrar estudiante',
+  'inscripciones':'Inscripciones','nueva-inscripcion':'Nueva inscripción','en-curso':'En curso',
+  'pagos':'Pagos','pagos-todos':'Todos los pagos','pagos-pendientes':'Pagos pendientes',
+  'pagos-parciales':'Pagos parciales','pagos-pagados':'Pagados'
+};
+
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if (pg) pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.sub-item').forEach(n => n.classList.remove('active'));
+  const ni = pageMap[id]; if (ni && document.getElementById(ni)) document.getElementById(ni).classList.add('active');
+  const si = subMap[id]; if (si && document.getElementById(si)) document.getElementById(si).classList.add('active');
+  document.getElementById('page-title').textContent = titles[id] || id;
+}
+
+function updateAvatar() {
+  const n = document.getElementById('reg-nombres').value;
+  const a = document.getElementById('reg-apellidos').value;
+  const initials = ((n[0]||'') + (a[0]||'')).toUpperCase() || '?';
+  document.getElementById('reg-avatar-preview').textContent = initials;
+}
+
+function regNext(n) {
+  document.querySelectorAll('#page-registrar-estudiante .inscr-step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('rstep' + (n === 99 ? '-confirm' : n));
+  if (el) el.classList.add('active');
+  for (let i = 1; i <= 3; i++) {
+    const rp = document.getElementById('rp'+i);
+    if (!rp) continue;
+    rp.classList.remove('active','done');
+    if (i < n) rp.classList.add('done');
+    else if (i === n) rp.classList.add('active');
+  }
+  if (n === 3) {
+    const nombre = (document.getElementById('reg-nombres').value + ' ' + document.getElementById('reg-apellidos').value).trim() || '—';
+    const ci = document.getElementById('reg-ci').value || '—';
+    const prof = document.getElementById('reg-profesion').value || '—';
+    document.getElementById('summary-nombre').textContent = nombre;
+    document.getElementById('summary-ci').textContent = ci;
+    document.getElementById('summary-prof').textContent = prof;
+  }
+}
+
+function regConfirm() {
+  const nombre = (document.getElementById('reg-nombres').value + ' ' + document.getElementById('reg-apellidos').value).trim();
+  document.getElementById('confirm-nombre-msg').textContent = (nombre || 'El estudiante') + ' fue guardado correctamente.';
+  document.querySelectorAll('#page-registrar-estudiante .inscr-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('rstep-confirm').classList.add('active');
+  for (let i = 1; i <= 3; i++) {
+    const rp = document.getElementById('rp'+i);
+    if (rp) { rp.classList.remove('active'); rp.classList.add('done'); }
+  }
+}
+
+function resetReg() {
+  document.getElementById('reg-nombres').value = '';
+  document.getElementById('reg-apellidos').value = '';
+  document.getElementById('reg-ci').value = '';
+  document.getElementById('reg-prefijo').value = '';
+  document.getElementById('reg-profesion').value = '';
+  document.getElementById('reg-avatar-preview').textContent = '?';
+  regNext(1);
+}
+
+function filterStudents() {
+  const q = document.getElementById('search-est').value.toLowerCase();
+  document.querySelectorAll('#est-list .pago-row').forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function selectStudent(name, ci) {
+  const sel = document.getElementById('est-selected');
+  sel.style.display = 'flex';
+  document.getElementById('est-name').textContent = name;
+  document.getElementById('est-ci').textContent = 'CI: ' + ci;
+  document.getElementById('est-avatar').textContent = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('est-list').style.display = 'none';
+  document.getElementById('search-est').value = name;
+}
+
+function clearStudent() {
+  document.getElementById('est-selected').style.display = 'none';
+  document.getElementById('est-list').style.display = '';
+  document.getElementById('search-est').value = '';
+}
+
+function nextStep(n) {
+  document.querySelectorAll('#page-nueva-inscripcion .inscr-step').forEach(s => s.classList.remove('active'));
+  if (n === 5) { document.getElementById('step-confirm').classList.add('active'); updateStepUI(5); return; }
+  const el = document.getElementById('step'+n);
+  if (el) { el.classList.add('active'); updateStepUI(n); }
+  if (n === 3 && currentTipo) {
+    document.getElementById('step3-promo').style.display = currentTipo === 'promo' ? 'block' : 'none';
+    document.getElementById('step3-individual').style.display = currentTipo === 'individual' ? 'block' : 'none';
+  }
+}
+
+function updateStepUI(n) {
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('sd'+i);
+    const lbl = document.getElementById('sl'+i);
+    if (!dot) continue;
+    dot.className = 'step-dot ' + (i < n ? 'done' : i === n ? 'current' : 'pending');
+    lbl.className = 'step-label' + (i === n ? ' current' : '');
+  }
+}
+
+let currentTipo = null;
+function selectTipo(t) {
+  currentTipo = t;
+  document.getElementById('tc-promo').classList.toggle('selected', t==='promo');
+  document.getElementById('tc-individual').classList.toggle('selected', t==='individual');
+}
+
+function toggleCourse(id) {
+  const el = document.getElementById(id);
+  const cb = el.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+  const count = document.querySelectorAll('.promo-course.checked').length;
+  document.getElementById('cursos-count').textContent = count + ' de 5 cursos seleccionados';
+}
+
+function selArea(el) {
+  document.querySelectorAll('.area-badge').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selectEval(t) {
+  document.getElementById('ec-con').classList.toggle('selected', t==='con');
+  document.getElementById('ec-sin').classList.toggle('selected', t==='sin');
+}
+
+function confirmarInscripcion() { nextStep(5); }
+
+function resetInscripcion() {
+  currentTipo = null;
+  clearStudent();
+  document.querySelectorAll('#page-nueva-inscripcion .inscr-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step1').classList.add('active');
+  document.querySelectorAll('.promo-course').forEach(p => { p.classList.remove('checked'); p.querySelector('input').checked = false; });
+  document.getElementById('cursos-count').textContent = '0 de 5 cursos seleccionados';
+  document.getElementById('tc-promo').classList.remove('selected');
+  document.getElementById('tc-individual').classList.remove('selected');
+  document.getElementById('ec-con').classList.remove('selected');
+  document.getElementById('ec-sin').classList.remove('selected');
+  updateStepUI(1);
+}
+
+goPage('dashboard');
+</script>

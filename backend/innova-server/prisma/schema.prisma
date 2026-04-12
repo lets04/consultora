@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// USUARIOS DEL SISTEMA
+// ─────────────────────────────────────────
+
+enum Role {
+  administrador
+  gerente
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  role     Role
+}
+
+// ─────────────────────────────────────────
+// ESTUDIANTES
+// ─────────────────────────────────────────
+
+enum EstadoEstudiante {
+  activo
+  inactivo
+  suspendido
+}
+
+model Estudiante {
+  id            Int              @id @default(autoincrement())
+  ci            String           @unique
+  nombres       String
+  apellidos     String
+  prefijo       String?          // Ing., Lic., Dr., Téc., etc.
+  profesion     String?
+  telefono      String?
+  email         String?
+  departamento  String?
+  estado        EstadoEstudiante @default(activo)
+  observaciones String?
+
+  creadoEn      DateTime         @default(now())
+  actualizadoEn DateTime         @updatedAt
+
+  inscripciones Inscripcion[]
+}
+
+// ─────────────────────────────────────────
+// CATÁLOGO: ÁREAS Y CURSOS
+// ─────────────────────────────────────────
+
+model Area {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+  color  String @default("#2F5FD0")
+
+  cursos Curso[]
+}
+
+model Curso {
+  id     Int     @id @default(autoincrement())
+  nombre String
+  activo Boolean @default(true)
+
+  areaId Int
+  area   Area    @relation(fields: [areaId], references: [id])
+
+  inscripcionCursos InscripcionCurso[]
+  promocionesCursos PromocionCurso[]
+}
+
+// ─────────────────────────────────────────
+// PROMOCIONES SEMANALES
+// ─────────────────────────────────────────
+
+model Promocion {
+  id       Int      @id @default(autoincrement())
+  nombre   String
+  periodo  String
+  activa   Boolean  @default(false)
+  creadoEn DateTime @default(now())
+
+  cursos        PromocionCurso[]
+  inscripciones Inscripcion[]
+}
+
+model PromocionCurso {
+  promocionId Int
+  cursoId     Int
+
+  promocion Promocion @relation(fields: [promocionId], references: [id])
+  curso     Curso     @relation(fields: [cursoId], references: [id])
+
+  @@id([promocionId, cursoId])
+}
+
+// ─────────────────────────────────────────
+// INSCRIPCIONES
+// ─────────────────────────────────────────
+
+enum TipoInscripcion {
+  promocion
+  individual
+}
+
+enum Modalidad {
+  certificado
+  examen
+}
+
+enum EstadoInscripcion {
+  activo
+  completado
+  retirado
+}
+
+model Inscripcion {
+  id           Int               @id @default(autoincrement())
+  estudianteId Int
+  tipo         TipoInscripcion?
+  promocionId  Int?
+  modalidad    Modalidad?
+  estado       EstadoInscripcion @default(activo)
+  montoTotal   Float
+  montoPagado  Float             @default(0)
+  creadoEn     DateTime          @default(now())
+
+  estudiante Estudiante @relation(fields: [estudianteId], references: [id])
+  promocion  Promocion? @relation(fields: [promocionId], references: [id])
+
+  cursos       InscripcionCurso[]
+  pagos        Pago[]
+  certificados Certificado[]
+}
+
+model InscripcionCurso {
+  id            Int     @id @default(autoincrement())
+  inscripcionId Int
+  cursoId       Int
+  nota          Float?
+  completado    Boolean @default(false)
+
+  inscripcion Inscripcion @relation(fields: [inscripcionId], references: [id])
+  curso       Curso       @relation(fields: [cursoId], references: [id])
+
+  certificado Certificado?
+
+  @@unique([inscripcionId, cursoId])
+}
+
+// ─────────────────────────────────────────
+// PAGOS
+// ─────────────────────────────────────────
+
+enum TipoPago {
+  efectivo
+  transferencia
+}
+
+model Pago {
+  id              Int      @id @default(autoincrement())
+  inscripcionId   Int
+  monto           Float
+  fecha           DateTime @default(now())
+  tipoPago        TipoPago
+  numeroComprobante String?  // Nro. de comprobante si es transferencia, nro. de recibo si es efectivo
+
+  inscripcion Inscripcion @relation(fields: [inscripcionId], references: [id])
+}
+
+// ─────────────────────────────────────────
+// CERTIFICADOS
+// ─────────────────────────────────────────
+
+model Certificado {
+  id                 Int       @id @default(autoincrement())
+  inscripcionId      Int
+  inscripcionCursoId Int?      @unique
+  fechaEmision       DateTime
+  codigo             String?   @unique
+
+  inscripcion      Inscripcion       @relation(fields: [inscripcionId], references: [id])
+  inscripcionCurso InscripcionCurso? @relation(fields: [inscripcionCursoId], references: [id])
+}
