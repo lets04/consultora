@@ -67,7 +67,12 @@ function mapEstudianteToDetailDto(estudiante: {
     estado: string;
     promocion?: { nombre: string } | null;
     cursos: Array<{ curso: { nombre: string; area: { nombre: string } } }>;
-    pagos: Array<{ monto: number; fecha: Date; tipoPago: string; numeroComprobante: string | null }>;
+    pagos: Array<{
+      monto: number;
+      fecha: Date;
+      tipoPago: string;
+      numeroComprobante: string | null;
+    }>;
   }>;
 }) {
   const latestInscripcion = estudiante.inscripciones
@@ -78,7 +83,13 @@ function mapEstudianteToDetailDto(estudiante: {
     id: estudiante.id,
     nombre: `${estudiante.nombres} ${estudiante.apellidos}`,
     ci: estudiante.ci,
-    curso: latestInscripcion?.cursos[0]?.curso.nombre ?? "Sin curso",
+    tipoInscripcion: latestInscripcion?.tipo,
+    promocionNombre: latestInscripcion?.promocion?.nombre,
+
+    curso:
+      latestInscripcion?.tipo === "promocion"
+        ? (latestInscripcion?.promocion?.nombre ?? "Promoción")
+        : (latestInscripcion?.cursos[0]?.curso.nombre ?? "Sin curso"),
     inscripcion: latestInscripcion
       ? formatDateEs(latestInscripcion.creadoEn)
       : "N/A",
@@ -92,13 +103,14 @@ function mapEstudianteToDetailDto(estudiante: {
     telefono: estudiante.telefono ?? "",
     email: estudiante.email ?? "",
     departamento: estudiante.departamento ?? "",
-    cursos: latestInscripcion?.cursos.map((item) => ({
-      nombre: item.curso.nombre,
-      area: item.curso.area.nombre,
-      modalidad: latestInscripcion.modalidad ?? "certificado",
-      estado: latestInscripcion.estado,
-      inicio: formatDateEs(latestInscripcion.creadoEn),
-    })) ?? [],
+    cursos:
+      latestInscripcion?.cursos.map((item) => ({
+        nombre: item.curso.nombre,
+        area: item.curso.area.nombre,
+        modalidad: latestInscripcion.modalidad ?? "certificado",
+        estado: latestInscripcion.estado,
+        inicio: formatDateEs(latestInscripcion.creadoEn),
+      })) ?? [],
     pagos:
       latestInscripcion?.pagos.map((p) => ({
         monto: p.monto,

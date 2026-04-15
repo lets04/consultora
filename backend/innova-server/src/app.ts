@@ -7,6 +7,7 @@ import { dashboardRouter } from "./routes/dashboard.routes.js";
 import { inscriptionsRouter } from "./routes/inscription.routes.js";
 import { paymentsRouter } from "./routes/payment.routes.js";
 import { studentsRouter } from "./routes/student.routes.js";
+import { promotionsRouter } from "./routes/promotion.routes.js";
 import { prisma } from "./lib/prisma.js";
 import { authMiddleware } from "./middleware/auth.js";
 import { asyncHandler } from "./utils/asyncHandler.js";
@@ -48,6 +49,7 @@ export function createApp() {
   secured.use(inscriptionsRouter);
   secured.use(paymentsRouter);
   secured.use(catalogRouter);
+  secured.use(promotionsRouter);
 
   api.use(secured);
   app.use("/api", api);

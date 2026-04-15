@@ -22,6 +22,22 @@ export function NuevaInscripcionPage() {
   );
   const [montoTotal, setMontoTotal] = useState("");
   const [studentCi, setStudentCi] = useState("");
+  const [cursosPromocion, setCursosPromocion] = useState<number[]>([]);
+  const [promoCursosDisponibles, setPromoCursosDisponibles] = useState<
+    { id: number; nombre: string }[]
+  >([]);
+  const [areaId, setAreaId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!promocionId) {
+      setPromoCursosDisponibles([]);
+      return;
+    }
+
+    const promo = promotions.find((p) => p.id === promocionId);
+
+    setPromoCursosDisponibles(promo?.cursos ?? []);
+  }, [promocionId, promotions]);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,20 +70,17 @@ export function NuevaInscripcionPage() {
     const filter = studentQuery.trim().toLowerCase();
     if (!filter) return students;
     return students.filter((student) =>
-      [student.nombre, student.ci]
-        .join(" ")
-        .toLowerCase()
-        .includes(filter),
+      [student.nombre, student.ci].join(" ").toLowerCase().includes(filter),
     );
   }, [studentQuery, students]);
 
-  const availableCourses = useMemo(
-    () =>
-      areas.flatMap((area) =>
-        area.cursos.map((curso) => ({ ...curso, area: area.nombre })),
-      ),
-    [areas],
-  );
+  const availableCourses = useMemo(() => {
+    if (!areaId) return [];
+
+    const area = areas.find((a) => a.id === areaId);
+
+    return area?.cursos ?? [];
+  }, [areaId, areas]);
 
   async function handleSubmit() {
     setError(null);
@@ -88,7 +101,14 @@ export function NuevaInscripcionPage() {
       setError("Ingresa un monto total válido");
       return;
     }
-
+    if (tipo === "promocion" && cursosPromocion.length === 0) {
+      setError("Selecciona al menos un curso de la promoción");
+      return;
+    }
+    if (tipo === "individual" && !areaId) {
+      setError("Selecciona un área");
+      return;
+    }
     setSaving(true);
 
     try {
@@ -97,6 +117,7 @@ export function NuevaInscripcionPage() {
         tipo,
         cursoId: tipo === "individual" ? cursoId : undefined,
         promocionId: tipo === "promocion" ? promocionId : undefined,
+        cursosSeleccionados: cursosPromocion,
         modalidad,
         montoTotal: monto,
       });
@@ -114,6 +135,10 @@ export function NuevaInscripcionPage() {
   if (loading) {
     return <div className="empty-hint">Cargando formulario...</div>;
   }
+
+  console.log("areas:", areas);
+  console.log("promotions:", promotions);
+  console.log("cursosPromocion:", cursosPromocion);
 
   return (
     <>
@@ -300,41 +325,130 @@ export function NuevaInscripcionPage() {
             <div className="form-section-title">
               Selecciona {tipo === "individual" ? "curso" : "promoción"}
             </div>
+
             {tipo === "individual" ? (
-              <div className="form-field" style={{ gridColumn: "1 / -1" }}>
-                <label>Curso</label>
-                <select
-                  value={cursoId ?? ""}
-                  onChange={(event) =>
-                    setCursoId(Number(event.target.value) || null)
-                  }
-                >
-                  <option value="">Selecciona un curso</option>
-                  {availableCourses.map((curso) => (
-                    <option key={curso.id} value={curso.id}>
-                      {curso.nombre} — {curso.area}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <>
+                {/* AREA */}
+                <div className="form-field" style={{ gridColumn: "1 / -1" }}>
+                  <label>Área</label>
+                  <select
+                    value={areaId ?? ""}
+                    onChange={(e) => {
+                      const id = Number(e.target.value) || null;
+                      setAreaId(id);
+                      setCursoId(null); // reset curso al cambiar área
+                    }}
+                  >
+                    <option value="">Selecciona un área</option>
+                    {areas.map((area) => (
+                      <option key={area.id} value={area.id}>
+                        {area.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* CURSO */}
+                {areaId && (
+                  <div className="form-field" style={{ gridColumn: "1 / -1" }}>
+                    <label>Curso</label>
+                    <select
+                      value={cursoId ?? ""}
+                      onChange={(event) =>
+                        setCursoId(Number(event.target.value) || null)
+                      }
+                    >
+                      <option value="">Selecciona un curso</option>
+                      {availableCourses?.map((curso) => (
+                        <option key={curso?.id} value={curso?.id}>
+                          {curso?.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </>
             ) : (
-              <div className="form-field" style={{ gridColumn: "1 / -1" }}>
-                <label>Promoción</label>
-                <select
-                  value={promocionId ?? ""}
-                  onChange={(event) =>
-                    setPromocionId(Number(event.target.value) || null)
-                  }
-                >
-                  <option value="">Selecciona una promoción</option>
-                  {promotions.map((promo) => (
-                    <option key={promo.id} value={promo.id}>
-                      {promo.titulo} — {promo.periodo}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <>
+                {/* SELECT PROMOCIÓN */}
+                <div className="form-field" style={{ gridColumn: "1 / -1" }}>
+                  <label>Promoción</label>
+                  <select
+                    value={promocionId ?? ""}
+                    onChange={(e) => {
+                      const id = Number(e.target.value) || null;
+                      setPromocionId(id);
+                      setCursosPromocion([]);
+                    }}
+                  >
+                    <option value="">Selecciona una promoción</option>
+                    {promotions.map((promo) => (
+                      <option key={promo.id} value={promo.id}>
+                        {promo.titulo} — {promo.periodo}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/*CURSOS */}
+                {promocionId && (
+                  <div className="card" style={{ marginTop: 12 }}>
+                    <div className="form-section-title">
+                      Seleccionar cursos de la promoción
+                    </div>
+
+                    {promoCursosDisponibles
+                      .filter((curso) => curso && curso.id != null)
+                      .map((curso) => {
+                        console.log("CURSO DEBUG:", curso);
+                        console.log("curso.id:", curso.id, typeof curso.id);
+
+                        return (
+                          <label
+                            key={`curso-${curso.id}`}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 10,
+                              padding: "8px 10px",
+                              border: "1px solid #e2e8f0",
+                              borderRadius: 6,
+                              marginBottom: 6,
+                              cursor: "pointer",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={cursosPromocion.includes(
+                                Number(curso.id),
+                              )}
+                              onChange={() => {
+                                const id = Number(curso.id);
+
+                                console.log("CLICK curso:", curso);
+                                console.log("ID enviado:", id);
+
+                                setCursosPromocion((prev) =>
+                                  prev.includes(id)
+                                    ? prev.filter((c) => c !== id)
+                                    : [...prev, id],
+                                );
+                              }}
+                            />
+                            <span>{curso.nombre ?? "Curso sin nombre"}</span>
+                          </label>
+                        );
+                      })}
+
+                    <div style={{ fontSize: 12, color: "#64748b" }}>
+                      {cursosPromocion.length} de{" "}
+                      {promoCursosDisponibles.length} cursos seleccionados
+                    </div>
+                  </div>
+                )}
+              </>
             )}
+
             <div style={{ display: "flex", gap: 10 }}>
               <button
                 type="button"

@@ -1,12 +1,16 @@
-import type { Request, Response } from 'express';
-import { prisma } from '../lib/prisma.js';
-import { formatDateEs } from '../utils/dateFormat.js';
+import type { Request, Response } from "express";
+import { prisma } from "../lib/prisma.js";
+import { formatDateEs } from "../utils/dateFormat.js";
 
-export async function listInscriptions(_req: Request, res: Response): Promise<void> {
+export async function listInscriptions(
+  _req: Request,
+  res: Response,
+): Promise<void> {
   const rows = await prisma.inscripcion.findMany({
-    orderBy: { creadoEn: 'desc' },
+    orderBy: { creadoEn: "desc" },
     include: {
       estudiante: true,
+      promocion: true,
       cursos: {
         include: { curso: true },
       },
@@ -14,33 +18,44 @@ export async function listInscriptions(_req: Request, res: Response): Promise<vo
   });
 
   res.json(
-  rows.map((r) => {
-    const total = r.montoTotal;
-    const pagado = r.montoPagado;
-    const saldo = total - pagado;
+    rows.map((r) => {
+      const total = r.montoTotal;
+      const pagado = r.montoPagado;
+      const saldo = total - pagado;
 
-    let estadoPago: "pendiente" | "parcial" | "pagado" = "pendiente";
-    if (pagado >= total) estadoPago = "pagado";
-    else if (pagado > 0) estadoPago = "parcial";
+      let estadoPago: "pendiente" | "parcial" | "pagado" = "pendiente";
+      if (pagado >= total) estadoPago = "pagado";
+      else if (pagado > 0) estadoPago = "parcial";
 
-    return {
-      id: r.id,
-      estudiante: `${r.estudiante.nombres} ${r.estudiante.apellidos}`,
-      curso: r.cursos[0]?.curso.nombre ?? "Sin curso",
-      tipo: r.tipo === "promocion" ? "Promoción" : "Individual",
-      modalidad: r.modalidad === "certificado" ? "Certificado" : "Examen",
-      fecha: formatDateEs(r.creadoEn),
+      const cursos = r.cursos.map((c) => c.curso.nombre);
+      const cursosTexto =
+        cursos.length > 2
+          ? `${cursos.slice(0, 2).join(", ")} +${cursos.length - 2} más`
+          : cursos.join(", ");
+      return {
+        id: r.id,
+        estudiante: `${r.estudiante.nombres} ${r.estudiante.apellidos}`,
+        curso:
+          r.tipo === "promocion"
+            ? `${r.promocion?.nombre ?? "Promoción"}: ${cursosTexto}`
+            : cursosTexto || "Sin curso",
+        tipo: r.tipo,
+        modalidad: r.modalidad === "certificado" ? "Certificado" : "Examen",
+        fecha: formatDateEs(r.creadoEn),
 
-      total,
-      pagado,
-      saldo,
-      estadoPago,
-    };
-  }),
-);
+        total,
+        pagado,
+        saldo,
+        estadoPago,
+      };
+    }),
+  );
 }
 
-export async function createInscription(req: Request, res: Response): Promise<void> {
+export async function createInscription(
+  req: Request,
+  res: Response,
+): Promise<void> {
   const {
     studentCi,
     tipo,
@@ -48,17 +63,19 @@ export async function createInscription(req: Request, res: Response): Promise<vo
     promocionId,
     modalidad,
     montoTotal,
+    cursosSeleccionados,
   } = req.body as {
     studentCi: string;
-    tipo: 'individual' | 'promocion';
+    tipo: "individual" | "promocion";
     cursoId?: number;
     promocionId?: number;
-    modalidad: 'certificado' | 'examen';
+    modalidad: "certificado" | "examen";
     montoTotal: number;
+    cursosSeleccionados?: number[];
   };
 
   if (!studentCi || !tipo || !modalidad || montoTotal == null) {
-    res.status(400).json({ message: 'Datos incompletos' });
+    res.status(400).json({ message: "Datos incompletos" });
     return;
   }
 
@@ -67,13 +84,13 @@ export async function createInscription(req: Request, res: Response): Promise<vo
   });
 
   if (!estudiante) {
-    res.status(404).json({ message: 'Estudiante no encontrado' });
+    res.status(404).json({ message: "Estudiante no encontrado" });
     return;
   }
 
-  if (tipo === 'promocion') {
+  if (tipo === "promocion") {
     if (!promocionId) {
-      res.status(400).json({ message: 'Promoción requerida' });
+      res.status(400).json({ message: "Promoción requerida" });
       return;
     }
 
@@ -83,31 +100,38 @@ export async function createInscription(req: Request, res: Response): Promise<vo
     });
 
     if (!promocion) {
-      res.status(404).json({ message: 'Promoción no encontrada' });
+      res.status(404).json({ message: "Promoción no encontrada" });
       return;
     }
 
     if (promocion.cursos.length === 0) {
-      res.status(400).json({ message: 'La promoción no tiene cursos asignados' });
+      res
+        .status(400)
+        .json({ message: "La promoción no tiene cursos asignados" });
       return;
     }
 
     const inscripcion = await prisma.inscripcion.create({
       data: {
         estudianteId: estudiante.id,
-        tipo: 'promocion',
+        tipo: "promocion",
         promocionId,
         modalidad,
-        estado: 'activo',
+        estado: "activo",
         montoTotal,
         montoPagado: 0,
       },
     });
 
+    const cursosFinales: number[] =
+      cursosSeleccionados && cursosSeleccionados.length > 0
+        ? cursosSeleccionados
+        : promocion.cursos.map((pc) => pc.curso.id);
+
     await prisma.inscripcionCurso.createMany({
-      data: promocion.cursos.map((pc) => ({
+      data: cursosFinales.map((cursoId: number) => ({
         inscripcionId: inscripcion.id,
-        cursoId: pc.curso.id,
+        cursoId,
       })),
     });
 
@@ -115,24 +139,24 @@ export async function createInscription(req: Request, res: Response): Promise<vo
     return;
   }
 
-  if (tipo === 'individual') {
+  if (tipo === "individual") {
     if (!cursoId) {
-      res.status(400).json({ message: 'Curso requerido' });
+      res.status(400).json({ message: "Curso requerido" });
       return;
     }
 
     const curso = await prisma.curso.findUnique({ where: { id: cursoId } });
     if (!curso) {
-      res.status(404).json({ message: 'Curso no encontrado' });
+      res.status(404).json({ message: "Curso no encontrado" });
       return;
     }
 
     const inscripcion = await prisma.inscripcion.create({
       data: {
         estudianteId: estudiante.id,
-        tipo: 'individual',
+        tipo: "individual",
         modalidad,
-        estado: 'activo',
+        estado: "activo",
         montoTotal,
         montoPagado: 0,
       },
@@ -149,5 +173,5 @@ export async function createInscription(req: Request, res: Response): Promise<vo
     return;
   }
 
-  res.status(400).json({ message: 'Tipo de inscripción inválido' });
+  res.status(400).json({ message: "Tipo de inscripción inválido" });
 }

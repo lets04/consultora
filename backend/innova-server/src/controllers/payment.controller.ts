@@ -76,6 +76,7 @@ export async function listByFiltro(req: Request, res: Response): Promise<void> {
     orderBy: { creadoEn: "desc" },
     include: {
       estudiante: true,
+      promocion: true,
       cursos: { include: { curso: true } },
     },
   });

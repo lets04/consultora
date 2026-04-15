@@ -1,4 +1,4 @@
-import type { UserRole } from './role';
+import type { UserRole } from "./role";
 
 export interface LoginResponse {
   token: string;
@@ -40,8 +40,10 @@ export interface PromotionDto {
   id: number;
   titulo: string;
   periodo: string;
-  activa: boolean;
-  cursos: string[];
+  cursos: {
+    id: number;
+    nombre: string;
+  }[];
 }
 
 export interface AreaDto {
@@ -61,7 +63,7 @@ export interface InscripcionDto {
   total: number;
   pagado: number;
   saldo: number;
-  estadoPago: 'pendiente' | 'parcial' | 'pagado';
+  estadoPago: "pendiente" | "parcial" | "pagado";
 }
 
 export interface PaymentsSummaryDto {

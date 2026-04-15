@@ -3,11 +3,10 @@ import { Link, useParams } from 'react-router-dom';
 import { apiGet } from '../../api/client';
 import type { Estudiante } from '../../types/student';
 import { StudentCursosTab } from './detail/StudentCursosTab';
-import { StudentGestionarTab } from './detail/StudentGestionarTab';
 import { StudentInfoTab } from './detail/StudentInfoTab';
 import { StudentPagosTab } from './detail/StudentPagosTab';
 
-type Tab = 'info' | 'cursos' | 'pagos' | 'gestionar';
+type Tab = 'info' | 'cursos' | 'pagos' ;
 
 export function StudentDetailPage() {
   const { ci } = useParams<{ ci: string }>();
@@ -79,7 +78,6 @@ export function StudentDetailPage() {
             ['info', 'Información'],
             ['cursos', 'Cursos'],
             ['pagos', 'Pagos'],
-            ['gestionar', 'Gestionar'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -95,7 +93,6 @@ export function StudentDetailPage() {
       {tab === 'info' && <StudentInfoTab e={e} />}
       {tab === 'cursos' && <StudentCursosTab e={e} />}
       {tab === 'pagos' && <StudentPagosTab e={e} />}
-      {tab === 'gestionar' && <StudentGestionarTab e={e} />}
     </>
   );
 }
