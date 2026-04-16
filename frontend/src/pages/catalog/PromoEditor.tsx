@@ -58,7 +58,7 @@ export function PromoEditor({ onBack, onSave }: PromoEditorProps) {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(name)) next.delete(name);
-      else if (next.size < 5) next.add(name);
+      else next.add(name);
       return next;
     });
   }
@@ -89,7 +89,7 @@ export function PromoEditor({ onBack, onSave }: PromoEditorProps) {
       <div className="promo-week-header">
         <div>
           <div style={{ fontSize: 14, fontWeight: 500, color: '#0B2A4A' }}>Nueva promoción semanal</div>
-          <div style={{ fontSize: 11.5, color: '#64748b' }}>Selecciona exactamente 5 cursos de cualquier área</div>
+          <div style={{ fontSize: 11.5, color: '#64748b' }}>Selecciona los cursos para la promoción de cualquier área</div>
         </div>
         <span
           style={{

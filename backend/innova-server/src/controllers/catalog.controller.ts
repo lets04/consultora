@@ -17,7 +17,10 @@ export async function listPromotions(_req: Request, res: Response): Promise<void
       titulo: row.nombre,
       periodo: row.periodo,
       activa: row.activa,
-      cursos: row.cursos.map((pc) => pc.curso.nombre),
+      cursos: row.cursos.map((pc) => ({
+        id: pc.curso.id,
+        nombre: pc.curso.nombre,
+      })),
     })),
   );
 }

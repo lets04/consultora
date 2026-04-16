@@ -33,25 +33,16 @@ export function PromoList({ promotions, loading, error, onNueva, onEdit }: Promo
                 {p.periodo} · {p.cursos.length} cursos
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span className={'bs ' + (p.activa ? 'activo' : 'inactivo')}>{p.activa ? 'Activa' : 'Finalizada'}</span>
+            <div>
               <button type="button" className="ab" onClick={() => onEdit(p.id)}>
-                {p.activa ? 'Editar' : 'Ver'}
+                Editar
               </button>
             </div>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {p.cursos.map((c) => (
-              <span
-                key={c}
-                className="promo-chip"
-                style={
-                  p.activa
-                    ? undefined
-                    : { background: '#f1f5f9', borderColor: '#dde3ea', color: '#64748b' }
-                }
-              >
-                {c}
+              <span key={c.id} className="promo-chip">
+                {c.nombre}
               </span>
             ))}
           </div>

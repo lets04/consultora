@@ -35,6 +35,9 @@ export function NuevaInscripcionPage() {
     }
 
     const promo = promotions.find((p) => p.id === promocionId);
+    console.log("promocionId:", promocionId);
+    console.log("promo encontrado:", promo);
+    console.log("promo?.cursos:", promo?.cursos);
 
     setPromoCursosDisponibles(promo?.cursos ?? []);
   }, [promocionId, promotions]);

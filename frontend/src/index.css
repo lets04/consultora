@@ -1145,3 +1145,83 @@ tbody tr:hover td {
   border-color: #2f5fd0;
   box-shadow: 0 0 0 1px rgba(47, 95, 208, 0.2);
 }
+.inline-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  gap: 2px;
+}
+.inline-form .btn-primary {
+  height: 32px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 🔥 animación suave */
+.expand-row td {
+  animation: fadeSlide 0.25s ease;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🔥 input activo */
+.input-active {
+  border-color: #2f5fd0 !important;
+  box-shadow: 0 0 0 2px rgba(47, 95, 208, 0.15);
+}
+
+/* 🔥 botón premium */
+.btn-pay-premium {
+  transition: all 0.2s ease;
+}
+
+.btn-pay-premium:disabled {
+  background: #cbd5f5;
+  cursor: not-allowed;
+}
+
+.btn-pay-premium:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(47, 95, 208, 0.3);
+}
+
+/* 🔥 mejor inline form */
+.inline-form {
+  display: grid;
+  grid-template-columns: 160px 140px 160px 180px auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+/* inputs elegantes */
+.inline-form input,
+.inline-form select {
+  height: 32px;
+  border: 1px solid #dde3ea;
+  border-radius: 7px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+/* hint */
+.hint {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}

@@ -23,11 +23,13 @@ export function PaymentsPage() {
 
   const [monto, setMonto] = useState("");
   const [tipoPago, setTipoPago] = useState<"efectivo" | "transferencia">(
-    "efectivo"
+    "efectivo",
   );
   const [numeroComprobante, setNumeroComprobante] = useState("");
 
   const [error, setError] = useState<string | null>(null);
+
+  const [activeInput, setActiveInput] = useState<number | null>(null);
 
   // 🔄 cargar datos
   useEffect(() => {
@@ -46,7 +48,7 @@ export function PaymentsPage() {
         setItems(
           filtro === "todos"
             ? (data as InscripcionDto[])
-            : (data as PaymentsListResponse).items
+            : (data as PaymentsListResponse).items,
         );
       })
       .catch(() => setError("Error al cargar pagos"))
@@ -95,7 +97,7 @@ export function PaymentsPage() {
     setItems(
       filtro === "todos"
         ? (data as InscripcionDto[])
-        : (data as PaymentsListResponse).items
+        : (data as PaymentsListResponse).items,
     );
   }
 
@@ -105,7 +107,7 @@ export function PaymentsPage() {
     <>
       {/* 🔷 TABS */}
       <div className="tabs-pro">
-        {["todos", "pendientes", "parciales", "pagados"].map((f) => (
+        {["todos", "pendiente", "parcial", "pagado"].map((f) => (
           <button
             key={f}
             className={filtro === f ? "active" : ""}
@@ -137,6 +139,7 @@ export function PaymentsPage() {
           <tbody>
             {items.map((item) => {
               const montoNumber = Number(monto) || 0;
+              const isInvalid = !monto || Number(monto) <= 0 || Number(monto) > item.saldo;
               const saldoRestante = Math.max(item.saldo - montoNumber, 0);
 
               return (
@@ -165,9 +168,7 @@ export function PaymentsPage() {
                             setOpenRow(openRow === item.id ? null : item.id)
                           }
                         >
-                          {openRow === item.id
-                            ? "Cancelar"
-                            : "Registrar pago"}
+                          {openRow === item.id ? "Cancelar" : "Registrar pago"}
                         </button>
                       )}
                     </td>
@@ -175,12 +176,14 @@ export function PaymentsPage() {
 
                   {/* 🔥 FORM INLINE */}
                   {openRow === item.id && (
-                    <tr>
+                    <tr className="expand-row">
                       <td colSpan={8}>
                         <div className="inline-form">
                           {/* INFO */}
                           <div className="inline-info">
-                            <div>Total: <strong>{item.total} Bs</strong></div>
+                            <div>
+                              Total: <strong>{item.total} Bs</strong>
+                            </div>
                             <div>Pagado: {item.pagado} Bs</div>
                             <div style={{ color: "#dc2626" }}>
                               Saldo: {item.saldo} Bs
@@ -193,34 +196,46 @@ export function PaymentsPage() {
                               type="number"
                               placeholder={`Máx. ${item.saldo}`}
                               value={monto}
-                              onChange={(e) => setMonto(e.target.value)}
+                              onFocus={() => setActiveInput(item.id)}
+                              onBlur={() => setActiveInput(null)}
+                              onChange={(e) => {
+                                let value = Number(e.target.value);
+
+                                if (value > item.saldo) value = item.saldo;
+
+                                setMonto(value.toString());
+                              }}
+                              className={
+                                activeInput === item.id ? "input-active" : ""
+                              }
                             />
 
                             {monto && (
-                              <div className="hint">
-                                Saldo restante:{" "}
-                                <strong>{saldoRestante} Bs</strong>
-                              </div>
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  bottom: -16,
+                                  left: 2,
+                                  fontSize: 11,
+                                  color: "#64748b",
+                                }}
+                              >
+                                Saldo: {saldoRestante} Bs
+                              </span>
                             )}
 
                             {montoNumber > item.saldo && (
-                              <div className="error-text">
-                                Excede el saldo
-                              </div>
+                              <div className="error-text">Excede el saldo</div>
                             )}
                           </div>
 
                           {/* SELECT */}
                           <select
                             value={tipoPago}
-                            onChange={(e) =>
-                              setTipoPago(e.target.value as any)
-                            }
+                            onChange={(e) => setTipoPago(e.target.value as any)}
                           >
                             <option value="efectivo">Efectivo</option>
-                            <option value="transferencia">
-                              Transferencia
-                            </option>
+                            <option value="transferencia">Transferencia</option>
                           </select>
 
                           {/* COMPROBANTE */}
@@ -234,8 +249,9 @@ export function PaymentsPage() {
 
                           {/* BOTÓN */}
                           <button
-                            className="btn-primary"
+                            className="btn-primary btn-pay-premium"
                             onClick={() => handlePago(item)}
+                            disabled={isInvalid}
                           >
                             Confirmar pago
                           </button>
