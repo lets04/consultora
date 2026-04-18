@@ -5,5 +5,5 @@ export interface Student {
   curso: string;
   inscripcion: string;
   pago: 'pagado' | 'parcial' | 'pendiente';
-  estado: string;
+  registro?: string;
 }

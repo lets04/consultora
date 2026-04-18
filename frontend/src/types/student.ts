@@ -1,7 +1,7 @@
 export type PagoEstado = "pagado" | "parcial" | "pendiente";
-export type EstudianteEstado = "activo" | "inactivo";
 
 export interface CursoInscrito {
+  id: number;
   nombre: string;
   area: string;
   modalidad: string;
@@ -9,6 +9,7 @@ export interface CursoInscrito {
   estado: string;
   tipo?: "curso" | "promocion";
   nombrePromocion?: string;
+  nota?: number;
 }
 
 export interface PagoItem {
@@ -29,7 +30,7 @@ export interface Estudiante {
   curso: string;
   inscripcion: string;
   pago: PagoEstado;
-  estado: EstudianteEstado;
+  registro?: string;
 
   telefono?: string;
   email?: string;

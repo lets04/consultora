@@ -31,7 +31,10 @@ export function PaymentsPage() {
 
   const [activeInput, setActiveInput] = useState<number | null>(null);
 
-  // 🔄 cargar datos
+  const esPagado = filtro === "pagado";
+  const colSpan = esPagado ? 4 : 8;
+
+  // cargar datos
   useEffect(() => {
     if (!isAdmin) return;
 
@@ -102,7 +105,7 @@ export function PaymentsPage() {
   }
 
   if (loading) return <div className="empty-hint">Cargando…</div>;
-
+  console.log(filtro, items);
   return (
     <>
       {/* 🔷 TABS */}
@@ -129,17 +132,23 @@ export function PaymentsPage() {
               <th>Curso</th>
               <th>Fecha</th>
               <th>Total</th>
-              <th>Pagado</th>
-              <th>Saldo</th>
-              <th>Estado</th>
-              <th></th>
+              {!esPagado && (
+                <>
+                  <th>Pagado</th>
+                  <th>Saldo</th>
+                  <th>Estado</th>
+                </>
+              )}
+
+              {!esPagado && <th></th>}
             </tr>
           </thead>
 
           <tbody>
             {items.map((item) => {
               const montoNumber = Number(monto) || 0;
-              const isInvalid = !monto || Number(monto) <= 0 || Number(monto) > item.saldo;
+              const isInvalid =
+                !monto || Number(monto) <= 0 || Number(monto) > item.saldo;
               const saldoRestante = Math.max(item.saldo - montoNumber, 0);
 
               return (
@@ -150,34 +159,41 @@ export function PaymentsPage() {
                     <td>{item.curso}</td>
                     <td>{item.fecha}</td>
                     <td>{item.total} Bs</td>
-                    <td>{item.pagado} Bs</td>
-                    <td>
-                      <strong>{item.saldo} Bs</strong>
-                    </td>
-                    <td>
-                      <span className={"bs " + item.estadoPago}>
-                        {item.estadoPago}
-                      </span>
-                    </td>
 
-                    <td>
-                      {item.estadoPago !== "pagado" && (
-                        <button
-                          className="btn-inline"
-                          onClick={() =>
-                            setOpenRow(openRow === item.id ? null : item.id)
-                          }
-                        >
-                          {openRow === item.id ? "Cancelar" : "Registrar pago"}
-                        </button>
-                      )}
-                    </td>
+                    {!esPagado && (
+                      <>
+                        <td>{item.pagado} Bs</td>
+                        <td>
+                          <strong>{item.saldo} Bs</strong>
+                        </td>
+                        <td>
+                          <span className={"bs " + item.estadoPago}>
+                            {item.estadoPago}
+                          </span>
+                        </td>
+
+                        <td>
+                          {item.estadoPago !== "pagado" && (
+                            <button
+                              className="btn-inline"
+                              onClick={() =>
+                                setOpenRow(openRow === item.id ? null : item.id)
+                              }
+                            >
+                              {openRow === item.id
+                                ? "Cancelar"
+                                : "Registrar pago"}
+                            </button>
+                          )}
+                        </td>
+                      </>
+                    )}
                   </tr>
 
-                  {/* 🔥 FORM INLINE */}
+                  {/* FORM INLINE */}
                   {openRow === item.id && (
                     <tr className="expand-row">
-                      <td colSpan={8}>
+                      <td colSpan={colSpan}>
                         <div className="inline-form">
                           {/* INFO */}
                           <div className="inline-info">

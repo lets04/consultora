@@ -101,7 +101,7 @@ export function PromoEditor({ onBack, onSave }: PromoEditorProps) {
             borderRadius: 20,
           }}
         >
-          {selected.size} / 5 cursos
+          {selected.size}  cursos
         </span>
       </div>
       <div className="card">

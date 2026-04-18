@@ -17,7 +17,7 @@ function mapEstudianteToDto(estudiante: {
   nombres: string;
   apellidos: string;
   ci: string;
-  estado: string;
+  creadoEn: Date;
   inscripciones: Array<{
     creadoEn: Date;
     montoTotal: number;
@@ -44,7 +44,7 @@ function mapEstudianteToDto(estudiante: {
           latestInscripcion.montoPagado,
         )
       : "pendiente",
-    estado: estudiante.estado,
+    registro: formatDateEs(estudiante.creadoEn),
   };
 }
 
@@ -53,7 +53,6 @@ function mapEstudianteToDetailDto(estudiante: {
   nombres: string;
   apellidos: string;
   ci: string;
-  estado: string;
   telefono: string | null;
   email: string | null;
   departamento: string | null;
@@ -66,7 +65,14 @@ function mapEstudianteToDetailDto(estudiante: {
     modalidad: string | null;
     estado: string;
     promocion?: { nombre: string } | null;
-    cursos: Array<{ curso: { nombre: string; area: { nombre: string } } }>;
+    cursos: Array<{
+      id: number;
+      nota: number | null;
+      curso: {
+        nombre: string;
+        area: { nombre: string };
+      };
+    }>;
     pagos: Array<{
       monto: number;
       fecha: Date;
@@ -78,6 +84,20 @@ function mapEstudianteToDetailDto(estudiante: {
   const latestInscripcion = estudiante.inscripciones
     .slice()
     .sort((a, b) => b.creadoEn.getTime() - a.creadoEn.getTime())[0];
+
+  const cursos = estudiante.inscripciones.flatMap((inscripcion) =>
+    inscripcion.cursos.map((item) => ({
+      id: item.id,
+      nombre: item.curso.nombre,
+      area: item.curso.area.nombre,
+      modalidad: inscripcion.modalidad ?? "certificado",
+      estado: inscripcion.estado,
+      inicio: formatDateEs(inscripcion.creadoEn),
+      nota: item.nota ?? 0,
+      tipo: inscripcion.tipo === "promocion" ? "promocion" : "curso",
+      nombrePromocion: inscripcion.promocion?.nombre ?? undefined,
+    })),
+  );
 
   return {
     id: estudiante.id,
@@ -99,18 +119,10 @@ function mapEstudianteToDetailDto(estudiante: {
           latestInscripcion.montoPagado,
         )
       : "pendiente",
-    estado: estudiante.estado,
     telefono: estudiante.telefono ?? "",
     email: estudiante.email ?? "",
     departamento: estudiante.departamento ?? "",
-    cursos:
-      latestInscripcion?.cursos.map((item) => ({
-        nombre: item.curso.nombre,
-        area: item.curso.area.nombre,
-        modalidad: latestInscripcion.modalidad ?? "certificado",
-        estado: latestInscripcion.estado,
-        inicio: formatDateEs(latestInscripcion.creadoEn),
-      })) ?? [],
+    cursos,
     pagos:
       latestInscripcion?.pagos.map((p) => ({
         monto: p.monto,
@@ -137,6 +149,62 @@ export async function listStudents(
   res.json(rows.map(mapEstudianteToDto));
 }
 
+export async function listCompletedStudents(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const modalidadQuery = String(req.query.modalidad ?? "").trim().toLowerCase();
+  const modalidadFilter =
+    modalidadQuery === "examen" || modalidadQuery === "certificado"
+      ? modalidadQuery
+      : undefined;
+
+  const students = await prisma.estudiante.findMany({
+    orderBy: { nombres: "asc" },
+    include: {
+      inscripciones: {
+        orderBy: { creadoEn: "desc" },
+        include: {
+          cursos: { include: { curso: true } },
+          promocion: true,
+        },
+      },
+    },
+  });
+
+  const result = students
+    .map((estudiante) => {
+      const completedInscripciones = estudiante.inscripciones.filter(
+        (inscripcion) =>
+          inscripcion.montoPagado >= inscripcion.montoTotal &&
+          (!modalidadFilter || inscripcion.modalidad === modalidadFilter),
+      );
+
+      if (completedInscripciones.length === 0) return null;
+
+      const inscription = completedInscripciones[0];
+      const cursos = inscription.cursos.map((item) => item.curso.nombre);
+      const cursosTexto =
+        cursos.length > 2
+          ? `${cursos.slice(0, 2).join(", ")} +${cursos.length - 2} más`
+          : cursos.join(", ") || "Sin curso";
+
+      return {
+        id: estudiante.id,
+        nombre: `${estudiante.nombres} ${estudiante.apellidos}`,
+        ci: estudiante.ci,
+        registro: formatDateEs(estudiante.creadoEn),
+        modalidad: (inscription.modalidad ?? "certificado") as
+          | "certificado"
+          | "examen",
+        curso: cursosTexto,
+      };
+    })
+    .filter(Boolean);
+
+  res.json(result);
+}
+
 export async function getStudentByCi(
   req: Request,
   res: Response,
@@ -157,6 +225,7 @@ export async function getStudentByCi(
       },
     },
   });
+
   if (!estudiante) {
     res.status(404).json({ message: "No encontrado" });
     return;
@@ -199,7 +268,6 @@ export async function createStudent(
       ci,
       nombres,
       apellidos,
-      estado: "activo",
       prefijo,
       profesion,
       telefono,

@@ -40,10 +40,6 @@ export function EstudiantesAdminPage() {
     );
   }, [q, list]);
 
-  const total = list.length;
-  const activos = list.filter((e) => e.estado === "activo").length;
-  const pend = list.filter((e) => e.pago === "pendiente").length;
-
   if (loading) return <div className="empty-hint">Cargando estudiantes…</div>;
   if (err) return <div className="empty-hint">{err}</div>;
 
@@ -58,27 +54,9 @@ export function EstudiantesAdminPage() {
       alert("Error al eliminar");
     }
   }
-  
+
   return (
     <>
-      <div className="stats-row">
-        <div className="stat-card">
-          <div className="sl">Total</div>
-          <div className="sn blue">{total}</div>
-        </div>
-        <div className="stat-card">
-          <div className="sl">Activos</div>
-          <div className="sn green">{activos}</div>
-        </div>
-        <div className="stat-card">
-          <div className="sl">Pago pendiente</div>
-          <div className="sn amber">{pend}</div>
-        </div>
-        <div className="stat-card">
-          <div className="sl">Nuevos mes</div>
-          <div className="sn">—</div>
-        </div>
-      </div>
       <div className="sec-header">
         <h2>Lista de estudiantes</h2>
         <Link to="/estudiantes/nuevo" className="btn-primary">
@@ -99,9 +77,7 @@ export function EstudiantesAdminPage() {
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Curso</th>
-            <th>Inscripción</th>
-            <th>Estado pago</th>
+            <th>Registro</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -120,11 +96,7 @@ export function EstudiantesAdminPage() {
                   CI: {e.ci}
                 </span>
               </td>
-              <td>{e.curso}</td>
-              <td>{e.inscripcion}</td>
-              <td>
-                <span className={"bs " + e.pago}>{e.pago}</span>
-              </td>
+              <td>{e.registro ?? e.inscripcion}</td>
               <td>
                 <Link to={`/estudiantes/ver/${e.ci}`} className="ab">
                   Ver

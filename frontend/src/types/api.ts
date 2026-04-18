@@ -71,3 +71,14 @@ export interface PaymentsSummaryDto {
   parciales: number;
   pagados: number;
 }
+
+export interface EstudianteConcluidoDto {
+  id: number;
+  nombre: string;
+  ci: string;
+  registro: string;
+  modalidad: "certificado" | "examen";
+  curso: string;
+  inscripcion: string;
+  tipo: "individual" | "promocion";
+}

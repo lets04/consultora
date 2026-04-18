@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
-import type { Student as StudentDto } from "../models/student.model.js";
 import { formatDateEs } from "../utils/dateFormat.js";
 
 function getPagoStatus(

@@ -38,10 +38,6 @@ export function DashboardPage() {
       <>
         <div className="stats-row">
           <div className="stat-card">
-            <div className="sl">Estudiantes activos</div>
-            <div className="sn green">{gerente.estudiantesActivos}</div>
-          </div>
-          <div className="stat-card">
             <div className="sl">Promoción actual</div>
             <div className="sn blue">Sem. {gerente.promocionSemana}</div>
           </div>
@@ -80,10 +76,6 @@ export function DashboardPage() {
               <span style={{ color: '#dc2626', fontWeight: 500 }}>{gerente.resumenEstudiantes.pagoPendiente}</span>
             </div>
             <div className="pago-row">
-              <span style={{ color: '#64748b' }}>Inscripciones activas</span>
-              <span style={{ color: '#16a34a', fontWeight: 500 }}>{gerente.resumenEstudiantes.inscripcionesActivas}</span>
-            </div>
-            <div className="pago-row">
               <span style={{ color: '#64748b' }}>Nuevos este mes</span>
               <span style={{ color: '#2F5FD0', fontWeight: 500 }}>{gerente.resumenEstudiantes.nuevosMes}</span>
             </div>
@@ -108,10 +100,6 @@ export function DashboardPage() {
           <div className="sn blue">{admin.totalEstudiantes}</div>
         </div>
         <div className="stat-card">
-          <div className="sl">Activos</div>
-          <div className="sn green">{admin.activos}</div>
-        </div>
-        <div className="stat-card">
           <div className="sl">Pago pendiente</div>
           <div className="sn amber">{admin.pagoPendiente}</div>
         </div>
@@ -132,7 +120,7 @@ export function DashboardPage() {
           ))}
         </div>
         <div className="card">
-          <div className="form-section-title">Resumen de pagos</div>
+          <div className="form-section-title">Resumen de pagos ete mes</div>
           <div className="pago-row">
             <span style={{ color: '#64748b' }}>Cobrado este mes</span>
             <span style={{ color: '#0B2A4A', fontWeight: 500 }}>

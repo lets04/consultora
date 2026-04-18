@@ -63,6 +63,10 @@ export function Sidebar() {
               <span className="ni">◎</span>
               <span className="nl">Estudiantes</span>
             </NavLink>
+            <NavLink to="/estudiantes/concluidos" className={subClass}>
+              <span className="dot" />
+              Estudiantes Concluidos
+            </NavLink>
             <div className="nav-divider" />
             <NavLink to="/inscripciones" className={navClass}>
               <span className="ni">✎</span>
@@ -80,25 +84,6 @@ export function Sidebar() {
             <NavLink to="/pagos/todos" className={navClass}>
               <span className="ni">◈</span>
               <span className="nl">Pagos</span>
-            </NavLink>
-            <NavLink to="/pagos/todos" className={subClass}>
-              <span className="dot" />
-              Todos
-            </NavLink>
-            <NavLink to="/pagos/pendientes" className={subClass}>
-              <span className="dot" />
-              Pendientes{' '}
-              {pay != null && <span className="sb red">{pay.pendientes}</span>}
-            </NavLink>
-            <NavLink to="/pagos/parciales" className={subClass}>
-              <span className="dot" />
-              Parciales{' '}
-              {pay != null && <span className="sb yellow">{pay.parciales}</span>}
-            </NavLink>
-            <NavLink to="/pagos/pagados" className={subClass}>
-              <span className="dot" />
-              Pagados{' '}
-              {pay != null && <span className="sb green">{pay.pagados}</span>}
             </NavLink>
           </>
         ) : (

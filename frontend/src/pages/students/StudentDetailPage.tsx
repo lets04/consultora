@@ -4,9 +4,9 @@ import { apiGet } from '../../api/client';
 import type { Estudiante } from '../../types/student';
 import { StudentCursosTab } from './detail/StudentCursosTab';
 import { StudentInfoTab } from './detail/StudentInfoTab';
-import { StudentPagosTab } from './detail/StudentPagosTab';
+import { StudentNotasTab } from './detail/StudentNotasTab';
 
-type Tab = 'info' | 'cursos' | 'pagos' ;
+type Tab = 'info' | 'cursos' | 'notas' ;
 
 export function StudentDetailPage() {
   const { ci } = useParams<{ ci: string }>();
@@ -68,16 +68,13 @@ export function StudentDetailPage() {
           <div className="student-name">{e.nombre}</div>
           <div className="student-ci">CI: {e.ci}</div>
         </div>
-        <div className="student-status">
-          <span className={'bs ' + e.estado}>{e.estado}</span>
-        </div>
       </div>
       <div className="detail-tabs">
         {(
           [
             ['info', 'Información'],
             ['cursos', 'Cursos'],
-            ['pagos', 'Pagos'],
+            ['notas', 'Notas'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -92,7 +89,7 @@ export function StudentDetailPage() {
       </div>
       {tab === 'info' && <StudentInfoTab e={e} />}
       {tab === 'cursos' && <StudentCursosTab e={e} />}
-      {tab === 'pagos' && <StudentPagosTab e={e} />}
+      {tab === 'notas' && <StudentNotasTab e={e} />}
     </>
   );
 }

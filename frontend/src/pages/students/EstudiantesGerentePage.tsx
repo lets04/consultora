@@ -38,7 +38,6 @@ export function EstudiantesGerentePage() {
   }, [q, list]);
 
   const total = list.length;
-  const activos = list.filter((e) => e.estado === 'activo').length;
   const pend = list.filter((e) => e.pago === 'pendiente').length;
 
   if (loading) return <div className="empty-hint">Cargando estudiantes…</div>;
@@ -62,10 +61,6 @@ export function EstudiantesGerentePage() {
         <div className="stat-card">
           <div className="sl">Total</div>
           <div className="sn blue">{total}</div>
-        </div>
-        <div className="stat-card">
-          <div className="sl">Activos</div>
-          <div className="sn green">{activos}</div>
         </div>
         <div className="stat-card">
           <div className="sl">Pago pendiente</div>
@@ -96,7 +91,6 @@ export function EstudiantesGerentePage() {
             <th>Curso actual</th>
             <th>Inscripción</th>
             <th>Pago</th>
-            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -113,9 +107,6 @@ export function EstudiantesGerentePage() {
               <td>{e.inscripcion}</td>
               <td>
                 <span className={'bs ' + e.pago}>{e.pago}</span>
-              </td>
-              <td>
-                <span className={'bs ' + e.estado}>{e.estado}</span>
               </td>
               <td>
                 <Link to={`/estudiantes/ver/${encodeURIComponent(e.ci)}`} className="ab">

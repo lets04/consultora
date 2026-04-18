@@ -27,12 +27,6 @@ model User {
 // ESTUDIANTES
 // ─────────────────────────────────────────
 
-enum EstadoEstudiante {
-  activo
-  inactivo
-  suspendido
-}
-
 model Estudiante {
   id            Int              @id @default(autoincrement())
   ci            String           @unique
@@ -43,7 +37,6 @@ model Estudiante {
   telefono      String?
   email         String?
   departamento  String?
-  estado        EstadoEstudiante @default(activo)
   observaciones String?
 
   creadoEn      DateTime         @default(now())

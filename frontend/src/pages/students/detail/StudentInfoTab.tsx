@@ -12,18 +12,8 @@ export function StudentInfoTab({ e }: { e: Estudiante }) {
         <span className="info-value">{e.ci}</span>
       </div>
       <div className="info-row">
-        <span className="info-label">Fecha de inscripción</span>
-        <span className="info-value">{e.inscripcion}</span>
-      </div>
-      <div className="info-row">
-        <span className="info-label">Estado de pago</span>
-        <span className="info-value">
-          <span className={'bs ' + e.pago}>{e.pago.charAt(0).toUpperCase() + e.pago.slice(1)}</span>
-        </span>
-      </div>
-      <div className="info-row">
-        <span className="info-label">Curso actual</span>
-        <span className="info-value">{e.curso}</span>
+        <span className="info-label">Fecha de registro</span>
+        <span className="info-value">{e.registro ?? e.inscripcion}</span>
       </div>
       <div className="info-row">
         <span className="info-label">Teléfono</span>

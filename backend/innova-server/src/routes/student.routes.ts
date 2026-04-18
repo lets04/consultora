@@ -12,6 +12,12 @@ studentsRouter.get(
 );
 
 studentsRouter.get(
+  '/students/concluidos',
+  requireRole('admin'),
+  asyncHandler(studentController.listCompletedStudents)
+);
+
+studentsRouter.get(
   '/students/:ci',
   requireRole('admin', 'gerente'),
   asyncHandler(studentController.getStudentByCi)

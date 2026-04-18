@@ -12,6 +12,7 @@ import { InscripcionesPage } from "./pages/inscriptions/InscripcionesPage";
 import { NuevaInscripcionPage } from "./pages/inscriptions/NuevaInscripcionPage";
 import { PaymentsPage } from "./pages/payments/PaymentsPage";
 import { EstudiantesPage } from "./pages/students/EstudiantesPage";
+import { EstudiantesConcluidosPage } from "./pages/students/EstudiantesConcluidosPage";
 import { RegistrarEstudiantePage } from "./pages/students/RegistrarEstudiantePage";
 import { StudentDetailPage } from "./pages/students/StudentDetailPage";
 
@@ -73,6 +74,15 @@ export default function App() {
             element={
               <RoleGuard allow={["admin", "gerente"]}>
                 <RegistrarEstudiantePage />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="estudiantes/concluidos"
+            element={
+              <RoleGuard allow={["admin"]}>
+                <EstudiantesConcluidosPage />
               </RoleGuard>
             }
           />

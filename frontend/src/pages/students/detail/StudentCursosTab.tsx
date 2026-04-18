@@ -6,6 +6,7 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
       ? e.cursos
       : [
           {
+            id: 0,
             nombre: e.curso,
             area: "General",
             modalidad: "certificado",
@@ -15,7 +16,6 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
             nombrePromocion: undefined,
           },
         ];
-  const esPromocion = e.tipoInscripcion === "promocion";
 
   return (
     <div className="card">
@@ -28,44 +28,29 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
           <tr>
             <th>Tipo</th>
             <th>Nombre</th>
-             {!esPromocion && <th>Área</th>}
+            <th>Área</th>
             <th>Modalidad</th>
             <th>Inicio</th>
             <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          {esPromocion ? (
-            <tr>
+          {cursos.map((curso) => (
+            <tr key={`${curso.nombre}-${curso.inicio}-${curso.id}`}>
               <td>
-                <span className="bs info">Promoción</span>
+                <span className={`bs ${curso.tipo === "promocion" ? "info" : "success"}`}>
+                  {curso.tipo === "promocion" ? "Promoción" : "Curso"}
+                </span>
               </td>
-              <td style={{ fontWeight: 500 }}>
-                {e.promocionNombre}
-              </td>
-              <td>{cursos[0]?.modalidad}</td>
-              
-              <td>{e.inscripcion}</td>
+              <td>{curso.nombre}</td>
+              <td>{curso.area}</td>
+              <td>{curso.modalidad}</td>
+              <td>{curso.inicio}</td>
               <td>
-                <span className="bs activo">activo</span>
+                <span className={`bs ${curso.estado}`}>{curso.estado}</span>
               </td>
             </tr>
-          ) : (
-            cursos.map((curso) => (
-              <tr key={`${curso.nombre}-${curso.inicio}`}>
-                <td>
-                  <span className="bs success">Curso</span>
-                </td>
-                <td>{curso.nombre}</td>
-                <td>{curso.area}</td>
-                <td>{curso.modalidad}</td>
-                <td>{curso.inicio}</td>
-                <td>
-                  <span className={`bs ${curso.estado}`}>{curso.estado}</span>
-                </td>
-              </tr>
-            ))
-          )}
+          ))}
         </tbody>
       </table>
     </div>

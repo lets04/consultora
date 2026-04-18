@@ -17,3 +17,9 @@ inscriptionsRouter.post(
   requireRole('admin'),
   asyncHandler(inscriptionController.createInscription)
 );
+
+inscriptionsRouter.put(
+  '/inscriptions/nota',
+  requireRole('admin'),
+  asyncHandler(inscriptionController.updateNota)
+);

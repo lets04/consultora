@@ -175,3 +175,25 @@ export async function createInscription(
 
   res.status(400).json({ message: "Tipo de inscripción inválido" });
 }
+
+export async function updateNota(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id, nota } = req.body as { id: number; nota: number };
+
+  if (id == null || nota == null || nota < 0 || nota > 100) {
+    res.status(400).json({ message: "Datos inválidos" });
+    return;
+  }
+
+  try {
+    await prisma.inscripcionCurso.update({
+      where: { id },
+      data: { nota },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar nota" });
+  }
+}

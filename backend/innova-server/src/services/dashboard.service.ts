@@ -12,9 +12,8 @@ function getPagoStatus(montoTotal: number, montoPagado: number): 'pagado' | 'par
 }
 
 export async function buildAdminDashboard(prisma: PrismaClient) {
-  const [totalEstudiantes, activos, inscripcionesRecientes, pagosMes, inscripcionesMes] = await Promise.all([
+  const [totalEstudiantes, inscripcionesRecientes, pagosMes, inscripcionesMes] = await Promise.all([
     prisma.estudiante.count(),
-    prisma.estudiante.count({ where: { estado: 'activo' } }),
     prisma.inscripcion.findMany({
       orderBy: { creadoEn: 'desc' },
       take: 3,
@@ -48,7 +47,6 @@ export async function buildAdminDashboard(prisma: PrismaClient) {
 
   return {
     totalEstudiantes,
-    activos,
     pagoPendiente: categorized.pendientes,
     nuevosMes: inscripcionesMes.length,
     cobradoMes: Number(pagosMes._sum.monto ?? 0),
@@ -63,9 +61,9 @@ export async function buildAdminDashboard(prisma: PrismaClient) {
 }
 
 export async function buildGerenteDashboard(prisma: PrismaClient) {
-  const [estudiantesActivos, promActiva, areasList, totalCursos, totalReg, pagoPend, inscAct, nuevosMes] =
+  const [totalEstudiantes, promActiva, areasList, totalCursos, totalReg, pagoPend, inscAct, nuevosMes] =
     await Promise.all([
-      prisma.estudiante.count({ where: { estado: 'activo' } }),
+      prisma.estudiante.count(),
       prisma.promocion.findFirst({ where: { activa: true }, orderBy: { id: 'desc' } }),
       prisma.area.findMany({ orderBy: { id: 'asc' }, include: { cursos: true } }),
       prisma.curso.count(),
@@ -81,7 +79,7 @@ export async function buildGerenteDashboard(prisma: PrismaClient) {
   }));
 
   return {
-    estudiantesActivos,
+    estudiantesActivos: totalEstudiantes,
     promocionSemana: promActiva?.id ?? 0,
     areasActivas: areasList.length,
     cursosCatalogo: totalCursos,

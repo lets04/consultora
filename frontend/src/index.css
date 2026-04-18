@@ -258,16 +258,17 @@ html, body, #root {
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
   margin-bottom: 16px;
 }
 
 .stat-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 0.5px solid #dde3ea;
-  padding: 10px 12px;
+  padding: 14px 16px;
+  transition: all 0.2s ease;
 }
 
 .stat-card .sl {
@@ -1158,7 +1159,7 @@ tbody tr:hover td {
   align-items: center;
   justify-content: center;
 }
-/* 🔥 animación suave */
+/* animación suave */
 .expand-row td {
   animation: fadeSlide 0.25s ease;
 }
@@ -1180,7 +1181,7 @@ tbody tr:hover td {
   box-shadow: 0 0 0 2px rgba(47, 95, 208, 0.15);
 }
 
-/* 🔥 botón premium */
+/*  botón premium */
 .btn-pay-premium {
   transition: all 0.2s ease;
 }
@@ -1195,7 +1196,7 @@ tbody tr:hover td {
   box-shadow: 0 4px 10px rgba(47, 95, 208, 0.3);
 }
 
-/* 🔥 mejor inline form */
+/*  mejor inline form */
 .inline-form {
   display: grid;
   grid-template-columns: 160px 140px 160px 180px auto;
@@ -1224,4 +1225,111 @@ tbody tr:hover td {
   font-size: 11px;
   color: #64748b;
   margin-top: 2px;
+}
+
+/* Input de nota */
+.input-nota {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+}
+
+/* Focus */
+.input-nota:focus {
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* Hover */
+.input-nota:hover {
+  border-color: #93c5fd;
+}
+
+/* Error (nota inválida) */
+.input-nota.error {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+/* Aprobado */
+.input-nota.aprobado {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+/* Reprobado */
+.input-nota.reprobado {
+  border-color: #f97316;
+  background: #fff7ed;
+}
+/* Quitar flechitas */
+.input-nota::-webkit-outer-spin-button,
+.input-nota::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-nota {
+  -moz-appearance: textfield;
+}
+/* Mensaje éxito */
+.success-banner {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ecfdf5;
+  color: #166534;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #bbf7d0;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.filter-tabs {
+  display: flex;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.filter-tab {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-tab:hover {
+  background: #e2e8f0;
+}
+
+.filter-tab.active {
+  background: #fff;
+  color: #0b2a4a;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
