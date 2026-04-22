@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { apiGet } from '../../api/client';
 import type { Estudiante } from '../../types/student';
 import { StudentCursosTab } from './detail/StudentCursosTab';
@@ -10,8 +10,10 @@ type Tab = 'info' | 'cursos' | 'notas' ;
 
 export function StudentDetailPage() {
   const { ci } = useParams<{ ci: string }>();
+  const [searchParams] = useSearchParams();
+  const isConcluido = searchParams.get('from') === 'concluidos';
   const [e, setE] = useState<Estudiante | null | undefined>(undefined);
-  const [tab, setTab] = useState<Tab>('info');
+  const [tab, setTab] = useState<Tab>(isConcluido ? 'notas' : 'info');
 
   useEffect(() => {
     if (!ci) {
@@ -57,7 +59,7 @@ export function StudentDetailPage() {
   return (
     <>
       <div className="sec-header">
-        <h2>Detalle del estudiante</h2>
+        <h2></h2>
         <Link to="/estudiantes" className="btn-secondary">
           ← Volver
         </Link>
@@ -70,11 +72,23 @@ export function StudentDetailPage() {
         </div>
       </div>
       <div className="detail-tabs">
-        {(
+        {isConcluido ? (
+          [
+            ['notas', 'Notas'],
+            ['cursos', 'Cursos'],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className={'detail-tab' + (tab === id ? ' active' : '')}
+            onClick={() => setTab(id)}
+          >
+            {label}
+          </button>
+        )) : (
           [
             ['info', 'Información'],
-            ['cursos', 'Cursos'],
-            ['notas', 'Notas'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -88,8 +102,8 @@ export function StudentDetailPage() {
         ))}
       </div>
       {tab === 'info' && <StudentInfoTab e={e} />}
-      {tab === 'cursos' && <StudentCursosTab e={e} />}
-      {tab === 'notas' && <StudentNotasTab e={e} />}
+      {isConcluido && tab === 'cursos' && <StudentCursosTab e={e} />}
+      {isConcluido && tab === 'notas' && <StudentNotasTab e={e} />}
     </>
   );
 }

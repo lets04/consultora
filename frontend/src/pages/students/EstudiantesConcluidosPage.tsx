@@ -133,7 +133,7 @@ export function EstudiantesConcluidosPage() {
               {filtro !== "certificado" && (
                 <td>
                   <Link
-                    to={`/estudiantes/ver/${encodeURIComponent(item.ci)}`}
+                    to={`/estudiantes/ver/${encodeURIComponent(item.ci)}?from=concluidos`}
                     className="ab"
                   >
                     Agregar Nota

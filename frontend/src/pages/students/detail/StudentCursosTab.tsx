@@ -31,7 +31,6 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
             <th>Área</th>
             <th>Modalidad</th>
             <th>Inicio</th>
-            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
@@ -46,9 +45,6 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
               <td>{curso.area}</td>
               <td>{curso.modalidad}</td>
               <td>{curso.inicio}</td>
-              <td>
-                <span className={`bs ${curso.estado}`}>{curso.estado}</span>
-              </td>
             </tr>
           ))}
         </tbody>
