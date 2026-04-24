@@ -6,7 +6,7 @@ import { catalogRouter } from "./routes/catalog.routes.js";
 import { dashboardRouter } from "./routes/dashboard.routes.js";
 import { inscriptionsRouter } from "./routes/inscription.routes.js";
 import { paymentsRouter } from "./routes/payment.routes.js";
-import { studentsRouter } from "./routes/student.routes.js";
+import { studentPublicRouter, studentsRouter } from "./routes/student.routes.js";
 import { promotionsRouter } from "./routes/promotion.routes.js";
 import { prisma } from "./lib/prisma.js";
 import { authMiddleware } from "./middleware/auth.js";
@@ -39,6 +39,7 @@ export function createApp() {
     }),
   );
   api.use(authPublicRouter);
+  api.use(studentPublicRouter);
 
   const secured = express.Router();
   secured.use(authMiddleware);

@@ -3,7 +3,13 @@ import * as studentController from '../controllers/student.controller.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { requireRole } from '../middleware/auth.js';
 
+export const studentPublicRouter = Router();
 export const studentsRouter = Router();
+
+studentPublicRouter.get(
+  '/student-portal/:ci',
+  asyncHandler(studentController.getStudentPortalByCi)
+);
 
 studentsRouter.get(
   '/students',

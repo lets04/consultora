@@ -53,6 +53,8 @@ function mapEstudianteToDetailDto(estudiante: {
   nombres: string;
   apellidos: string;
   ci: string;
+  prefijo: string | null;
+  profesion: string | null;
   telefono: string | null;
   email: string | null;
   departamento: string | null;
@@ -103,6 +105,8 @@ function mapEstudianteToDetailDto(estudiante: {
     id: estudiante.id,
     nombre: `${estudiante.nombres} ${estudiante.apellidos}`,
     ci: estudiante.ci,
+    prefijo: estudiante.prefijo ?? undefined,
+    profesion: estudiante.profesion ?? undefined,
     tipoInscripcion: latestInscripcion?.tipo,
     promocionNombre: latestInscripcion?.promocion?.nombre,
 
@@ -130,6 +134,67 @@ function mapEstudianteToDetailDto(estudiante: {
         tipoPago: p.tipoPago,
         numeroComprobante: p.numeroComprobante,
       })) ?? [],
+  };
+}
+
+function mapEstudianteToPortalDto(estudiante: {
+  id: number;
+  ci: string;
+  nombres: string;
+  apellidos: string;
+  prefijo: string | null;
+  profesion: string | null;
+  telefono: string | null;
+  email: string | null;
+  departamento: string | null;
+  inscripciones: Array<{
+    id: number;
+    tipo: string | null;
+    modalidad: string | null;
+    montoTotal: number;
+    montoPagado: number;
+    creadoEn: Date;
+    promocion: { nombre: string } | null;
+    cursos: Array<{
+      id: number;
+      nota: number | null;
+      curso: {
+        nombre: string;
+        area: { nombre: string };
+      };
+    }>;
+  }>;
+}) {
+  const cursosPagados = estudiante.inscripciones
+    .filter((inscripcion) => inscripcion.montoPagado >= inscripcion.montoTotal)
+    .flatMap((inscripcion) =>
+      inscripcion.cursos.map((item) => ({
+        id: item.id,
+        nombre: item.curso.nombre,
+        area: item.curso.area.nombre,
+        tipo: inscripcion.tipo === "promocion" ? "promocion" : "curso",
+        promocionNombre: inscripcion.promocion?.nombre ?? undefined,
+        modalidad: (inscripcion.modalidad ?? "certificado") as
+          | "certificado"
+          | "examen",
+        fechaInscripcion: formatDateEs(inscripcion.creadoEn),
+        nota:
+          inscripcion.modalidad === "examen" && item.nota != null
+            ? item.nota
+            : undefined,
+      })),
+    );
+
+  return {
+    id: estudiante.id,
+    ci: estudiante.ci,
+    nombreCompleto: `${estudiante.nombres} ${estudiante.apellidos}`,
+    prefijo: estudiante.prefijo ?? undefined,
+    profesion: estudiante.profesion ?? undefined,
+    telefono: estudiante.telefono ?? undefined,
+    email: estudiante.email ?? undefined,
+    departamento: estudiante.departamento ?? undefined,
+    cursos: cursosPagados,
   };
 }
 
@@ -232,6 +297,40 @@ export async function getStudentByCi(
   }
   res.json(mapEstudianteToDetailDto(estudiante));
 }
+
+export async function getStudentPortalByCi(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const ci = String(
+    Array.isArray(req.params.ci) ? req.params.ci[0] : req.params.ci,
+  ).trim();
+
+  if (!ci) {
+    res.status(400).json({ message: "CI requerido" });
+    return;
+  }
+
+  const estudiante = await prisma.estudiante.findUnique({
+    where: { ci },
+    include: {
+      inscripciones: {
+        orderBy: { creadoEn: "desc" },
+        include: {
+          promocion: true,
+          cursos: { include: { curso: { include: { area: true } } } },
+        },
+      },
+    },
+  });
+
+  if (!estudiante) {
+    res.status(404).json({ message: "Estudiante no encontrado" });
+    return;
+  }
+
+  res.json(mapEstudianteToPortalDto(estudiante));
+}
 export async function createStudent(
   req: Request,
   res: Response,
@@ -285,7 +384,7 @@ export async function updateStudent(
 ): Promise<void> {
   const ci = String(req.params.ci);
 
-  const { nombres, apellidos, telefono, email, profesion, departamento } =
+  const { nombres, apellidos, prefijo, profesion, telefono, email, departamento } =
     req.body;
 
   try {
@@ -294,9 +393,10 @@ export async function updateStudent(
       data: {
         nombres,
         apellidos,
+        prefijo,
+        profesion,
         telefono,
         email,
-        profesion,
         departamento,
       },
     });
