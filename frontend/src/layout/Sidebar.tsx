@@ -1,8 +1,5 @@
-import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { apiGet } from '../api/client';
 import { useAuth, useRole } from '../context/AuthContext';
-import type { PaymentsSummaryDto } from '../types/api';
 import { ROLE_LABELS } from '../types/role';
 
 function navClass({ isActive }: { isActive: boolean }) {
@@ -18,25 +15,6 @@ export function Sidebar() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const isAdmin = role === 'admin';
-  const [pay, setPay] = useState<PaymentsSummaryDto | null>(null);
-
-  useEffect(() => {
-    if (!isAdmin) {
-      setPay(null);
-      return;
-    }
-    let cancelled = false;
-    apiGet<PaymentsSummaryDto>('/api/payments/summary')
-      .then((d) => {
-        if (!cancelled) setPay(d);
-      })
-      .catch(() => {
-        if (!cancelled) setPay({ pendientes: 0, parciales: 0, pagados: 0 });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [isAdmin]);
 
   function onLogout() {
     logout();

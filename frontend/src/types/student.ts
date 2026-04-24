@@ -24,6 +24,9 @@ export interface Estudiante {
   nombre: string;
   ci: string;
 
+  prefijo?: string;
+  profesion?: string;
+
   tipoInscripcion?: "promocion" | "individual";
   promocionNombre?: string;
 

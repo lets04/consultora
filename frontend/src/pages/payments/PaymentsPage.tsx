@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { apiGet, apiPost } from "../../api/client";
 import { useRole } from "../../context/AuthContext";
 import type { InscripcionDto } from "../../types/api";
@@ -8,13 +8,43 @@ interface PaymentsListResponse {
   items: InscripcionDto[];
 }
 
-export function PaymentsPage() {
+type PaymentFilter = "todos" | "pendiente" | "parcial" | "pagado";
+type PaymentRouteFilter = PaymentFilter | "pendientes" | "parciales" | "pagados";
+
+interface PaymentsPageProps {
+  filtro?: PaymentRouteFilter;
+  titulo?: string;
+  detalle?: string;
+}
+
+const filterMap: Record<PaymentRouteFilter, PaymentFilter> = {
+  todos: "todos",
+  pendiente: "pendiente",
+  parcial: "parcial",
+  pagado: "pagado",
+  pendientes: "pendiente",
+  parciales: "parcial",
+  pagados: "pagado",
+};
+
+const filters: { value: PaymentFilter; label: string }[] = [
+  { value: "todos", label: "Todos" },
+  { value: "pendiente", label: "Pendiente" },
+  { value: "parcial", label: "Parcial" },
+  { value: "pagado", label: "Pagado" },
+];
+
+export function PaymentsPage({
+  filtro: filtroInicial = "todos",
+  titulo = "Pagos",
+  detalle,
+}: PaymentsPageProps) {
   const role = useRole();
   const isAdmin = role === "admin";
 
-  const [filtro, setFiltro] = useState<
-    "todos" | "pendientes" | "parciales" | "pagados"
-  >("todos");
+  const [filtro, setFiltro] = useState<PaymentFilter>(
+    filterMap[filtroInicial],
+  );
 
   const [items, setItems] = useState<InscripcionDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +63,10 @@ export function PaymentsPage() {
 
   const esPagado = filtro === "pagado";
   const colSpan = esPagado ? 4 : 8;
+
+  useEffect(() => {
+    setFiltro(filterMap[filtroInicial]);
+  }, [filtroInicial]);
 
   // cargar datos
   useEffect(() => {
@@ -105,18 +139,25 @@ export function PaymentsPage() {
   }
 
   if (loading) return <div className="empty-hint">Cargando…</div>;
-  console.log(filtro, items);
+
   return (
     <>
+      <div className="sec-header">
+        <div>
+          <h2>{titulo}</h2>
+          {detalle && <p>{detalle}</p>}
+        </div>
+      </div>
+
       {/* 🔷 TABS */}
       <div className="tabs-pro">
-        {["todos", "pendiente", "parcial", "pagado"].map((f) => (
+        {filters.map((filter) => (
           <button
-            key={f}
-            className={filtro === f ? "active" : ""}
-            onClick={() => setFiltro(f as any)}
+            key={filter.value}
+            className={filtro === filter.value ? "active" : ""}
+            onClick={() => setFiltro(filter.value)}
           >
-            {f}
+            {filter.label}
           </button>
         ))}
       </div>
@@ -152,9 +193,9 @@ export function PaymentsPage() {
               const saldoRestante = Math.max(item.saldo - montoNumber, 0);
 
               return (
-                <>
+                <Fragment key={item.id}>
                   {/* FILA */}
-                  <tr key={item.id}>
+                  <tr>
                     <td>{item.estudiante}</td>
                     <td>{item.curso}</td>
                     <td>{item.fecha}</td>
@@ -248,7 +289,13 @@ export function PaymentsPage() {
                           {/* SELECT */}
                           <select
                             value={tipoPago}
-                            onChange={(e) => setTipoPago(e.target.value as any)}
+                            onChange={(e) =>
+                              setTipoPago(
+                                e.target.value as
+                                  | "efectivo"
+                                  | "transferencia",
+                              )
+                            }
                           >
                             <option value="efectivo">Efectivo</option>
                             <option value="transferencia">Transferencia</option>
@@ -275,7 +322,7 @@ export function PaymentsPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>

@@ -5,12 +5,20 @@ export function StudentInfoTab({ e }: { e: Estudiante }) {
     <div className="card">
       <div className="info-row">
         <span className="info-label">Nombre completo</span>
-        <span className="info-value">{e.nombre}</span>
+        <span className="info-value">
+          {e.prefijo ? `${e.prefijo} ` : ''}{e.nombre}
+        </span>
       </div>
       <div className="info-row">
         <span className="info-label">Cédula de identidad</span>
         <span className="info-value">{e.ci}</span>
       </div>
+      {e.profesion && (
+        <div className="info-row">
+          <span className="info-label">Profesión</span>
+          <span className="info-value">{e.profesion}</span>
+        </div>
+      )}
       <div className="info-row">
         <span className="info-label">Fecha de registro</span>
         <span className="info-value">{e.registro ?? e.inscripcion}</span>

@@ -82,3 +82,26 @@ export interface EstudianteConcluidoDto {
   inscripcion: string;
   tipo: "individual" | "promocion";
 }
+
+export interface StudentPortalCourseDto {
+  id: number;
+  nombre: string;
+  area: string;
+  tipo: "curso" | "promocion";
+  promocionNombre?: string;
+  modalidad: "certificado" | "examen";
+  fechaInscripcion: string;
+  nota?: number;
+}
+
+export interface StudentPortalDto {
+  id: number;
+  ci: string;
+  nombreCompleto: string;
+  prefijo?: string;
+  profesion?: string;
+  telefono?: string;
+  email?: string;
+  departamento?: string;
+  cursos: StudentPortalCourseDto[];
+}

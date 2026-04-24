@@ -11,6 +11,8 @@ import { EnCursoPage } from "./pages/inscriptions/EnCursoPage";
 import { InscripcionesPage } from "./pages/inscriptions/InscripcionesPage";
 import { NuevaInscripcionPage } from "./pages/inscriptions/NuevaInscripcionPage";
 import { PaymentsPage } from "./pages/payments/PaymentsPage";
+import { StudentPortalLoginPage } from "./pages/students/StudentPortalLoginPage";
+import { StudentPortalPage } from "./pages/students/StudentPortalPage";
 import { EstudiantesPage } from "./pages/students/EstudiantesPage";
 import { EstudiantesConcluidosPage } from "./pages/students/EstudiantesConcluidosPage";
 import { RegistrarEstudiantePage } from "./pages/students/RegistrarEstudiantePage";
@@ -21,6 +23,11 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/portal-estudiante" element={<StudentPortalLoginPage />} />
+        <Route
+          path="/portal-estudiante/:ci"
+          element={<StudentPortalPage />}
+        />
         <Route
           path="/"
           element={
