@@ -16,7 +16,7 @@ export function createApp() {
   const app = express();
   const allowedOrigins = (
     process.env.FRONTEND_ORIGIN ??
-    "http://localhost:5173,http://127.0.0.1:5173"
+    "http://localhost:5173,http://127.0.0.1:5173,https://consultorainnova-oq866oit4-lets04s-projects.vercel.app"
   )
     .split(",")
     .map((origin) => origin.trim())
