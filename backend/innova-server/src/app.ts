@@ -14,9 +14,17 @@ import { asyncHandler } from "./utils/asyncHandler.js";
 
 export function createApp() {
   const app = express();
+  const allowedOrigins = (
+    process.env.FRONTEND_ORIGIN ??
+    "http://localhost:5173,http://127.0.0.1:5173"
+  )
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.use(
     cors({
-      origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+      origin: allowedOrigins,
       credentials: true,
     }),
   );
