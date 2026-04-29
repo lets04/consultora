@@ -6,9 +6,19 @@ interface PromoListProps {
   error: string | null;
   onNueva: () => void;
   onEdit: (id: number) => void;
+  onToggleActive: (id: number, activa: boolean) => void;
+  updatingId: number | null;
 }
 
-export function PromoList({ promotions, loading, error, onNueva, onEdit }: PromoListProps) {
+export function PromoList({
+  promotions,
+  loading,
+  error,
+  onNueva,
+  onEdit,
+  onToggleActive,
+  updatingId,
+}: PromoListProps) {
   if (loading) {
     return <div className="empty-hint">Cargando promociones…</div>;
   }
@@ -33,7 +43,27 @@ export function PromoList({ promotions, loading, error, onNueva, onEdit }: Promo
                 {p.periodo} · {p.cursos.length} cursos
               </div>
             </div>
-            <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span
+                style={{
+                  background: p.activa ? '#dcfce7' : '#f1f5f9',
+                  color: p.activa ? '#166534' : '#64748b',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '4px 8px',
+                  borderRadius: 999,
+                }}
+              >
+                {p.activa ? 'Activa' : 'Inactiva'}
+              </span>
+              <button
+                type="button"
+                className="ab"
+                onClick={() => onToggleActive(p.id, !p.activa)}
+                disabled={updatingId === p.id}
+              >
+                {updatingId === p.id ? 'Guardando…' : p.activa ? 'Desactivar' : 'Activar'}
+              </button>
               <button type="button" className="ab" onClick={() => onEdit(p.id)}>
                 Editar
               </button>

@@ -8,4 +8,5 @@ export interface Student {
   inscripcion: string;
   pago: 'pagado' | 'parcial' | 'pendiente';
   registro?: string;
+  adminEmail?: string;
 }

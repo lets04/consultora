@@ -1,8 +1,11 @@
 import type { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
 
-export async function listPromotions(_req: Request, res: Response): Promise<void> {
+export async function listPromotions(req: Request, res: Response): Promise<void> {
+  const onlyActive = req.query.active === 'true';
+
   const rows = await prisma.promocion.findMany({
+    where: onlyActive ? { activa: true } : undefined,
     orderBy: { id: 'desc' },
     include: {
       cursos: {
@@ -60,6 +63,32 @@ export async function createPromotion(req: Request, res: Response): Promise<void
   });
 
   res.status(201).json({ id: promocion.id });
+}
+
+export async function updatePromotionStatus(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { activa } = req.body as { activa?: boolean };
+
+  if (typeof activa !== 'boolean') {
+    res.status(400).json({ message: 'Estado requerido' });
+    return;
+  }
+
+  try {
+    const promocion = await prisma.promocion.update({
+      where: { id: Number(id) },
+      data: { activa },
+    });
+
+    res.json({
+      id: promocion.id,
+      titulo: promocion.nombre,
+      periodo: promocion.periodo,
+      activa: promocion.activa,
+    });
+  } catch {
+    res.status(404).json({ message: 'Promoción no encontrada' });
+  }
 }
 
 export async function listAreas(_req: Request, res: Response): Promise<void> {

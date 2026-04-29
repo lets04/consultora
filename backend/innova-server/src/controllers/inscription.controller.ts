@@ -56,6 +56,8 @@ export async function createInscription(
   req: Request,
   res: Response,
 ): Promise<void> {
+  const userId = req.auth?.userId;
+
   const {
     studentCi,
     tipo,
@@ -104,6 +106,11 @@ export async function createInscription(
       return;
     }
 
+    if (!promocion.activa) {
+      res.status(400).json({ message: "La promoción está desactivada" });
+      return;
+    }
+
     if (promocion.cursos.length === 0) {
       res
         .status(400)
@@ -114,6 +121,7 @@ export async function createInscription(
     const inscripcion = await prisma.inscripcion.create({
       data: {
         estudianteId: estudiante.id,
+        userId,
         tipo: "promocion",
         promocionId,
         modalidad,
@@ -154,6 +162,7 @@ export async function createInscription(
     const inscripcion = await prisma.inscripcion.create({
       data: {
         estudianteId: estudiante.id,
+        userId,
         tipo: "individual",
         modalidad,
         estado: "activo",
@@ -196,4 +205,92 @@ export async function updateNota(
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar nota" });
   }
+}
+
+// Endpoint para que el gerente vea inscripciones agrupadas por admin
+export async function listInscriptionsByAdmin(
+  _req: Request,
+  res: Response,
+): Promise<void> {
+  const rows = await prisma.inscripcion.findMany({
+    orderBy: { creadoEn: "desc" },
+    include: {
+      estudiante: true,
+      user: {
+        select: { id: true, email: true },
+      },
+      promocion: true,
+      cursos: {
+        include: { curso: true },
+      },
+    },
+  });
+
+  type AdminInscripcion = {
+    id: number;
+    estudianteCi: string;
+    estudiante: string;
+    curso: string;
+    tipo: string | null;
+    modalidad: string;
+    fecha: string;
+    total: number;
+    pagado: number;
+    saldo: number;
+    estadoPago: "pendiente" | "parcial" | "pagado";
+  };
+
+  // Agrupar por admin
+  const groupedByAdmin = rows.reduce<Record<string, AdminInscripcion[]>>((acc, r) => {
+    const adminEmail = r.user?.email ?? "Sin asignar";
+    if (!acc[adminEmail]) {
+      acc[adminEmail] = [];
+    }
+
+    const total = r.montoTotal;
+    const pagado = r.montoPagado;
+    const saldo = total - pagado;
+
+    let estadoPago: "pendiente" | "parcial" | "pagado" = "pendiente";
+    if (pagado >= total) estadoPago = "pagado";
+    else if (pagado > 0) estadoPago = "parcial";
+
+    const cursos = r.cursos.map((c) => c.curso.nombre);
+    const cursosTexto =
+      cursos.length > 2
+        ? `${cursos.slice(0, 2).join(", ")} +${cursos.length - 2} más`
+        : cursos.join(", ");
+
+    acc[adminEmail].push({
+      id: r.id,
+      estudianteCi: r.estudiante.ci,
+      estudiante: `${r.estudiante.nombres} ${r.estudiante.apellidos}`,
+      curso:
+        r.tipo === "promocion"
+          ? `${r.promocion?.nombre ?? "Promoción"}: ${cursosTexto}`
+          : cursosTexto || "Sin curso",
+      tipo: r.tipo,
+      modalidad: r.modalidad === "certificado" ? "Certificado" : "Examen",
+      fecha: formatDateEs(r.creadoEn),
+      total,
+      pagado,
+      saldo,
+      estadoPago,
+    });
+    return acc;
+  }, {});
+
+  // Calcular estadísticas por admin
+  const stats = Object.entries(groupedByAdmin).map(([adminEmail, inscripciones]) => ({
+    adminEmail,
+    totalInscripciones: inscripciones.length,
+    totalMonto: inscripciones.reduce((sum, i) => sum + i.total, 0),
+    totalPagado: inscripciones.reduce((sum, i) => sum + i.pagado, 0),
+    pendiente: inscripciones.filter((i) => i.estadoPago === "pendiente").length,
+    parcial: inscripciones.filter((i) => i.estadoPago === "parcial").length,
+    pagado: inscripciones.filter((i) => i.estadoPago === "pagado").length,
+    inscripciones,
+  }));
+
+  res.json(stats);
 }

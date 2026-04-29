@@ -24,6 +24,12 @@ catalogRouter.post(
   asyncHandler(catalogController.createPromotion)
 );
 
+catalogRouter.put(
+  '/promotions/:id/status',
+  requireRole('gerente'),
+  asyncHandler(catalogController.updatePromotionStatus)
+);
+
 catalogRouter.post(
   '/areas',
   requireRole('gerente'),

@@ -39,7 +39,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 
   const role = mapRole(user.role);
   const token = jwt.sign(
-    { sub: user.email, name: user.email, role },
+    { sub: user.email, name: user.email, role, userId: user.id },
     config.jwt.secret,
     {
       issuer: config.jwt.issuer,

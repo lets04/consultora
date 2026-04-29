@@ -8,6 +8,7 @@ export function EstudiantesGerentePage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [q, setQ] = useState('');
+  const [adminFilter, setAdminFilter] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -26,16 +27,31 @@ export function EstudiantesGerentePage() {
     };
   }, []);
 
+  // Obtener lista única de admins
+  const admins = useMemo(() => {
+    const adminSet = new Set<string>();
+    list.forEach((e) => {
+      if (e.adminEmail) adminSet.add(e.adminEmail);
+    });
+    return Array.from(adminSet).sort();
+  }, [list]);
+
   const rows = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return list;
-    return list.filter(
-      (e) =>
-        e.nombre.toLowerCase().includes(s) ||
-        e.ci.includes(s) ||
-        e.curso.toLowerCase().includes(s),
-    );
-  }, [q, list]);
+    let result = list;
+    if (s) {
+      result = result.filter(
+        (e) =>
+          e.nombre.toLowerCase().includes(s) ||
+          e.ci.includes(s) ||
+          e.curso.toLowerCase().includes(s),
+      );
+    }
+    if (adminFilter) {
+      result = result.filter((e) => e.adminEmail === adminFilter);
+    }
+    return result;
+  }, [q, list, adminFilter]);
 
   const total = list.length;
   const pend = list.filter((e) => e.pago === 'pendiente').length;
@@ -67,8 +83,8 @@ export function EstudiantesGerentePage() {
           <div className="sn amber">{pend}</div>
         </div>
         <div className="stat-card">
-          <div className="sl">Nuevos mes</div>
-          <div className="sn">—</div>
+          <div className="sl">Admins activos</div>
+          <div className="sn">{admins.length}</div>
         </div>
       </div>
       <div className="sec-header">
@@ -83,6 +99,29 @@ export function EstudiantesGerentePage() {
           onChange={(ev) => setQ(ev.target.value)}
         />
       </div>
+      {admins.length > 0 && (
+        <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+          <label style={{ fontSize: 13, color: '#64748b' }}>Filtrar por admin:</label>
+          <select
+            value={adminFilter}
+            onChange={(ev) => setAdminFilter(ev.target.value)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 6,
+              border: '1px solid #e2e8f0',
+              fontSize: 13,
+              backgroundColor: 'white',
+            }}
+          >
+            <option value="">Todos los admins</option>
+            {admins.map((admin) => (
+              <option key={admin} value={admin}>
+                {admin}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <table>
         <thead>
           <tr>
@@ -91,6 +130,7 @@ export function EstudiantesGerentePage() {
             <th>Curso actual</th>
             <th>Inscripción</th>
             <th>Pago</th>
+            <th>Admin</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -107,6 +147,15 @@ export function EstudiantesGerentePage() {
               <td>{e.inscripcion}</td>
               <td>
                 <span className={'bs ' + e.pago}>{e.pago}</span>
+              </td>
+              <td>
+                {e.adminEmail ? (
+                  <span style={{ fontSize: 12, color: '#64748b' }}>
+                    {e.adminEmail}
+                  </span>
+                ) : (
+                  <span style={{ fontSize: 11, color: '#94a3b8' }}>—</span>
+                )}
               </td>
               <td>
                 <Link to={`/estudiantes/ver/${encodeURIComponent(e.ci)}`} className="ab">

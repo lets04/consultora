@@ -43,6 +43,6 @@ studentsRouter.put(
 
 studentsRouter.delete(
   '/students/:ci',
-  requireRole('gerente'),
+  requireRole('admin', 'gerente'),
   asyncHandler(studentController.deleteStudent)
 );

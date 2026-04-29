@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { apiGet } from '../../api/client';
+import { apiGet, apiPut } from '../../api/client';
 import type { PromotionDto } from '../../types/api';
 import { PromoConfirm } from './PromoConfirm';
 import { PromoEditor } from './PromoEditor';
@@ -12,6 +12,7 @@ export function PromocionesPage() {
   const [promotions, setPromotions] = useState<PromotionDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   useEffect(() => {
     if (view !== 'list') return;
@@ -33,6 +34,23 @@ export function PromocionesPage() {
     };
   }, [view]);
 
+  async function handleToggleActive(id: number, activa: boolean) {
+    setUpdatingId(id);
+    setError(null);
+    try {
+      await apiPut(`/api/promotions/${id}/status`, { activa });
+      setPromotions((current) =>
+        current.map((promotion) =>
+          promotion.id === id ? { ...promotion, activa } : promotion,
+        ),
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error al actualizar promoción');
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
   if (view === 'editor') {
     return <PromoEditor onBack={() => setView('list')} onSave={() => setView('confirm')} />;
   }
@@ -46,6 +64,8 @@ export function PromocionesPage() {
       error={error}
       onNueva={() => setView('editor')}
       onEdit={() => setView('editor')}
+      onToggleActive={handleToggleActive}
+      updatingId={updatingId}
     />
   );
 }

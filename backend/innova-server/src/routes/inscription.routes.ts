@@ -12,6 +12,12 @@ inscriptionsRouter.get(
   asyncHandler(inscriptionController.listInscriptions)
 );
 
+inscriptionsRouter.get(
+  '/inscriptions/by-admin',
+  requireRole('gerente'),
+  asyncHandler(inscriptionController.listInscriptionsByAdmin)
+);
+
 inscriptionsRouter.post(
   '/inscriptions',
   requireRole('admin'),

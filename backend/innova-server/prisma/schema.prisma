@@ -21,6 +21,8 @@ model User {
   email    String @unique
   password String
   role     Role
+
+  inscripciones Inscripcion[]
 }
 
 // ─────────────────────────────────────────
@@ -42,7 +44,7 @@ model Estudiante {
   creadoEn      DateTime         @default(now())
   actualizadoEn DateTime         @updatedAt
 
-  inscripciones Inscripcion[]
+  inscripciones Inscripcion[]    @relation("EstudianteInscripciones")
 }
 
 // ─────────────────────────────────────────
@@ -117,6 +119,7 @@ enum EstadoInscripcion {
 model Inscripcion {
   id           Int               @id @default(autoincrement())
   estudianteId Int
+  userId       Int?              // Admin que gestionó esta inscripción
   tipo         TipoInscripcion?
   promocionId  Int?
   modalidad    Modalidad?
@@ -125,7 +128,8 @@ model Inscripcion {
   montoPagado  Float             @default(0)
   creadoEn     DateTime          @default(now())
 
-  estudiante Estudiante @relation(fields: [estudianteId], references: [id])
+  estudiante Estudiante @relation("EstudianteInscripciones", fields: [estudianteId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id])
   promocion  Promocion? @relation(fields: [promocionId], references: [id])
 
   cursos       InscripcionCurso[]
@@ -140,7 +144,7 @@ model InscripcionCurso {
   nota          Float?
   completado    Boolean @default(false)
 
-  inscripcion Inscripcion @relation(fields: [inscripcionId], references: [id])
+  inscripcion Inscripcion @relation(fields: [inscripcionId], references: [id], onDelete: Cascade)
   curso       Curso       @relation(fields: [cursoId], references: [id])
 
   certificado Certificado?
@@ -165,7 +169,7 @@ model Pago {
   tipoPago        TipoPago
   numeroComprobante String?  // Nro. de comprobante si es transferencia, nro. de recibo si es efectivo
 
-  inscripcion Inscripcion @relation(fields: [inscripcionId], references: [id])
+  inscripcion Inscripcion @relation(fields: [inscripcionId], references: [id], onDelete: Cascade)
 }
 
 // ─────────────────────────────────────────
@@ -179,6 +183,6 @@ model Certificado {
   fechaEmision       DateTime
   codigo             String?   @unique
 
-  inscripcion      Inscripcion       @relation(fields: [inscripcionId], references: [id])
+  inscripcion      Inscripcion       @relation(fields: [inscripcionId], references: [id], onDelete: Cascade)
   inscripcionCurso InscripcionCurso? @relation(fields: [inscripcionCursoId], references: [id])
 }

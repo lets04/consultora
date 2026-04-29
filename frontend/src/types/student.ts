@@ -39,6 +39,9 @@ export interface Estudiante {
   email?: string;
   departamento?: string;
 
+  // Admin que gestionó la inscripción
+  adminEmail?: string;
+
   cursos?: CursoInscrito[];
   pagos?: PagoItem[];
 }

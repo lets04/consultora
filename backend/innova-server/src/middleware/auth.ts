@@ -8,7 +8,7 @@ export type { AuthPayload, UserRole } from '../models/user.model.js';
 declare global {
   namespace Express {
     interface Request {
-      auth?: AuthPayload;
+      auth?: AuthPayload & { userId?: number };
     }
   }
 }
@@ -43,7 +43,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
     const decoded = jwt.verify(token, config.jwt.secret, {
       issuer: config.jwt.issuer,
       audience: config.jwt.audience,
-    }) as jwt.JwtPayload & { name?: string; role?: string };
+    }) as jwt.JwtPayload & { name?: string; role?: string; userId?: number };
 
     const role = decoded.role as UserRole | undefined;
     const name = (decoded.name ?? decoded.sub) as string;
@@ -51,7 +51,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
       res.status(401).json({ message: 'Token inválido' });
       return;
     }
-    req.auth = { sub: name, name, role };
+    req.auth = { sub: name, name, role, userId: decoded.userId };
     next();
   } catch {
     res.status(401).json({ message: 'Token inválido' });

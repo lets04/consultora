@@ -35,10 +35,6 @@ export function NuevaInscripcionPage() {
     }
 
     const promo = promotions.find((p) => p.id === promocionId);
-    console.log("promocionId:", promocionId);
-    console.log("promo encontrado:", promo);
-    console.log("promo?.cursos:", promo?.cursos);
-
     setPromoCursosDisponibles(promo?.cursos ?? []);
   }, [promocionId, promotions]);
 
@@ -47,7 +43,7 @@ export function NuevaInscripcionPage() {
     Promise.all([
       apiGet<Estudiante[]>("/api/students"),
       apiGet<AreaDto[]>("/api/areas"),
-      apiGet<PromotionDto[]>("/api/promotions"),
+      apiGet<PromotionDto[]>("/api/promotions?active=true"),
     ])
       .then(([studentsData, areaData, promotionData]) => {
         if (cancelled) return;
@@ -138,10 +134,6 @@ export function NuevaInscripcionPage() {
   if (loading) {
     return <div className="empty-hint">Cargando formulario...</div>;
   }
-
-  console.log("areas:", areas);
-  console.log("promotions:", promotions);
-  console.log("cursosPromocion:", cursosPromocion);
 
   return (
     <>
@@ -385,12 +377,19 @@ export function NuevaInscripcionPage() {
                     }}
                   >
                     <option value="">Selecciona una promoción</option>
-                    {promotions.map((promo) => (
+                    {promotions
+                      .filter((promo) => promo.activa)
+                      .map((promo) => (
                       <option key={promo.id} value={promo.id}>
                         {promo.titulo} — {promo.periodo}
                       </option>
                     ))}
                   </select>
+                  {promotions.length === 0 && (
+                    <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>
+                      No hay promociones activas disponibles.
+                    </div>
+                  )}
                 </div>
 
                 {/*CURSOS */}
@@ -403,9 +402,6 @@ export function NuevaInscripcionPage() {
                     {promoCursosDisponibles
                       .filter((curso) => curso && curso.id != null)
                       .map((curso) => {
-                        console.log("CURSO DEBUG:", curso);
-                        console.log("curso.id:", curso.id, typeof curso.id);
-
                         return (
                           <label
                             key={`curso-${curso.id}`}
@@ -427,9 +423,6 @@ export function NuevaInscripcionPage() {
                               )}
                               onChange={() => {
                                 const id = Number(curso.id);
-
-                                console.log("CLICK curso:", curso);
-                                console.log("ID enviado:", id);
 
                                 setCursosPromocion((prev) =>
                                   prev.includes(id)

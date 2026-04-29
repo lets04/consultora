@@ -23,6 +23,7 @@ function mapEstudianteToDto(estudiante: {
     montoTotal: number;
     montoPagado: number;
     estado: string;
+    user?: { email: string } | null;
     cursos: Array<{ curso: { nombre: string } }>;
   }>;
 }): Student {
@@ -45,6 +46,7 @@ function mapEstudianteToDto(estudiante: {
         )
       : "pendiente",
     registro: formatDateEs(estudiante.creadoEn),
+    adminEmail: latestInscripcion?.user?.email,
   };
 }
 
@@ -207,7 +209,10 @@ export async function listStudents(
     include: {
       inscripciones: {
         orderBy: { creadoEn: "desc" },
-        include: { cursos: { include: { curso: true } } },
+        include: {
+          user: { select: { email: true } },
+          cursos: { include: { curso: true } },
+        },
       },
     },
   });
@@ -414,12 +419,47 @@ export async function deleteStudent(
   const ci = String(req.params.ci);
 
   try {
+    // Primero obtener el estudiante y sus inscripciones
+    const estudiante = await prisma.estudiante.findUnique({
+      where: { ci },
+      include: {
+        inscripciones: { select: { id: true } },
+      },
+    });
+
+    if (!estudiante) {
+      res.status(404).json({ message: "Estudiante no encontrado" });
+      return;
+    }
+
+    // Eliminar inscripciones en cascada
+    for (const inscripcion of estudiante.inscripciones) {
+      // Eliminar pagos relacionados
+      await prisma.pago.deleteMany({
+        where: { inscripcionId: inscripcion.id },
+      });
+      // Eliminar cursos inscritos
+      await prisma.inscripcionCurso.deleteMany({
+        where: { inscripcionId: inscripcion.id },
+      });
+      // Eliminar certificados
+      await prisma.certificado.deleteMany({
+        where: { inscripcionId: inscripcion.id },
+      });
+      // Eliminar la inscripción
+      await prisma.inscripcion.delete({
+        where: { id: inscripcion.id },
+      });
+    }
+
+    // Finalmente eliminar el estudiante
     await prisma.estudiante.delete({
       where: { ci },
     });
 
     res.json({ message: "Estudiante eliminado" });
-  } catch {
-    res.status(404).json({ message: "No encontrado" });
+  } catch (error) {
+    console.error('Error al eliminar estudiante:', error);
+    res.status(500).json({ message: "Error al eliminar estudiante" });
   }
 }

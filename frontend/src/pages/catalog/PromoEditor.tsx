@@ -109,17 +109,9 @@ export function PromoEditor({ onBack, onSave }: PromoEditorProps) {
           <div className="form-field">
             <label>Nombre de la promoción</label>
             <input
-              placeholder="Ej: Semana 16 — Abril 2025"
+              placeholder=""
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
-            />
-          </div>
-          <div className="form-field">
-            <label>Semana / Período</label>
-            <input
-              placeholder="Ej: 14 al 19 de abril"
-              value={periodo}
-              onChange={(e) => setPeriodo(e.target.value)}
             />
           </div>
         </div>
