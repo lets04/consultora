@@ -29,16 +29,19 @@ export async function listPromotions(req: Request, res: Response): Promise<void>
 }
 
 export async function createPromotion(req: Request, res: Response): Promise<void> {
-  const { titulo, periodo, cursos } = req.body as { titulo: string; periodo: string; cursos: string[] };
+  const { titulo, cursos } = req.body as { titulo: string; cursos: Array<string | number> };
 
-  if (!titulo || !periodo || !Array.isArray(cursos) || cursos.length === 0) {
+  if (!titulo || !Array.isArray(cursos) || cursos.length === 0) {
     res.status(400).json({ message: 'Datos incompletos' });
     return;
   }
 
-  // Obtener IDs de cursos por nombre
+  const cursosNumericos = cursos.every((curso) => typeof curso === 'number');
+
   const cursoRecords = await prisma.curso.findMany({
-    where: { nombre: { in: cursos } },
+    where: cursosNumericos
+      ? { id: { in: cursos as number[] } }
+      : { nombre: { in: cursos as string[] } },
     select: { id: true },
   });
 
@@ -50,7 +53,7 @@ export async function createPromotion(req: Request, res: Response): Promise<void
   const promocion = await prisma.promocion.create({
     data: {
       nombre: titulo,
-      periodo,
+      periodo: '',
       activa: true,
     },
   });
@@ -63,6 +66,52 @@ export async function createPromotion(req: Request, res: Response): Promise<void
   });
 
   res.status(201).json({ id: promocion.id });
+}
+
+export async function updatePromotion(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { titulo, cursos } = req.body as { titulo: string; cursos: number[] };
+  const promotionId = Number(id);
+
+  if (!titulo || !Array.isArray(cursos) || cursos.length === 0) {
+    res.status(400).json({ message: 'Datos incompletos' });
+    return;
+  }
+
+  const uniqueCourseIds = Array.from(new Set(cursos.map(Number))).filter(Boolean);
+  const cursoRecords = await prisma.curso.findMany({
+    where: { id: { in: uniqueCourseIds } },
+    select: { id: true },
+  });
+
+  if (cursoRecords.length !== uniqueCourseIds.length) {
+    res.status(400).json({ message: 'Algunos cursos no existen' });
+    return;
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.promocion.update({
+        where: { id: promotionId },
+        data: {
+          nombre: titulo,
+        },
+      }),
+      prisma.promocionCurso.deleteMany({
+        where: { promocionId: promotionId },
+      }),
+      prisma.promocionCurso.createMany({
+        data: uniqueCourseIds.map((cursoId) => ({
+          promocionId: promotionId,
+          cursoId,
+        })),
+      }),
+    ]);
+
+    res.json({ id: promotionId });
+  } catch {
+    res.status(404).json({ message: 'Promoción no encontrada' });
+  }
 }
 
 export async function updatePromotionStatus(req: Request, res: Response): Promise<void> {

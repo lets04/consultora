@@ -25,6 +25,12 @@ catalogRouter.post(
 );
 
 catalogRouter.put(
+  '/promotions/:id',
+  requireRole('gerente'),
+  asyncHandler(catalogController.updatePromotion)
+);
+
+catalogRouter.put(
   '/promotions/:id/status',
   requireRole('gerente'),
   asyncHandler(catalogController.updatePromotionStatus)

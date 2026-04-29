@@ -1,4 +1,4 @@
-import type { PromotionDto } from '../../types/api';
+import type { PromotionDto } from "../../types/api";
 
 interface PromoListProps {
   promotions: PromotionDto[];
@@ -36,40 +36,50 @@ export function PromoList({
       </div>
       {promotions.map((p) => (
         <div key={p.id} className="card" style={{ marginBottom: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 14,
+            }}
+          >
             <div>
-              <div style={{ fontSize: 13, fontWeight: 500, color: '#0B2A4A' }}>{p.titulo}</div>
-              <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 2 }}>
-                {p.periodo} · {p.cursos.length} cursos
+              <div style={{ fontSize: 13, fontWeight: 500, color: "#0B2A4A" }}>
+                {p.titulo}
+              </div>
+              <div style={{ fontSize: 11.5, color: "#64748b", marginTop: 2 }}>
+                {p.cursos.length} cursos
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span
                 style={{
-                  background: p.activa ? '#dcfce7' : '#f1f5f9',
-                  color: p.activa ? '#166534' : '#64748b',
+                  background: p.activa ? "#dcfce7" : "#f1f5f9",
+                  color: p.activa ? "#166534" : "#64748b",
                   fontSize: 11,
                   fontWeight: 600,
-                  padding: '4px 8px',
+                  padding: "4px 8px",
                   borderRadius: 999,
                 }}
               >
-                {p.activa ? 'Activa' : 'Inactiva'}
+                {p.activa ? "Activa" : "Inactiva"}
               </span>
-              <button
-                type="button"
-                className="ab"
-                onClick={() => onToggleActive(p.id, !p.activa)}
-                disabled={updatingId === p.id}
-              >
-                {updatingId === p.id ? 'Guardando…' : p.activa ? 'Desactivar' : 'Activar'}
-              </button>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={p.activa}
+                  onChange={() => onToggleActive(p.id, !p.activa)}
+                  disabled={updatingId === p.id}
+                />
+                <span className="slider"></span>
+              </label>
               <button type="button" className="ab" onClick={() => onEdit(p.id)}>
                 Editar
               </button>
             </div>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {p.cursos.map((c) => (
               <span key={c.id} className="promo-chip">
                 {c.nombre}

@@ -381,7 +381,7 @@ export function NuevaInscripcionPage() {
                       .filter((promo) => promo.activa)
                       .map((promo) => (
                       <option key={promo.id} value={promo.id}>
-                        {promo.titulo} — {promo.periodo}
+                        {promo.titulo}
                       </option>
                     ))}
                   </select>

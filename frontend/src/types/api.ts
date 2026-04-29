@@ -39,7 +39,6 @@ export interface DashboardGerenteDto {
 export interface PromotionDto {
   id: number;
   titulo: string;
-  periodo: string;
   activa: boolean;
   cursos: {
     id: number;

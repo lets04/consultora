@@ -13,6 +13,7 @@ export function PromocionesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [editingPromotion, setEditingPromotion] = useState<PromotionDto | null>(null);
 
   useEffect(() => {
     if (view !== 'list') return;
@@ -52,7 +53,19 @@ export function PromocionesPage() {
   }
 
   if (view === 'editor') {
-    return <PromoEditor onBack={() => setView('list')} onSave={() => setView('confirm')} />;
+    return (
+      <PromoEditor
+        promotion={editingPromotion}
+        onBack={() => {
+          setEditingPromotion(null);
+          setView('list');
+        }}
+        onSave={() => {
+          setEditingPromotion(null);
+          setView('confirm');
+        }}
+      />
+    );
   }
   if (view === 'confirm') {
     return <PromoConfirm onList={() => setView('list')} onAnother={() => setView('editor')} />;
@@ -62,8 +75,14 @@ export function PromocionesPage() {
       promotions={promotions}
       loading={loading}
       error={error}
-      onNueva={() => setView('editor')}
-      onEdit={() => setView('editor')}
+      onNueva={() => {
+        setEditingPromotion(null);
+        setView('editor');
+      }}
+      onEdit={(id) => {
+        setEditingPromotion(promotions.find((promotion) => promotion.id === id) ?? null);
+        setView('editor');
+      }}
       onToggleActive={handleToggleActive}
       updatingId={updatingId}
     />
