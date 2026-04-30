@@ -24,10 +24,13 @@ export interface DashboardAdminDto {
 
 export interface DashboardGerenteDto {
   estudiantesActivos: number;
-  promocionSemana: number;
-  areasActivas: number;
+  promocionesActivas: number;
+  promocionesInactivas: number;
+  totalPromociones: number;
+  cursosPromocion: number;
+  estudiantesPromocion: number;
+  porcentajeEstudiantesPromocion: number;
   cursosCatalogo: number;
-  previewCursos: { area: string; curso: string }[];
   resumenEstudiantes: {
     totalRegistrados: number;
     pagoPendiente: number;

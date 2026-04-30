@@ -107,7 +107,7 @@ export function PromoEditor({ promotion, onBack, onSave }: PromoEditorProps) {
       <div className="promo-week-header">
         <div>
           <div style={{ fontSize: 14, fontWeight: 500, color: "#0B2A4A" }}>
-            {isEditing ? "Editar promoción semanal" : "Nueva promoción semanal"}
+            {isEditing ? "Editar promoción" : "Nueva promoción"}
           </div>
           <div style={{ fontSize: 11.5, color: "#64748b" }}>
             {isEditing

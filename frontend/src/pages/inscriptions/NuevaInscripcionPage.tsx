@@ -138,7 +138,7 @@ export function NuevaInscripcionPage() {
   return (
     <>
       <div className="sec-header">
-        <h2>Nueva inscripción</h2>
+        <h2> </h2>
         <Link to="/inscripciones" className="btn-secondary">
           ← Volver
         </Link>

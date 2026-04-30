@@ -61,11 +61,32 @@ export async function buildAdminDashboard(prisma: PrismaClient) {
 }
 
 export async function buildGerenteDashboard(prisma: PrismaClient) {
-  const [totalEstudiantes, promActiva, areasList, totalCursos, totalReg, pagoPend, inscAct, nuevosMes] =
+  const [
+    totalEstudiantes,
+    promocionesActivas,
+    promocionesInactivas,
+    totalPromociones,
+    cursosPromocion,
+    estudiantesConPromocion,
+    totalCursos,
+    totalReg,
+    pagoPend,
+    inscAct,
+    nuevosMes,
+  ] =
     await Promise.all([
       prisma.estudiante.count(),
-      prisma.promocion.findFirst({ where: { activa: true }, orderBy: { id: 'desc' } }),
-      prisma.area.findMany({ orderBy: { id: 'asc' }, include: { cursos: true } }),
+      prisma.promocion.count({ where: { activa: true } }),
+      prisma.promocion.count({ where: { activa: false } }),
+      prisma.promocion.count(),
+      prisma.promocionCurso.count({
+        where: { promocion: { activa: true } },
+      }),
+      prisma.inscripcion.findMany({
+        where: { tipo: 'promocion' },
+        distinct: ['estudianteId'],
+        select: { estudianteId: true },
+      }),
       prisma.curso.count(),
       prisma.estudiante.count(),
       prisma.inscripcion.count({ where: { montoPagado: 0 } }),
@@ -73,17 +94,16 @@ export async function buildGerenteDashboard(prisma: PrismaClient) {
       prisma.inscripcion.count({ where: { creadoEn: { gte: startOfCurrentMonth() } } }),
     ]);
 
-  const previewCursos = areasList.slice(0, 5).map((a) => ({
-    area: a.nombre,
-    curso: a.cursos[0]?.nombre ?? 'Sin curso',
-  }));
-
   return {
     estudiantesActivos: totalEstudiantes,
-    promocionSemana: promActiva?.id ?? 0,
-    areasActivas: areasList.length,
+    promocionesActivas,
+    promocionesInactivas,
+    totalPromociones,
+    cursosPromocion,
+    estudiantesPromocion: estudiantesConPromocion.length,
+    porcentajeEstudiantesPromocion:
+      totalEstudiantes > 0 ? Math.round((estudiantesConPromocion.length / totalEstudiantes) * 100) : 0,
     cursosCatalogo: totalCursos,
-    previewCursos,
     resumenEstudiantes: {
       totalRegistrados: totalReg,
       pagoPendiente: pagoPend,

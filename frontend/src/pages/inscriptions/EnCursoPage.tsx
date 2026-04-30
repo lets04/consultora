@@ -35,7 +35,6 @@ export function EnCursoPage() {
 
   return (
     <div className="card">
-      <div className="form-section-title">Inscripciones en curso</div>
       <table>
         <thead>
           <tr>

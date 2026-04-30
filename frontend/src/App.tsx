@@ -123,34 +123,11 @@ export default function App() {
             path="pagos/todos"
             element={
               <RoleGuard allow={["admin"]}>
-                <PaymentsPage filtro="todos" titulo="Todos los pagos" detalle="Listado completo de pagos." />
+                <PaymentsPage filtro="todos" titulo="" detalle="" />
               </RoleGuard>
             }
           />
-          <Route
-            path="pagos/pendientes"
-            element={
-              <RoleGuard allow={["admin"]}>
-                <PaymentsPage filtro="pendientes" titulo="Pagos pendientes" detalle="Filtra pagos con estado pendiente." />
-              </RoleGuard>
-            }
-          />
-          <Route
-            path="pagos/parciales"
-            element={
-              <RoleGuard allow={["admin"]}>
-                <PaymentsPage filtro="parciales" titulo="Pagos parciales" detalle="Filtra pagos parciales." />
-              </RoleGuard>
-            }
-          />
-          <Route
-            path="pagos/pagados"
-            element={
-              <RoleGuard allow={["admin"]}>
-                <PaymentsPage filtro="pagados" titulo="Pagos completados" detalle="Filtra pagos completados." />
-              </RoleGuard>
-            }
-          />
+         
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>

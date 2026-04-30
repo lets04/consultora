@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from '@/assets/logo.jpg';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -34,6 +35,9 @@ export function LoginPage() {
     return (
       <div className="login-page">
         <div className="login-card" style={{ textAlign: 'center' }}>
+          <div className="login-logo-ring">
+            <img src={logo} alt="logo" />
+          </div>
           <div className="login-brand">INNOVA</div>
           <p className="login-sub">Verificando sesión…</p>
         </div>
@@ -44,41 +48,40 @@ export function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
+
+        {/* 🔥 LOGO */}
+        <div className="login-logo-ring">
+          <img src={logo} alt="logo" />
+        </div>
+
         <div className="login-brand">INNOVA</div>
         <p className="login-sub">Ingresa con tu usuario institucional</p>
+
         <form onSubmit={onSubmit} className="login-form">
           <div className="form-field">
-            <label htmlFor="user">Usuario</label>
+            <label>Usuario</label>
             <input
-              id="user"
-              name="userName"
-              autoComplete="username"
               value={userName}
-              onChange={(ev) => setUserName(ev.target.value)}
+              onChange={(e) => setUserName(e.target.value)}
               placeholder="admin o gerente"
-              required
             />
           </div>
+
           <div className="form-field">
-            <label htmlFor="pass">Contraseña</label>
+            <label>Contraseña</label>
             <input
-              id="pass"
-              name="password"
               type="password"
-              autoComplete="current-password"
               value={password}
-              onChange={(ev) => setPassword(ev.target.value)}
-              required
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
           {error && <div className="login-error">{error}</div>}
+
           <button type="submit" className="btn-primary login-submit" disabled={pending}>
             {pending ? 'Ingresando…' : 'Ingresar'}
           </button>
         </form>
-        <div className="login-hint">
-          <strong>Demo:</strong> admin / admin123 · gerente / gerente123
-        </div>
       </div>
     </div>
   );

@@ -10,6 +10,8 @@ export function EstudiantesAdminPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<{ ci: string; nombre: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const role = useRole();
 
   useEffect(() => {
@@ -43,17 +45,20 @@ export function EstudiantesAdminPage() {
   if (loading) return <div className="empty-hint">Cargando estudiantes…</div>;
   if (err) return <div className="empty-hint">{err}</div>;
 
-  async function handleDelete(ci: string) {
-    if (!confirm("¿Eliminar estudiante?")) return;
-
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await apiDelete(`/api/students/${ci}`);
-      setList((prev) => prev.filter((e) => e.ci !== ci));
+      await apiDelete(`/api/students/${pendingDelete.ci}`);
+      setList((prev) => prev.filter((e) => e.ci !== pendingDelete.ci));
+      setPendingDelete(null);
     } catch (e) {
       console.error(e);
       alert("Error al eliminar");
+    } finally {
+      setDeleting(false);
     }
-  }
+  };
 
   return (
     <>
@@ -110,7 +115,7 @@ export function EstudiantesAdminPage() {
                   <button
                     type="button"
                     className="ab"
-                    onClick={() => handleDelete(e.ci)}
+                    onClick={() => setPendingDelete({ ci: e.ci, nombre: e.nombre })}
                   >
                     Eliminar
                   </button>
@@ -120,6 +125,28 @@ export function EstudiantesAdminPage() {
           ))}
         </tbody>
       </table>
+
+      {pendingDelete && (
+        <div className="modal-overlay" onClick={() => setPendingDelete(null)}>
+          <div className="modal confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="confirm-icon">!</div>
+            <h3>Eliminar estudiante</h3>
+            <p>
+              ¿Está seguro que desea eliminar a <strong>{pendingDelete.nombre}</strong> (CI: {pendingDelete.ci})?
+              <br /><br />
+              Se borrarán todos sus datos e inscripciones. Esta acción no se puede deshacer.
+            </p>
+            <div className="form-actions">
+              <button type="button" className="btn-secondary" onClick={() => setPendingDelete(null)} disabled={deleting}>
+                Cancelar
+              </button>
+              <button type="button" className="btn-danger" onClick={handleConfirmDelete} disabled={deleting}>
+                {deleting ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

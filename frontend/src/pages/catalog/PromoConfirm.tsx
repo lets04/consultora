@@ -10,7 +10,7 @@ export function PromoConfirm({ onList, onAnother }: PromoConfirmProps) {
         <div className="success-icon">★</div>
         <div style={{ fontSize: 15, fontWeight: 500, color: '#0B2A4A', marginBottom: 6 }}>Promoción guardada</div>
         <div style={{ fontSize: 12.5, color: '#64748b', marginBottom: 18 }}>
-          La promoción semanal fue configurada correctamente con 5 cursos.
+          La promoción fue configurada correctamente.
         </div>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
           <button type="button" className="btn-primary" onClick={onList}>

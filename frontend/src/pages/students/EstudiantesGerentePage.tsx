@@ -9,6 +9,8 @@ export function EstudiantesGerentePage() {
   const [err, setErr] = useState<string | null>(null);
   const [q, setQ] = useState('');
   const [adminFilter, setAdminFilter] = useState('');
+  const [pendingDelete, setPendingDelete] = useState<{ ci: string; nombre: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,17 +61,20 @@ export function EstudiantesGerentePage() {
   if (loading) return <div className="empty-hint">Cargando estudiantes…</div>;
   if (err) return <div className="empty-hint">{err}</div>;
 
-  async function handleDelete(ci: string) {
-    if (!confirm('¿Eliminar estudiante?')) return;
-
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await apiDelete(`/api/students/${ci}`);
-      setList((prev) => prev.filter((e) => e.ci !== ci));
+      await apiDelete(`/api/students/${pendingDelete.ci}`);
+      setList((prev) => prev.filter((e) => e.ci !== pendingDelete.ci));
+      setPendingDelete(null);
     } catch (error) {
       console.error(error);
       alert('Error al eliminar estudiante');
+    } finally {
+      setDeleting(false);
     }
-  }
+  };
 
   return (
     <>
@@ -100,26 +105,39 @@ export function EstudiantesGerentePage() {
         />
       </div>
       {admins.length > 0 && (
-        <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
-          <label style={{ fontSize: 13, color: '#64748b' }}>Filtrar por admin:</label>
-          <select
-            value={adminFilter}
-            onChange={(ev) => setAdminFilter(ev.target.value)}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 6,
-              border: '1px solid #e2e8f0',
-              fontSize: 13,
-              backgroundColor: 'white',
-            }}
-          >
-            <option value="">Todos los admins</option>
-            {admins.map((admin) => (
-              <option key={admin} value={admin}>
-                {admin}
-              </option>
-            ))}
-          </select>
+        <div className="manager-filter-card">
+          <div className="manager-filter-main">
+            <div className="manager-filter-icon">◎</div>
+            <div className="manager-filter-copy">
+              <span className="manager-filter-label">Admin responsable</span>
+              <span className="manager-filter-meta">
+                {rows.length} de {total} estudiantes visibles
+              </span>
+            </div>
+          </div>
+          <div className="manager-filter-controls">
+            <select
+              value={adminFilter}
+              onChange={(ev) => setAdminFilter(ev.target.value)}
+              className="manager-admin-select"
+            >
+              <option value="">Todos los admins</option>
+              {admins.map((admin) => (
+                <option key={admin} value={admin}>
+                  {admin}
+                </option>
+              ))}
+            </select>
+            {adminFilter && (
+              <button
+                type="button"
+                className="btn-secondary btn-compact"
+                onClick={() => setAdminFilter('')}
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
         </div>
       )}
       <table>
@@ -161,7 +179,7 @@ export function EstudiantesGerentePage() {
                 <Link to={`/estudiantes/ver/${encodeURIComponent(e.ci)}`} className="ab">
                   Ver
                 </Link>
-                <button type="button" className="ab" onClick={() => handleDelete(e.ci)}>
+                <button type="button" className="ab" onClick={() => setPendingDelete({ ci: e.ci, nombre: e.nombre })}>
                   Eliminar
                 </button>
               </td>
@@ -169,6 +187,28 @@ export function EstudiantesGerentePage() {
           ))}
         </tbody>
       </table>
+
+      {pendingDelete && (
+        <div className="modal-overlay" onClick={() => setPendingDelete(null)}>
+          <div className="modal confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="confirm-icon">!</div>
+            <h3>Eliminar estudiante</h3>
+            <p>
+              ¿Está seguro que desea eliminar a <strong>{pendingDelete.nombre}</strong> (CI: {pendingDelete.ci})?
+              <br /><br />
+              Se borrarán todos sus datos e inscripciones. Esta acción no se puede deshacer.
+            </p>
+            <div className="form-actions">
+              <button type="button" className="btn-secondary" onClick={() => setPendingDelete(null)} disabled={deleting}>
+                Cancelar
+              </button>
+              <button type="button" className="btn-danger" onClick={handleConfirmDelete} disabled={deleting}>
+                {deleting ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

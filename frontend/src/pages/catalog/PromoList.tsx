@@ -29,7 +29,7 @@ export function PromoList({
   return (
     <>
       <div className="sec-header">
-        <h2>Promociones semanales</h2>
+        <h2></h2>
         <button type="button" className="btn-primary" onClick={onNueva}>
           + Nueva promoción
         </button>

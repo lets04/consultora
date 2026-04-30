@@ -9,7 +9,11 @@ interface PaymentsListResponse {
 }
 
 type PaymentFilter = "todos" | "pendiente" | "parcial" | "pagado";
-type PaymentRouteFilter = PaymentFilter | "pendientes" | "parciales" | "pagados";
+type PaymentRouteFilter =
+  | PaymentFilter
+  | "pendientes"
+  | "parciales"
+  | "pagados";
 
 interface PaymentsPageProps {
   filtro?: PaymentRouteFilter;
@@ -42,10 +46,8 @@ export function PaymentsPage({
   const role = useRole();
   const isAdmin = role === "admin";
 
-  const [filtro, setFiltro] = useState<PaymentFilter>(
-    filterMap[filtroInicial],
-  );
-
+  const [filtro, setFiltro] = useState<PaymentFilter>(filterMap[filtroInicial]);
+  const [allItems, setAllItems] = useState<InscripcionDto[]>([]);
   const [items, setItems] = useState<InscripcionDto[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,6 +66,13 @@ export function PaymentsPage({
   const esPagado = filtro === "pagado";
   const colSpan = esPagado ? 4 : 8;
 
+  const counts = {
+    todos: allItems.length,
+    pendiente: allItems.filter((i) => i.estadoPago === "pendiente").length,
+    parcial: allItems.filter((i) => i.estadoPago === "parcial").length,
+    pagado: allItems.filter((i) => i.estadoPago === "pagado").length,
+  };
+
   useEffect(() => {
     setFiltro(filterMap[filtroInicial]);
   }, [filtroInicial]);
@@ -75,18 +84,16 @@ export function PaymentsPage({
     setLoading(true);
     setError(null);
 
-    const request =
-      filtro === "todos"
-        ? apiGet<InscripcionDto[]>("/api/inscriptions")
-        : apiGet<PaymentsListResponse>(`/api/payments/${filtro}`);
-
-    request
+    apiGet<InscripcionDto[]>("/api/inscriptions")
       .then((data) => {
-        setItems(
-          filtro === "todos"
-            ? (data as InscripcionDto[])
-            : (data as PaymentsListResponse).items,
-        );
+        setAllItems(data);
+
+        // aplicar filtro en frontend
+        if (filtro === "todos") {
+          setItems(data);
+        } else {
+          setItems(data.filter((i) => i.estadoPago === filtro));
+        }
       })
       .catch(() => setError("Error al cargar pagos"))
       .finally(() => setLoading(false));
@@ -149,15 +156,19 @@ export function PaymentsPage({
         </div>
       </div>
 
-      {/* 🔷 TABS */}
-      <div className="tabs-pro">
+      {/*  TABS */}
+      <div className="payment-tabs">
         {filters.map((filter) => (
           <button
             key={filter.value}
-            className={filtro === filter.value ? "active" : ""}
+            className={`payment-tab ${filtro === filter.value ? "active" : ""}`}
             onClick={() => setFiltro(filter.value)}
           >
-            {filter.label}
+            <span className="tab-label">{filter.label}</span>
+
+            <span className={`tab-count ${filter.value}`}>
+              {counts[filter.value]}
+            </span>
           </button>
         ))}
       </div>
@@ -291,9 +302,7 @@ export function PaymentsPage({
                             value={tipoPago}
                             onChange={(e) =>
                               setTipoPago(
-                                e.target.value as
-                                  | "efectivo"
-                                  | "transferencia",
+                                e.target.value as "efectivo" | "transferencia",
                               )
                             }
                           >

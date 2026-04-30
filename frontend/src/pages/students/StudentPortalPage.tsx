@@ -35,25 +35,9 @@ export function StudentPortalPage() {
   if (student === undefined) {
     return <div className="empty-hint">Cargando información…</div>;
   }
-
   if (!student) {
-    return (
-      <div className="portal-shell">
-        <div className="portal-wrapper">
-          <div className="card portal-card">
-            <h2 className="portal-title">No encontramos un estudiante con ese CI</h2>
-            <p className="portal-muted">
-              Verifica el número e intenta nuevamente.
-            </p>
-            <div className="portal-actions">
-              <Link to="/portal-estudiante" className="btn-secondary">
-                Volver
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    navigate("/portal-estudiante");
+    return null;
   }
 
   const displayName = student.prefijo
@@ -66,7 +50,9 @@ export function StudentPortalPage() {
         <div className="sec-header">
           <div>
             <h2>Portal del estudiante</h2>
-            <p className="portal-muted">Consulta tu perfil y tu información académica.</p>
+            <p className="portal-muted">
+              Consulta tu perfil y tu información académica.
+            </p>
           </div>
           <button
             type="button"
@@ -102,15 +88,21 @@ export function StudentPortalPage() {
               </div>
               <div className="info-row">
                 <span className="info-label">Profesión</span>
-                <span className="info-value">{student.profesion || "No registrada"}</span>
+                <span className="info-value">
+                  {student.profesion || "No registrada"}
+                </span>
               </div>
               <div className="info-row">
                 <span className="info-label">Teléfono</span>
-                <span className="info-value">{student.telefono || "No registrado"}</span>
+                <span className="info-value">
+                  {student.telefono || "No registrado"}
+                </span>
               </div>
               <div className="info-row">
                 <span className="info-label">Correo</span>
-                <span className="info-value">{student.email || "No registrado"}</span>
+                <span className="info-value">
+                  {student.email || "No registrado"}
+                </span>
               </div>
               <div className="info-row">
                 <span className="info-label">Departamento</span>
@@ -133,7 +125,9 @@ export function StudentPortalPage() {
                     <div key={course.id} className="portal-course-item">
                       <div className="portal-course-head">
                         <div>
-                          <div className="portal-course-name">{course.nombre}</div>
+                          <div className="portal-course-name">
+                            {course.nombre}
+                          </div>
                           <div className="portal-course-meta">
                             {course.area}
                             {course.promocionNombre
@@ -147,7 +141,8 @@ export function StudentPortalPage() {
                         <span>Inscripción: {course.fechaInscripcion}</span>
                         {course.modalidad === "examen" ? (
                           <span>
-                            Nota: {course.nota != null ? course.nota : "Pendiente"}
+                            Nota:{" "}
+                            {course.nota != null ? course.nota : "Pendiente"}
                           </span>
                         ) : (
                           <span>Curso con certificado</span>

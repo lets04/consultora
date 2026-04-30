@@ -146,7 +146,6 @@ export function AreasCursosPage() {
     <>
       <div className="sec-header">
         <div>
-          <h2>Áreas y cursos</h2>
           <div className="catalog-subtitle">
             Organiza el catálogo, edita cursos y mantén cada área al día.
           </div>

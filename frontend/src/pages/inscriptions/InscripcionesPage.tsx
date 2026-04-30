@@ -31,7 +31,7 @@ export function InscripcionesPage() {
   return (
     <>
       <div className="sec-header">
-        <h2>Inscripciones</h2>
+        <h2></h2>
         <Link to="/inscripciones/nueva" className="btn-primary">
           + Nueva inscripción
         </Link>

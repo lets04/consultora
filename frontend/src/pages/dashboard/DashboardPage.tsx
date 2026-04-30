@@ -38,30 +38,40 @@ export function DashboardPage() {
       <>
         <div className="stats-row">
           <div className="stat-card">
-            <div className="sl">Promoción actual</div>
-            <div className="sn blue">Sem. {gerente.promocionSemana}</div>
+            <div className="sl">Promociones activas</div>
+            <div className="sn green">{gerente.promocionesActivas}</div>
           </div>
           <div className="stat-card">
-            <div className="sl">Áreas activas</div>
-            <div className="sn purple">{gerente.areasActivas}</div>
+            <div className="sl">Cursos en promoción</div>
+            <div className="sn blue">{gerente.cursosPromocion}</div>
           </div>
           <div className="stat-card">
-            <div className="sl">Cursos en catálogo</div>
-            <div className="sn">{gerente.cursosCatalogo}</div>
+            <div className="sl">Estudiantes en promoción</div>
+            <div className="sn purple">{gerente.estudiantesPromocion}</div>
           </div>
         </div>
         <div className="grid-2">
           <div className="card">
-            <div className="form-section-title">Promoción semana actual</div>
-            {gerente.previewCursos.map((row) => (
-              <div key={`${row.area}-${row.curso}`} className="pago-row">
-                <span style={{ color: '#64748b', fontSize: 12 }}>{row.area}</span>
-                <span style={{ color: '#334155', fontWeight: 500, fontSize: 12 }}>{row.curso}</span>
-              </div>
-            ))}
+            <div className="form-section-title">Resumen de promociones</div>
+            <div className="pago-row">
+              <span style={{ color: '#64748b' }}>Activas</span>
+              <span style={{ color: '#16a34a', fontWeight: 500 }}>{gerente.promocionesActivas}</span>
+            </div>
+            <div className="pago-row">
+              <span style={{ color: '#64748b' }}>Inactivas</span>
+              <span style={{ color: '#b45309', fontWeight: 500 }}>{gerente.promocionesInactivas}</span>
+            </div>
+            <div className="pago-row">
+              <span style={{ color: '#64748b' }}>Total</span>
+              <span style={{ color: '#0B2A4A', fontWeight: 500 }}>{gerente.totalPromociones}</span>
+            </div>
+            <div className="pago-row">
+              <span style={{ color: '#64748b' }}>Estudiantes en promociones</span>
+              <span style={{ color: '#2F5FD0', fontWeight: 500 }}>{gerente.porcentajeEstudiantesPromocion}%</span>
+            </div>
             <div style={{ marginTop: 12 }}>
               <Link to="/promociones" className="btn-primary" style={{ width: '100%', textAlign: 'center' }}>
-                Gestionar promoción
+                Gestionar promociones
               </Link>
             </div>
           </div>
