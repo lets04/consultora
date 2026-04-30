@@ -12,6 +12,13 @@ export function AreasCursosPage() {
   const [editingArea, setEditingArea] = useState<AreaDto | null>(null);
   const [newCursoName, setNewCursoName] = useState("");
   const [addingCursoTo, setAddingCursoTo] = useState<string | null>(null);
+  const [editingCurso, setEditingCurso] = useState<{ id: number; nombre: string } | null>(null);
+  const [editingCursoName, setEditingCursoName] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<
+    | { type: "area"; id: number; name: string }
+    | { type: "curso"; id: number; name: string }
+    | null
+  >(null);
   const [filterArea, setFilterArea] = useState<string>("todas");
 
   const loadAreas = async () => {
@@ -64,9 +71,9 @@ export function AreasCursosPage() {
   };
 
   const handleDeleteArea = async (areaId: number) => {
-    if (!confirm("¿Eliminar área?")) return;
     try {
       await apiDelete(`/api/areas/${areaId}`);
+      setPendingDelete(null);
       loadAreas();
     } catch (e) {
       alert(e instanceof Error ? e.message : "Error");
@@ -83,6 +90,39 @@ export function AreasCursosPage() {
     } catch (e) {
       alert(e instanceof Error ? e.message : "Error");
     }
+  };
+
+  const handleEditCurso = async () => {
+    if (!editingCurso || !editingCursoName.trim()) return;
+    try {
+      await apiPut(`/api/cursos/${editingCurso.id}`, {
+        nombre: editingCursoName.trim(),
+      });
+      setEditingCurso(null);
+      setEditingCursoName("");
+      loadAreas();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Error");
+    }
+  };
+
+  const handleDeleteCurso = async (cursoId: number) => {
+    try {
+      await apiDelete(`/api/cursos/${cursoId}`);
+      setPendingDelete(null);
+      loadAreas();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Error");
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (!pendingDelete) return;
+    if (pendingDelete.type === "area") {
+      handleDeleteArea(pendingDelete.id);
+      return;
+    }
+    handleDeleteCurso(pendingDelete.id);
   };
 
   const areaOptions = [
@@ -105,7 +145,12 @@ export function AreasCursosPage() {
   return (
     <>
       <div className="sec-header">
-        <h2>Áreas y cursos</h2>
+        <div>
+          <h2>Áreas y cursos</h2>
+          <div className="catalog-subtitle">
+            Organiza el catálogo, edita cursos y mantén cada área al día.
+          </div>
+        </div>
         <button
           type="button"
           className="btn-primary"
@@ -114,29 +159,32 @@ export function AreasCursosPage() {
           + Nueva área
         </button>
       </div>
-      <div className="form-section-title" style={{ marginBottom: 10 }}>
-        <span className="fs-icon">◈</span> Filtrar por área
-      </div>
-
-      <div className="area-tabs" style={{ marginBottom: 16 }}>
-        {areaOptions.map((a) => (
-          <button
-            key={a.id}
-            type="button"
-            className={"area-tab" + (filterArea === a.id ? " active" : "")}
-            onClick={() => setFilterArea(a.id)}
-          >
-            <span
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: a.color,
-              }}
-            />
-            {a.label}
-          </button>
-        ))}
+      <div className="catalog-toolbar">
+        <div>
+          <div className="form-section-title catalog-filter-title">
+            <span className="fs-icon">◈</span> Filtrar por área
+          </div>
+          <div className="area-tabs catalog-tabs">
+            {areaOptions.map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                className={"area-tab" + (filterArea === a.id ? " active" : "")}
+                onClick={() => setFilterArea(a.id)}
+              >
+                <span
+                  style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: "50%",
+                    background: a.color,
+                  }}
+                />
+                {a.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
       {showNewArea && (
         <div className="modal-overlay" onClick={() => setShowNewArea(false)}>
@@ -216,8 +264,77 @@ export function AreasCursosPage() {
         </div>
       )}
 
+      {editingCurso && (
+        <div className="modal-overlay" onClick={() => setEditingCurso(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Editar curso</h3>
+            <div className="form-field">
+              <label>Nombre</label>
+              <input
+                value={editingCursoName}
+                onChange={(e) => setEditingCursoName(e.target.value)}
+              />
+            </div>
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setEditingCurso(null);
+                  setEditingCursoName("");
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={handleEditCurso}
+                disabled={!editingCursoName.trim()}
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {pendingDelete && (
+        <div className="modal-overlay" onClick={() => setPendingDelete(null)}>
+          <div className="modal confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="confirm-icon">!</div>
+            <h3>
+              Eliminar {pendingDelete.type === "area" ? "área" : "curso"}
+            </h3>
+            <p>
+              Esta seguro que desea eliminar{" "}
+              <strong>{pendingDelete.name}</strong>
+              {pendingDelete.type === "area"
+                ? ", esta acción no se podrá ejecutar si tiene cursos con inscripciones"
+                : ", esta acción no se podrá ejecutar si el curso ya tiene inscripciones."}
+            </p>
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setPendingDelete(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={handleConfirmDelete}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {filteredAreas.map((sec) => (
-        <div key={sec.id} className="card" style={{ marginBottom: 12 }}>
+        <div key={sec.id} className="card catalog-area-card">
           <div className="area-section-header">
             <div className="area-section-name">
               <span
@@ -229,17 +346,17 @@ export function AreasCursosPage() {
                 ({sec.cursos.length} cursos)
               </span>
             </div>
-            <div style={{ display: "flex", gap: 6 }}>
+            <div className="catalog-area-actions">
               <button
                 type="button"
-                className="ab"
+                className="btn-secondary btn-compact"
                 onClick={() => setAddingCursoTo(sec.id.toString())}
               >
                 + Curso
               </button>
               <button
                 type="button"
-                className="ab"
+                className="btn-secondary btn-compact"
                 onClick={() => {
                   setEditingArea(sec);
                   setNewAreaName(sec.nombre);
@@ -250,25 +367,33 @@ export function AreasCursosPage() {
               </button>
               <button
                 type="button"
-                className="ab"
-                onClick={() => handleDeleteArea(sec.id)}
+                className="btn-danger btn-compact"
+                onClick={() =>
+                  setPendingDelete({ type: "area", id: sec.id, name: sec.nombre })
+                }
               >
                 Eliminar área
               </button>
             </div>
           </div>
           {addingCursoTo === sec.id.toString() && (
-            <div style={{ marginBottom: 12 }}>
+            <div className="catalog-inline-form">
               <input
                 placeholder="Nombre del curso"
                 value={newCursoName}
                 onChange={(e) => setNewCursoName(e.target.value)}
               />
-              <button type="button" onClick={() => handleAddCurso(sec.id)}>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => handleAddCurso(sec.id)}
+                disabled={!newCursoName.trim()}
+              >
                 Agregar
               </button>
               <button
                 type="button"
+                className="btn-secondary"
                 onClick={() => {
                   setAddingCursoTo(null);
                   setNewCursoName("");
@@ -278,29 +403,45 @@ export function AreasCursosPage() {
               </button>
             </div>
           )}
-          {sec.cursos.map((curso) => (
-            <div key={curso.id} className="course-row">
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: sec.color,
-                  flexShrink: 0,
-                }}
-              />
-              <span className="cr-name">{curso.nombre}</span>
-              <span className="cr-hrs">—</span>
-              <div style={{ display: "flex", gap: 4 }}>
-                <button type="button" className="ab">
-                  Editar
-                </button>
-                <button type="button" className="ab">
-                  ✕
-                </button>
+          <div className="catalog-course-list">
+            {sec.cursos.length === 0 && (
+              <div className="catalog-empty-course">Esta área todavía no tiene cursos.</div>
+            )}
+            {sec.cursos.map((curso) => (
+              <div key={curso.id} className="course-row catalog-course-row">
+                <span
+                  className="catalog-course-dot"
+                  style={{ background: sec.color }}
+                />
+                <span className="cr-name">{curso.nombre}</span>
+                <div className="catalog-course-actions">
+                  <button
+                    type="button"
+                    className="ab"
+                    onClick={() => {
+                      setEditingCurso(curso);
+                      setEditingCursoName(curso.nombre);
+                    }}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    className="ab danger"
+                    onClick={() =>
+                      setPendingDelete({
+                        type: "curso",
+                        id: curso.id,
+                        name: curso.nombre,
+                      })
+                    }
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       ))}
     </>

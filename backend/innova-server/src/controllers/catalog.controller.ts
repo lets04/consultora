@@ -242,9 +242,25 @@ export async function updateCurso(req: Request, res: Response): Promise<void> {
 
 export async function deleteCurso(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
+  const cursoId = Number(id);
 
   try {
-    await prisma.curso.delete({ where: { id: Number(id) } });
+    const inscripciones = await prisma.inscripcionCurso.count({
+      where: { cursoId },
+    });
+
+    if (inscripciones > 0) {
+      res.status(400).json({
+        message: 'No se puede eliminar un curso con inscripciones registradas',
+      });
+      return;
+    }
+
+    await prisma.$transaction([
+      prisma.promocionCurso.deleteMany({ where: { cursoId } }),
+      prisma.curso.delete({ where: { id: cursoId } }),
+    ]);
+
     res.status(204).send();
   } catch {
     res.status(404).json({ message: 'Curso no encontrado' });
