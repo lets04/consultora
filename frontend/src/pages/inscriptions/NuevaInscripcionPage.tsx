@@ -67,7 +67,11 @@ export function NuevaInscripcionPage() {
 
   const filteredStudents = useMemo(() => {
     const filter = studentQuery.trim().toLowerCase();
-    if (!filter) return students;
+    if (!filter) {
+      // Sin búsqueda: mostrar solo los 2 últimos inscritos
+      return students.slice(-2).reverse();
+    }
+    // Con búsqueda: filtrar inteligentemente
     return students.filter((student) =>
       [student.nombre, student.ci].join(" ").toLowerCase().includes(filter),
     );
@@ -202,11 +206,11 @@ export function NuevaInscripcionPage() {
             <div className="student-results">
               {filteredStudents.length === 0 && (
                 <div style={{ fontSize: 12, color: "#64748b" }}>
-                  No se encontraron estudiantes
+                  {studentQuery ? "No se encontraron estudiantes" : "Ingresa un término para buscar"}
                 </div>
               )}
 
-              {filteredStudents.slice(0, 5).map((student) => (
+              {filteredStudents.map((student) => (
                 <div
                   key={student.ci}
                   className={`student-item ${studentCi === student.ci ? "selected" : ""}`}

@@ -11,6 +11,7 @@ export function EstudiantesGerentePage() {
   const [adminFilter, setAdminFilter] = useState('');
   const [pendingDelete, setPendingDelete] = useState<{ ci: string; nombre: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [displayLimit, setDisplayLimit] = useState(10);
 
   useEffect(() => {
     let cancelled = false;
@@ -153,7 +154,7 @@ export function EstudiantesGerentePage() {
           </tr>
         </thead>
         <tbody>
-          {rows.map((e, i) => (
+          {rows.slice(0, displayLimit).map((e, i) => (
             <tr key={e.ci}>
               <td style={{ color: '#94a3b8' }}>{String(i + 1).padStart(2, '0')}</td>
               <td>
@@ -187,6 +188,19 @@ export function EstudiantesGerentePage() {
           ))}
         </tbody>
       </table>
+
+      {displayLimit < rows.length && (
+        <div style={{ textAlign: "center", marginTop: 16, paddingTop: 12, borderTop: "1px solid #e2e8f0" }}>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => setDisplayLimit(prev => prev + 10)}
+            style={{ fontSize: 13 }}
+          >
+            Ver más +
+          </button>
+        </div>
+      )}
 
       {pendingDelete && (
         <div className="modal-overlay" onClick={() => setPendingDelete(null)}>

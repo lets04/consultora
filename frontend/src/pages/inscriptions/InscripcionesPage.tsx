@@ -7,6 +7,7 @@ export function InscripcionesPage() {
   const [rows, setRows] = useState<InscripcionDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [displayLimit, setDisplayLimit] = useState(10);
 
   useEffect(() => {
     let cancelled = false;
@@ -50,7 +51,11 @@ export function InscripcionesPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {rows
+              .slice()
+              .reverse()
+              .slice(0, displayLimit)
+              .map((r) => (
               <tr key={`${r.estudiante}-${r.curso}-${r.fecha}`}>
                 <td style={{ fontWeight: 500, color: "#0B2A4A" }}>
                   {r.estudiante}
@@ -79,6 +84,18 @@ export function InscripcionesPage() {
             ))}
           </tbody>
         </table>
+        {displayLimit < rows.length && (
+          <div style={{ textAlign: "center", marginTop: 16, paddingTop: 12, borderTop: "1px solid #e2e8f0" }}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => setDisplayLimit(prev => prev + 10)}
+              style={{ fontSize: 13 }}
+            >
+              Ver más +
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

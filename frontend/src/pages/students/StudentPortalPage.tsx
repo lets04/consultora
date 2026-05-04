@@ -113,7 +113,7 @@ export function StudentPortalPage() {
             </div>
 
             <div className="card">
-              <div className="form-section-title">Cursos habilitados</div>
+              <div className="form-section-title">Cursos</div>
 
               {student.cursos.length === 0 ? (
                 <div className="empty-hint portal-empty">
