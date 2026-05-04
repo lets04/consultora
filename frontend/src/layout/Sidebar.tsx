@@ -54,10 +54,6 @@ export function Sidebar() {
               <span className="dot" />
               Nueva inscripción
             </NavLink>
-            <NavLink to="/inscripciones/en-curso" className={subClass}>
-              <span className="dot" />
-              En curso
-            </NavLink>
             <div className="nav-divider" />
             <NavLink to="/pagos/todos" className={navClass}>
               <span className="ni">◈</span>

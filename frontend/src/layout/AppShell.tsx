@@ -10,7 +10,6 @@ const TITLES: Record<string, string> = {
   '/estudiantes/nuevo': 'Registrar nuevo estudiante',
   '/inscripciones': 'Inscripciones',
   '/inscripciones/nueva': 'Nueva inscripción',
-  '/inscripciones/en-curso': 'Inscripciones en curso',
   '/pagos/todos': 'Todos los pagos',
   '/pagos/pendientes': 'Pagos pendientes',
   '/pagos/parciales': 'Pagos parciales',

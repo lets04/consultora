@@ -7,7 +7,6 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { AreasCursosPage } from "./pages/catalog/AreasCursosPage";
 import { PromocionesPage } from "./pages/catalog/PromocionesPage";
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
-import { EnCursoPage } from "./pages/inscriptions/EnCursoPage";
 import { InscripcionesPage } from "./pages/inscriptions/InscripcionesPage";
 import { NuevaInscripcionPage } from "./pages/inscriptions/NuevaInscripcionPage";
 import { PaymentsPage } from "./pages/payments/PaymentsPage";
@@ -110,14 +109,7 @@ export default function App() {
               </RoleGuard>
             }
           />
-          <Route
-            path="inscripciones/en-curso"
-            element={
-              <RoleGuard allow={["admin"]}>
-                <EnCursoPage />
-              </RoleGuard>
-            }
-          />
+
 
           <Route
             path="pagos/todos"
