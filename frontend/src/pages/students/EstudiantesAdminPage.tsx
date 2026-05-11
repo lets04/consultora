@@ -73,7 +73,7 @@ export function EstudiantesAdminPage() {
         <span style={{ color: "#94a3b8", fontSize: 13 }}>⌕</span>
         <input
           type="search"
-          placeholder="Buscar por nombre, CI o curso..."
+          placeholder="Buscar por nombre o CI"
           value={q}
           onChange={(ev) => setQ(ev.target.value)}
         />

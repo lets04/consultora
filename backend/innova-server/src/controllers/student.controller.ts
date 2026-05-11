@@ -23,6 +23,7 @@ function mapEstudianteToDto(estudiante: {
     montoTotal: number;
     montoPagado: number;
     estado: string;
+    tipo: "promocion" | "individual" | null;
     user?: { email: string } | null;
     cursos: Array<{ curso: { nombre: string } }>;
   }>;
@@ -35,6 +36,7 @@ function mapEstudianteToDto(estudiante: {
     id: estudiante.id,
     nombre: `${estudiante.nombres} ${estudiante.apellidos}`,
     ci: estudiante.ci,
+    tipoInscripcion: latestInscripcion?.tipo ?? undefined,
     curso: latestInscripcion?.cursos[0]?.curso.nombre ?? "Sin curso",
     inscripcion: latestInscripcion
       ? formatDateEs(latestInscripcion.creadoEn)

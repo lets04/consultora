@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom';
 import { apiDelete, apiGet } from '../../api/client';
 import type { Estudiante } from '../../types/student';
 
+function getTipoInscripcionLabel(estudiante: Estudiante) {
+  if (estudiante.tipoInscripcion === 'promocion') return 'Promoción';
+  if (estudiante.tipoInscripcion === 'individual') return 'Curso';
+  return estudiante.curso === 'Sin curso' ? 'Sin inscripción' : 'Curso';
+}
+
 export function EstudiantesGerentePage() {
   const [list, setList] = useState<Estudiante[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +53,8 @@ export function EstudiantesGerentePage() {
         (e) =>
           e.nombre.toLowerCase().includes(s) ||
           e.ci.includes(s) ||
-          e.curso.toLowerCase().includes(s),
+          e.curso.toLowerCase().includes(s) ||
+          getTipoInscripcionLabel(e).toLowerCase().includes(s),
       );
     }
     if (adminFilter) {
@@ -100,7 +107,7 @@ export function EstudiantesGerentePage() {
         <span style={{ color: '#94a3b8', fontSize: 13 }}>⌕</span>
         <input
           type="search"
-          placeholder="Buscar por nombre, CI o curso..."
+          placeholder="Buscar por nombre o CI"
           value={q}
           onChange={(ev) => setQ(ev.target.value)}
         />
@@ -146,7 +153,7 @@ export function EstudiantesGerentePage() {
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Curso actual</th>
+            <th>Tipo</th>
             <th>Inscripción</th>
             <th>Pago</th>
             <th>Admin</th>
@@ -162,7 +169,11 @@ export function EstudiantesGerentePage() {
                 <br />
                 <span style={{ fontSize: 11, color: '#94a3b8' }}>CI: {e.ci}</span>
               </td>
-              <td>{e.curso}</td>
+              <td>
+                <span className={`bs ${e.tipoInscripcion === 'promocion' ? 'info' : 'success'}`}>
+                  {getTipoInscripcionLabel(e)}
+                </span>
+              </td>
               <td>{e.inscripcion}</td>
               <td>
                 <span className={'bs ' + e.pago}>{e.pago}</span>
@@ -177,7 +188,7 @@ export function EstudiantesGerentePage() {
                 )}
               </td>
               <td>
-                <Link to={`/estudiantes/ver/${encodeURIComponent(e.ci)}`} className="ab">
+                <Link to={`/estudiantes/ver/${encodeURIComponent(e.ci)}?from=gerente`} className="ab">
                   Ver
                 </Link>
                 <button type="button" className="ab" onClick={() => setPendingDelete({ ci: e.ci, nombre: e.nombre })}>

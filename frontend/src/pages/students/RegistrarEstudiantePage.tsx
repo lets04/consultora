@@ -27,6 +27,7 @@ export function RegistrarEstudiantePage() {
     ci: "",
     nombres: "",
     apellidos: "",
+    telefono: "",
     email: "",
     departamento: "",
   });
@@ -56,44 +57,61 @@ export function RegistrarEstudiantePage() {
     });
   }, [ci]);
 
-  function validate() {
+  function validate(requireContact = false) {
     const newErrors = {
       ci: "",
       nombres: "",
       apellidos: "",
+      telefono: "",
       email: "",
       departamento: "",
     };
 
-    // CI solo números
-    if (!/^\d+$/.test(form.ci)) {
+    if (!form.ci) {
+      newErrors.ci = "Requerido";
+    } else if (!/^\d+$/.test(form.ci)) {
       newErrors.ci = "Solo números";
     }
 
-    if (!form.nombres) {
+    if (!form.nombres.trim()) {
       newErrors.nombres = "Requerido";
     }
 
-    if (!form.apellidos) {
+    if (!form.apellidos.trim()) {
       newErrors.apellidos = "Requerido";
     }
 
-    // Email válido
-    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) {
-      newErrors.email = "Email inválido";
-    }
+    if (requireContact) {
+      if (!form.telefono) {
+        newErrors.telefono = "Requerido";
+      } else if (!/^\d+$/.test(form.telefono)) {
+        newErrors.telefono = "Solo números";
+      } else if (!/^\d{8}$/.test(form.telefono)) {
+        newErrors.telefono = "Debe tener 8 dígitos";
+      }
 
-    if (!form.departamento) {
-      newErrors.departamento = "Selecciona un departamento";
+      if (!form.email) {
+        newErrors.email = "Requerido";
+      } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+        newErrors.email = "Email inválido";
+      }
+
+      if (!form.departamento) {
+        newErrors.departamento = "Selecciona un departamento";
+      }
     }
 
     setErrors(newErrors);
 
-    return Object.values(newErrors).every((e) => e === "");
+    const relevantErrors = requireContact
+      ? Object.values(newErrors)
+      : [newErrors.ci, newErrors.nombres, newErrors.apellidos];
+
+    return relevantErrors.every((e) => e === "");
   }
 
   async function handleSave() {
-    if (!validate()) return;
+    if (!validate(true)) return;
 
     setLoading(true);
     try {
@@ -178,7 +196,11 @@ export function RegistrarEstudiantePage() {
                 onChange={(e) =>
                   setForm({ ...form, apellidos: e.target.value })
                 }
+                style={{ borderColor: errors.apellidos ? "red" : undefined }}
               />
+              {errors.apellidos && (
+                <span className="error-text">{errors.apellidos}</span>
+              )}
             </div>
 
             <div className="form-field" style={{ gridColumn: "1 / -1" }}>
@@ -199,18 +221,24 @@ export function RegistrarEstudiantePage() {
 
           <div className="form-grid cols3">
             <div className="form-field">
-              <label>Teléfono</label>
+              <label>Teléfono *</label>
               <input
                 placeholder="Número de teléfono"
+                maxLength={8}
                 value={form.telefono}
-                onChange={(e) =>
-                  setForm({ ...form, telefono: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 8);
+                  setForm({ ...form, telefono: value });
+                }}
+                style={{ borderColor: errors.telefono ? "red" : undefined }}
               />
+              {errors.telefono && (
+                <span className="error-text">{errors.telefono}</span>
+              )}
             </div>
 
             <div className="form-field">
-              <label>Email</label>
+              <label>Email *</label>
               <input
                 type="email"
                 placeholder="correo@ejemplo.com"
@@ -224,7 +252,7 @@ export function RegistrarEstudiantePage() {
             </div>
 
             <div className="form-field">
-              <label>Departamento</label>
+              <label>Departamento *</label>
               <select
                 value={form.departamento}
                 onChange={(e) =>
@@ -371,7 +399,9 @@ export function RegistrarEstudiantePage() {
               <button
                 type="button"
                 className="btn-primary"
-                onClick={() => setStep(2)}
+                onClick={() => {
+                  if (validate()) setStep(2);
+                }}
               >
                 Siguiente →
               </button>
@@ -391,15 +421,21 @@ export function RegistrarEstudiantePage() {
                 <label>Teléfono *</label>
                 <input
                   placeholder="Número de teléfono"
+                  maxLength={8}
                   value={form.telefono}
-                  onChange={(e) =>
-                    setForm({ ...form, telefono: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 8);
+                    setForm({ ...form, telefono: value });
+                  }}
+                  style={{ borderColor: errors.telefono ? "red" : undefined }}
                 />
+                {errors.telefono && (
+                  <span className="error-text">{errors.telefono}</span>
+                )}
               </div>
 
               <div className="form-field">
-                <label>Email</label>
+                <label>Email *</label>
                 <input
                   type="email"
                   placeholder="correo@ejemplo.com"
@@ -413,7 +449,7 @@ export function RegistrarEstudiantePage() {
               </div>
 
               <div className="form-field">
-                <label>Departamento</label>
+                <label>Departamento *</label>
                 <select
                   value={form.departamento}
                   onChange={(e) =>

@@ -4,6 +4,7 @@ export interface Student {
   ci: string;
   prefijo?: string;
   profesion?: string;
+  tipoInscripcion?: 'promocion' | 'individual';
   curso: string;
   inscripcion: string;
   pago: 'pagado' | 'parcial' | 'pendiente';

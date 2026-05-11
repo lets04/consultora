@@ -12,6 +12,7 @@ export function StudentDetailPage() {
   const { ci } = useParams<{ ci: string }>();
   const [searchParams] = useSearchParams();
   const isConcluido = searchParams.get('from') === 'concluidos';
+  const isGerente = searchParams.get('from') === 'gerente';
   const [e, setE] = useState<Estudiante | null | undefined>(undefined);
   const [tab, setTab] = useState<Tab>(isConcluido ? 'notas' : 'info');
 
@@ -86,6 +87,20 @@ export function StudentDetailPage() {
           >
             {label}
           </button>
+        )) : isGerente ? (
+          [
+            ['info', 'Información'],
+            ['cursos', 'Cursos'],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className={'detail-tab' + (tab === id ? ' active' : '')}
+            onClick={() => setTab(id)}
+          >
+            {label}
+          </button>
         )) : (
           [
             ['info', 'Información'],
@@ -102,7 +117,7 @@ export function StudentDetailPage() {
         ))}
       </div>
       {tab === 'info' && <StudentInfoTab e={e} />}
-      {isConcluido && tab === 'cursos' && <StudentCursosTab e={e} />}
+      {(isConcluido || isGerente) && tab === 'cursos' && <StudentCursosTab e={e} />}
       {isConcluido && tab === 'notas' && <StudentNotasTab e={e} />}
     </>
   );

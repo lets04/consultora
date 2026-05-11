@@ -45,36 +45,7 @@ export function StudentPortalLoginPage() {
         </div>
 
         <div className="innova-divider" />
-        <div className="innova-badges">
-          <div className="innova-badge">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            SEPREC: 700810038
-          </div>
-
-          <div className="innova-badge">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" />
-              <path d="M16 7V5a2 2 0 0 0-4 0v2" />
-            </svg>
-            NIT: 700536037
-          </div>
-        </div>
+       
         <div className="innova-body">
           <form onSubmit={onSubmit}>
             <label className="innova-label">Carnet de identidad</label>

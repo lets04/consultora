@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { apiGet } from "../../api/client";
 import type { StudentPortalDto } from "../../types/api";
+import logo from "@/assets/logo.jpg";
 
 export function StudentPortalPage() {
   const navigate = useNavigate();
@@ -15,10 +16,7 @@ export function StudentPortalPage() {
       setStudent(null);
       return;
     }
-
     let cancelled = false;
-    setStudent(undefined);
-
     apiGet<StudentPortalDto>(`/api/student-portal/${encodeURIComponent(ci)}`)
       .then((data) => {
         if (!cancelled) setStudent(data);
@@ -32,9 +30,8 @@ export function StudentPortalPage() {
     };
   }, [ci]);
 
-  if (student === undefined) {
-    return <div className="empty-hint">Cargando información…</div>;
-  }
+  if (student === undefined)
+    return <div className="loading-state">Cargando...</div>;
   if (!student) {
     navigate("/portal-estudiante");
     return null;
@@ -45,117 +42,103 @@ export function StudentPortalPage() {
     : student.nombreCompleto;
 
   return (
-    <div className="portal-shell">
-      <div className="portal-wrapper">
-        <div className="sec-header">
-          <div>
-            <h2>Portal del estudiante</h2>
-            <p className="portal-muted">
-              Consulta tu perfil y tu información académica.
-            </p>
+    <div className="portal-container">
+      {/* HEADER: Sin bordes redondeados, ocupando todo el ancho */}
+      <header className="main-header">
+        <div className="header-inner">
+          <div className="brand-group">
+            <div className="logo-box">
+              <img src={logo} alt="Innova" />
+            </div>
+            <div className="brand-titles">
+              <h1>CONSULTORA INNOVA</h1>
+              <p>NIT: 700536037 | SEPREC: 700810038</p>
+            </div>
           </div>
+
           <button
-            type="button"
-            className="btn-secondary"
+            className="logout-minimal"
             onClick={() => navigate("/portal-estudiante")}
           >
-            Salir
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>Cerrar sesión</span>
           </button>
         </div>
+      </header>
 
-        <div className="card portal-card">
-          <div className="student-profile portal-profile">
-            <div className="student-avatar">
-              {student.nombreCompleto
-                .split(" ")
-                .map((part) => part[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase()}
-            </div>
-            <div>
-              <div className="student-name">{displayName}</div>
-              <div className="student-ci">CI: {student.ci}</div>
-            </div>
+      <main className="content-wrapper">
+        {/* PERFIL: Centrado totalmente */}
+        <section className="hero-section">
+          <h2 className="user-name">{displayName}</h2>
+          <div className="user-meta">
+            <span className="ci-tag">CI: {student.ci}</span>
           </div>
+        </section>
 
-          <div className="portal-grid">
-            <div className="card">
-              <div className="form-section-title">Datos personales</div>
-              <div className="info-row">
-                <span className="info-label">Nombre completo</span>
-                <span className="info-value">{displayName}</span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Profesión</span>
-                <span className="info-value">
-                  {student.profesion || "No registrada"}
-                </span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Teléfono</span>
-                <span className="info-value">
-                  {student.telefono || "No registrado"}
-                </span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Correo</span>
-                <span className="info-value">
-                  {student.email || "No registrado"}
-                </span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Departamento</span>
-                <span className="info-value">
-                  {student.departamento || "No registrado"}
-                </span>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="form-section-title">Cursos</div>
-
-              {student.cursos.length === 0 ? (
-                <div className="empty-hint portal-empty">
-                  Aún no tienes cursos con pago completado.
-                </div>
-              ) : (
-                <div className="portal-course-list">
-                  {student.cursos.map((course) => (
-                    <div key={course.id} className="portal-course-item">
-                      <div className="portal-course-head">
-                        <div>
-                          <div className="portal-course-name">
-                            {course.nombre}
-                          </div>
-                          <div className="portal-course-meta">
-                            {course.area}
-                            {course.promocionNombre
-                              ? ` · ${course.promocionNombre}`
-                              : ""}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="portal-course-details">
-                        <span>Inscripción: {course.fechaInscripcion}</span>
-                        {course.modalidad === "examen" ? (
-                          <span>
-                            Nota:{" "}
-                            {course.nota != null ? course.nota : "Pendiente"}
-                          </span>
-                        ) : (
-                          <span>Curso con certificado</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+        {/* INFO: Fila horizontal simétrica */}
+        <div className="info-strip">
+          <div className="info-cell">
+            <label>Profesión</label>
+            <strong>{student.profesion || "No definida"}</strong>
+          </div>
+          <div className="info-cell">
+            <label>Teléfono</label>
+            <strong>{student.telefono || "—"}</strong>
+          </div>
+          <div className="info-cell">
+            <label>Correo Electrónico</label>
+            <strong>{student.email || "—"}</strong>
+          </div>
+          <div className="info-cell">
+            <label>Sede</label>
+            <strong>{student.departamento || "Oruro"}</strong>
           </div>
         </div>
-      </div>
+
+        {/* CURSOS: Centrados */}
+        <section className="records-section">
+          <h3 className="section-label">Información Académica</h3>
+          <div className="records-container">
+            {student.cursos.map((course) => (
+              <div key={course.id} className="course-card-modern">
+                <div className="course-main-info">
+                  <h4>{course.nombre}</h4>
+                  <p>
+                    {course.area} • {course.promocionNombre}
+                  </p>
+                </div>
+                <div className="course-score-area">
+                  {course.modalidad === "examen" ? (
+                    <div
+                      className={`score-badge ${Number(course.nota) >= 71 ? "pass" : "fail"}`}
+                    >
+                      <span className="score-label">
+                        {Number(course.nota) >= 71
+                          ? "NOTA DE APROBACIÓN:"
+                          : "NOTA:"}
+                      </span>
+                      <span className="score-value">{course.nota ?? "—"}</span>
+                    </div>
+                  ) : (
+                    <span className="cert-pill">Certificado</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
