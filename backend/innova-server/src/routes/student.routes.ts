@@ -11,6 +11,11 @@ studentPublicRouter.get(
   asyncHandler(studentController.getStudentPortalByCi)
 );
 
+studentPublicRouter.get(
+  '/empresa',
+  asyncHandler(studentController.getEmpresa)
+);
+
 studentsRouter.get(
   '/students',
   requireRole('admin', 'gerente'),
@@ -39,6 +44,12 @@ studentsRouter.put(
   '/students/:ci',
   requireRole('admin'),
   asyncHandler(studentController.updateStudent)
+);
+
+studentsRouter.put(
+  '/registro-ministerial',
+  requireRole('gerente'),
+  asyncHandler(studentController.updateRegistroMinisterial)
 );
 
 studentsRouter.delete(

@@ -1,0 +1,128 @@
+.innova-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  position: relative;
+  overflow: hidden;
+  background: #f0f4f8;
+}
+
+.innova-root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0c3260 0%, #1a5fa8 50%, #0c3260 100%);
+  clip-path: polygon(0 0, 55% 0, 35% 100%, 0 100%);
+  z-index: 0;
+}
+
+.innova-root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: #eef2f8;
+  clip-path: polygon(55% 0, 100% 0, 100% 100%, 35% 100%);
+  z-index: 0;
+}
+
+.innova-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 460px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(12, 50, 96, 0.18);
+}
+
+.innova-header {
+  background: linear-gradient(150deg, #0c3260, #1a5fa8);
+  padding: 2rem;
+  text-align: center;
+}
+
+.innova-logo-ring {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 200, 50, 0.85);
+  background: #fff;
+  margin: 0 auto 1rem;
+  overflow: hidden;
+}
+
+.innova-logo-ring img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.innova-body {
+  padding: 1.5rem 2rem;
+}
+
+.innova-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0c3260;
+}
+
+.innova-input {
+  width: 100%;
+  height: 48px;
+  background: #f5f9ff;
+  border: 1px solid #c8d9ee;
+  border-radius: 10px;
+  padding: 0 16px;
+  margin-bottom: 1rem;
+}
+
+.innova-error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.innova-btn {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, #0c3260, #1a5fa8);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.innova-social {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.innova-social-links {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.innova-social-link {
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #185fa5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eef4fd;
+  font-size: 12px;
+}
+
+.innova-social-link:hover {
+  background: #dceeff;
+}

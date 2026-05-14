@@ -1,0 +1,64 @@
+.payment-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.payment-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-label {
+  font-weight: 500;
+}
+
+.tab-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.tab-count.pendiente {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.tab-count.parcial {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+.tab-count.pagado {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.tab-count.todos {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.payment-tab.active {
+  background: #ffffff;
+  border-color: #cbd5f5;
+  color: #0b2a4a;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}

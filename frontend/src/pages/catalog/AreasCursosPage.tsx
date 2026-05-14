@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiGet, apiPost, apiPut, apiDelete } from "../../api/client";
 import type { AreaDto } from "../../types/api";
+import "./AreasCursosPage.css";
 
 export function AreasCursosPage() {
   const [areas, setAreas] = useState<AreaDto[]>([]);

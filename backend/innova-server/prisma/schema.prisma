@@ -186,3 +186,15 @@ model Certificado {
   inscripcion      Inscripcion       @relation(fields: [inscripcionId], references: [id], onDelete: Cascade)
   inscripcionCurso InscripcionCurso? @relation(fields: [inscripcionCursoId], references: [id])
 }
+
+// ─────────────────────────────────────────
+// INFORMACIÓN DE LA EMPRESA
+model Empresa {
+  id Int @id @default(1)
+
+  nombre String
+  nit String?
+  seprec String?
+  registroMinisterial String?
+  logoUrl String?
+}

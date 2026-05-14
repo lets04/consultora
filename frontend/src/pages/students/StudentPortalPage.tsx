@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { apiGet } from "../../api/client";
 import type { StudentPortalDto } from "../../types/api";
 import logo from "@/assets/logo.jpg";
+import "./StudentPortalPage.css";
 
 export function StudentPortalPage() {
   const navigate = useNavigate();
@@ -10,19 +11,30 @@ export function StudentPortalPage() {
   const [student, setStudent] = useState<StudentPortalDto | null | undefined>(
     undefined,
   );
+  const [empresa, setEmpresa] = useState<any>(null);
 
   useEffect(() => {
     if (!ci) {
       setStudent(null);
       return;
     }
+
     let cancelled = false;
+
     apiGet<StudentPortalDto>(`/api/student-portal/${encodeURIComponent(ci)}`)
       .then((data) => {
         if (!cancelled) setStudent(data);
       })
       .catch(() => {
         if (!cancelled) setStudent(null);
+      });
+
+    apiGet("/api/empresa")
+      .then((data) => {
+        if (!cancelled) setEmpresa(data);
+      })
+      .catch(() => {
+        if (!cancelled) setEmpresa(null);
       });
 
     return () => {
@@ -43,7 +55,6 @@ export function StudentPortalPage() {
 
   return (
     <div className="portal-container">
-      {/* HEADER: Sin bordes redondeados, ocupando todo el ancho */}
       <header className="main-header">
         <div className="header-inner">
           <div className="brand-group">
@@ -52,7 +63,13 @@ export function StudentPortalPage() {
             </div>
             <div className="brand-titles">
               <h1>CONSULTORA INNOVA</h1>
-              <p>NIT: 700536037 | SEPREC: 700810038</p>
+
+              <p>
+                NIT: 700536037 | SEPREC: 700810038
+                {empresa?.registroMinisterial && (
+                  <> | REGISTRO MINISTERIAL: {empresa.registroMinisterial}</>
+                )}
+              </p>
             </div>
           </div>
 

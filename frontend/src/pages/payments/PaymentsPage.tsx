@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import { apiGet, apiPost } from "../../api/client";
 import { useRole } from "../../context/AuthContext";
 import type { InscripcionDto } from "../../types/api";
+import "./PaymentsPage.css";
 
 interface PaymentsListResponse {
   filtro: string;

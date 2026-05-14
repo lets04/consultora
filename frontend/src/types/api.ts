@@ -107,4 +107,5 @@ export interface StudentPortalDto {
   email?: string;
   departamento?: string;
   cursos: StudentPortalCourseDto[];
+  registroMinisterial?: string;
 }

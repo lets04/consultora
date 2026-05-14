@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { apiGet } from "../../api/client";
 
 import logo from "@/assets/logo.jpg";
+import "./StudentPortalLoginPage.css";
 
 export function StudentPortalLoginPage() {
   const navigate = useNavigate();

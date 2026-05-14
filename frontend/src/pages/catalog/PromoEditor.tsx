@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { apiGet, apiPost, apiPut } from "../../api/client";
 import type { AreaDto, PromotionDto } from "../../types/api";
+import "./PromoEditor.css";
 
 interface PromoEditorProps {
   promotion?: PromotionDto | null;

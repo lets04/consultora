@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth, useRole } from '../context/AuthContext';
 import { ROLE_LABELS } from '../types/role';
 
+
 function navClass({ isActive }: { isActive: boolean }) {
   return 'nav-item' + (isActive ? ' active' : '');
 }

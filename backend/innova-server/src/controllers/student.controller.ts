@@ -49,6 +49,7 @@ function mapEstudianteToDto(estudiante: {
       : "pendiente",
     registro: formatDateEs(estudiante.creadoEn),
     adminEmail: latestInscripcion?.user?.email,
+
   };
 }
 
@@ -464,4 +465,51 @@ export async function deleteStudent(
     console.error('Error al eliminar estudiante:', error);
     res.status(500).json({ message: "Error al eliminar estudiante" });
   }
+}
+
+export async function updateRegistroMinisterial(
+  req: Request,
+  res: Response,
+): Promise<void> {
+
+  const { registroMinisterial } = req.body;
+
+  try {
+
+    const actualizado = await prisma.empresa.upsert({
+      where: {
+        id: 1,
+      },
+
+      update: {
+        registroMinisterial,
+      },
+
+      create: {
+        id: 1,
+        nombre: 'CONSULTORA INNOVA',
+        registroMinisterial,
+      },
+    });
+
+    res.json(actualizado);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error al actualizar registro ministerial",
+    });
+  }
+}
+
+export async function getEmpresa(
+  _req: Request,
+  res: Response,
+): Promise<void> {
+
+  const empresa = await prisma.empresa.findFirst();
+
+  res.json(empresa);
 }

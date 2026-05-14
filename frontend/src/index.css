@@ -1229,66 +1229,6 @@ tbody tr:hover td {
   color: #64748b;
   font-size: 14px;
 }
-
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(160deg, #0b2a4a 0%, #1e4bb8 45%, #f0f4f8 45%);
-  padding: 24px;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 380px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 28px 26px 22px;
-  border: 0.5px solid #dde3ea;
-  box-shadow: 0 12px 40px rgba(11, 42, 74, 0.15);
-}
-
-.login-brand {
-  font-size: 22px;
-  font-weight: 500;
-  color: #0b2a4a;
-  letter-spacing: 2px;
-  text-align: center;
-}
-
-.login-sub {
-  text-align: center;
-  font-size: 12.5px;
-  color: #64748b;
-  margin: 8px 0 20px;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.login-error {
-  font-size: 12px;
-  color: #dc2626;
-  margin: 8px 0 4px;
-}
-
-.login-submit {
-  width: 100%;
-  margin-top: 12px;
-  padding: 9px 14px;
-}
-
-.login-hint {
-  margin-top: 18px;
-  font-size: 11px;
-  color: #94a3b8;
-  text-align: center;
-  line-height: 1.45;
-}
 .error-text {
   color: #dc2626;
   font-size: 12px;
@@ -1707,11 +1647,6 @@ tbody tr:hover td {
     width: 100%;
   }
 }
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
 .top-actions {
   display: flex;
   justify-content: space-between;
@@ -1768,464 +1703,67 @@ tbody tr:hover td {
   cursor: not-allowed;
 }
 
-/*estilos login portal estudiante*/
-
-
-.innova-root {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  font-family: 'DM Sans', sans-serif;
+.topbar-profile-wrapper {
   position: relative;
-  overflow: hidden;
-  background: #f0f4f8;
 }
 
-/* Background diagonal */
-.innova-root::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, #0c3260 0%, #1a5fa8 50%, #0c3260 100%);
-  clip-path: polygon(0 0, 55% 0, 35% 100%, 0 100%);
-  z-index: 0;
-}
-
-.innova-root::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: #eef2f8;
-  clip-path: polygon(55% 0, 100% 0, 100% 100%, 35% 100%);
-  z-index: 0;
-}
-
-.innova-card {
-  position: relative;
-  z-index: 1;
-  background: #fff;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 460px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(12, 50, 96, 0.18);
-}
-
-/* Header */
-.innova-header {
-  background: linear-gradient(150deg, #0c3260, #1a5fa8);
-  padding: 2rem;
-  text-align: center;
-}
-
-.innova-logo-ring {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 200, 50, 0.85);
-  background: #fff;
-  margin: 0 auto 1rem;
-  overflow: hidden;
-}
-
-.innova-logo-ring img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Body */
-.innova-body {
-  padding: 1.5rem 2rem;
-}
-
-.innova-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #0c3260;
-}
-
-.innova-input {
-  width: 100%;
-  height: 48px;
-  background: #f5f9ff;
-  border: 1px solid #c8d9ee;
-  border-radius: 10px;
-  padding: 0 16px;
-  margin-bottom: 1rem;
-}
-
-.innova-error {
-  background: #fee2e2;
-  color: #b91c1c;
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.innova-btn {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(135deg, #0c3260, #1a5fa8);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* Social */
-.innova-social {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.innova-social-links {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.innova-social-link {
-  border: 1px solid #cbd5e1;
-  padding: 6px 12px;
-  border-radius: 8px;
-  text-decoration: none;
-}
-/* BADGES */
-.innova-badges {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.innova-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #eef4fd;
-  border: 1px solid #b5d4f4;
-  border-radius: 8px;
-  padding: 5px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #185fa5;
-}
-
-.innova-divider {
-  height: 1px;
-  background: #e4edf7;
-  margin-bottom: 16px;
-}
-
-/* SOCIAL */
-.innova-social {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.innova-social-links {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.innova-social-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid #cbd5e1;
-  padding: 6px 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #185fa5;
-  font-size: 12px;
-  background: #eef4fd;
-}
-
-.innova-social-link:hover {
-  background: #dceeff;
-}
-/* LOGO estilo portal */
-.login-logo-ring {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  border: 3px solid #facc15;
+.topbar-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 220px;
   background: white;
-  margin: 0 auto 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.login-logo-ring img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.payment-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-/* CHIP */
-.payment-tab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: 14px;
   border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  font-size: 12px;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  padding: 8px;
+  z-index: 1000;
 }
 
-/* TEXTO */
-.tab-label {
-  font-weight: 500;
-}
-
-/* BURBUJITA */
-.tab-count {
-  min-width: 18px;
-  height: 18px;
-  padding: 0 6px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e2e8f0;
-  color: #475569;
-}
-
-/* 🔥 COLORES POR TIPO */
-.tab-count.pendiente {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.tab-count.parcial {
-  background: #fef9c3;
-  color: #ca8a04;
-}
-
-.tab-count.pagado {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.tab-count.todos {
-  background: #e2e8f0;
-  color: #475569;
-}
-
-/* ACTIVE */
-.payment-tab.active {
-  background: #ffffff;
-  border-color: #cbd5f5;
-  color: #0b2a4a;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-
-
-:root {
-  --navy: #1a365d;
-  --accent: #2b6cb0;
-  --light-bg: #f8fafc;
-  --border: #e2e8f0;
-}
-
-.portal-container {
-  background-color: var(--light-bg);
-  min-height: 100vh;
-}
-
-.main-header {
-  background: var(--navy);
-  color: white;
+.topbar-dropdown button {
   width: 100%;
-  padding: 0.7rem 0;
-}
-
-.header-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1.5rem;
-}
-
-.brand-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logo-box {
-  width: 48px;
-  height: 48px;
-  background: white;
-  border-radius: 50%;
-  overflow: hidden; /* Corta el exceso */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-box img {
-  width: 110%;
-  height: 110%;
-  object-fit: contain;
-}
-
-.brand-titles h1 {
-  font-size: 1.1rem;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
-
-.brand-titles p {
-  font-size: 0.75rem;
-  margin: 0;
-  opacity: 0.7;
-}
-
-/* Botón Logout minimalista */
-.logout-minimal {
+  border: none;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.logout-minimal:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-/* Sección de Perfil Centrada */
-.content-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-
-.hero-section {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.user-name {
-  font-size: 1.3rem;
-  color: var(--navy);
-  margin: 0 0 0.5rem;
-}
-
-.user-meta {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.ci-tag, .status-tag {
-  font-size: 0.85rem;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: white;
-  border: 1px solid var(--border);
-}
-
-/* Barra de información horizontal */
-.info-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  margin-bottom: 3rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.info-cell {
-  text-align: center;
-  border-right: 1px solid var(--border);
-}
-
-.info-cell:last-child { border-right: none; }
-
-.info-cell label {
-  display: block;
-  font-size: 0.65rem;
-  color: #a0aec0;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.info-cell strong {
-  font-size: 0.9rem;
-  color: #2d3748;
-}
-
-/* Tarjetas de Cursos */
-.section-label {
-  font-size: 0.9rem;
-  color: #718096;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.course-card-modern {
-  background: white;
-  border: 1px solid var(--border);
+  padding: 12px;
   border-radius: 10px;
-  padding: 1.2rem 1.5rem;
-  margin-bottom: 1rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.topbar-dropdown button:hover {
+  background: #f1f5f9;
+}
+
+.registro-mini-form {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.course-main-info h4 {
-  margin: 0;
-  color: var(--navy);
-  font-size: 1.1rem;
+.registro-mini-form input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  outline: none;
 }
 
-.course-main-info p {
-  margin: 4px 0;
-  color: #4a5568;
-  font-size: 0.9rem;
+.registro-mini-form input:focus {
+  border-color: #2F5FD0;
 }
 
-.score-badge {
-  text-align: center;
-  padding: 6px 15px;
-  border-radius: 8px;
-  min-width: 80px;
+.save-registro-btn {
+  background: #2F5FD0 !important;
+  color: white;
+  font-weight: 600;
 }
 
-.score-badge.pass { background: #f0fff4; color: #2f855a; border: 1px solid #c6f6d5; }
-.score-badge.fail { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
-
-.score-label { font-size: 0.6rem; display: block; font-weight: bold; }
-.score-value { font-size: 1.4rem; font-weight: bold; }
+.save-registro-btn:hover {
+  background: #1d4ed8 !important;
+}
