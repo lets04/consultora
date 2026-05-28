@@ -621,8 +621,10 @@ tbody tr:hover td {
 
 .form-actions {
   display: flex;
-  gap: 10px;
-  padding-top: 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .detail-tabs {

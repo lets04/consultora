@@ -14,6 +14,12 @@ export function PromocionesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: number;
+    titulo: string;
+    inscripcionesCount: number;
+  } | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [editingPromotion, setEditingPromotion] = useState<PromotionDto | null>(
     null,
   );
@@ -58,23 +64,29 @@ export function PromocionesPage() {
     }
   }
 
-  async function handleDelete(id: number) {
-    const confirmDelete = window.confirm(
-      "¿Seguro que deseas eliminar esta promoción?",
-    );
+  function handleDeleteRequest(id: number) {
+    const promotion = promotions.find((promotion) => promotion.id === id);
+    if (!promotion) return;
+    setPendingDelete({
+      id,
+      titulo: promotion.titulo,
+      inscripcionesCount: promotion.inscripcionesCount,
+    });
+  }
 
-    if (!confirmDelete) return;
-
-    setError(null);
-
+  async function handleDeleteConfirm() {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await apiDelete(`/api/promotions/${id}`);
-
+      await apiDelete(`/api/promotions/${pendingDelete.id}`);
       setPromotions((current) =>
-        current.filter((promotion) => promotion.id !== id),
+        current.filter((promotion) => promotion.id !== pendingDelete.id),
       );
+      setPendingDelete(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Error al eliminar promoción");
+      alert(e instanceof Error ? e.message : "Error al eliminar promoción");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -102,23 +114,65 @@ export function PromocionesPage() {
     );
   }
   return (
-    <PromoList
-      promotions={promotions}
-      loading={loading}
-      error={error}
-      onNueva={() => {
-        setEditingPromotion(null);
-        setView("editor");
-      }}
-      onEdit={(id) => {
-        setEditingPromotion(
-          promotions.find((promotion) => promotion.id === id) ?? null,
-        );
-        setView("editor");
-      }}
-      onDelete={handleDelete}
-      onToggleActive={handleToggleActive}
-      updatingId={updatingId}
-    />
+    <>
+      <PromoList
+        promotions={promotions}
+        loading={loading}
+        error={error}
+        onNueva={() => {
+          setEditingPromotion(null);
+          setView("editor");
+        }}
+        onEdit={(id) => {
+          setEditingPromotion(
+            promotions.find((promotion) => promotion.id === id) ?? null,
+          );
+          setView("editor");
+        }}
+        onDelete={handleDeleteRequest}
+        onToggleActive={handleToggleActive}
+        updatingId={updatingId}
+      />
+
+      {pendingDelete && (
+        <div className="modal-overlay" onClick={() => setPendingDelete(null)}>
+          <div
+            className="modal confirm-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="confirm-icon">!</div>
+            <h3>Eliminar promoción</h3>
+            {pendingDelete.inscripcionesCount > 0 ? (
+              <p>
+                No se puede eliminar promociones con inscripciones registradas.
+              </p>
+            ) : (
+              <p>
+                ¿Está seguro que desea eliminar <strong>{pendingDelete.titulo}</strong>?
+              </p>
+            )}
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setPendingDelete(null)}
+              >
+                Cancelar
+              </button>
+              {pendingDelete.inscripcionesCount === 0 && (
+                <button
+                  type="button"
+                  className="btn-danger"
+                  onClick={handleDeleteConfirm}
+                  disabled={deleting}
+                >
+                  {deleting ? "Eliminando..." : "Eliminar"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

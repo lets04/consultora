@@ -11,6 +11,9 @@ export async function listPromotions(req: Request, res: Response): Promise<void>
       cursos: {
         include: { curso: true },
       },
+      _count: {
+        select: { inscripciones: true },
+      },
     },
   });
 
@@ -20,6 +23,7 @@ export async function listPromotions(req: Request, res: Response): Promise<void>
       titulo: row.nombre,
       periodo: row.periodo,
       activa: row.activa,
+      inscripcionesCount: row._count.inscripciones,
       cursos: row.cursos.map((pc) => ({
         id: pc.curso.id,
         nombre: pc.curso.nombre,

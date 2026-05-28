@@ -42,6 +42,7 @@ export interface PromotionDto {
   id: number;
   titulo: string;
   activa: boolean;
+  inscripcionesCount: number;
   cursos: {
     id: number;
     nombre: string;
