@@ -6,6 +6,7 @@ interface PromoListProps {
   error: string | null;
   onNueva: () => void;
   onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
   onToggleActive: (id: number, activa: boolean) => void;
   updatingId: number | null;
 }
@@ -16,6 +17,7 @@ export function PromoList({
   error,
   onNueva,
   onEdit,
+  onDelete,
   onToggleActive,
   updatingId,
 }: PromoListProps) {
@@ -52,7 +54,7 @@ export function PromoList({
                 {p.cursos.length} cursos
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span
                 style={{
                   background: p.activa ? "#dcfce7" : "#f1f5f9",
@@ -74,9 +76,29 @@ export function PromoList({
                 />
                 <span className="slider"></span>
               </label>
-              <button type="button" className="ab" onClick={() => onEdit(p.id)}>
-                Editar
-              </button>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
+                }}
+              >
+                <button
+                  type="button"
+                  className="ab"
+                  onClick={() => onEdit(p.id)}
+                >
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  className="ab danger"
+                  onClick={() => onDelete(p.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>

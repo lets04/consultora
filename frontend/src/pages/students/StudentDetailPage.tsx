@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { apiGet } from "../../api/client";
 import type { Estudiante } from "../../types/student";
 import { StudentCursosTab } from "./detail/StudentCursosTab";
@@ -10,14 +14,26 @@ type Tab = "info" | "cursos" | "notas";
 
 export function StudentDetailPage() {
   const { ci } = useParams<{ ci: string }>();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isConcluido = searchParams.get("from") === "concluidos";
   const isGerente = searchParams.get("from") === "gerente";
   const fromCursos = searchParams.get("from") === "cursos";
+  const fallbackPath =
+    isConcluido || fromCursos ? "/estudiantes/concluidos" : "/estudiantes";
   const [e, setE] = useState<Estudiante | null | undefined>(undefined);
   const [tab, setTab] = useState<Tab>(
     isConcluido ? "notas" : fromCursos ? "cursos" : "info",
   );
+
+  const handleBack = () => {
+    if (window.history.state?.idx > 0) {
+      navigate(-1);
+      return;
+    }
+
+    navigate(fallbackPath);
+  };
 
   useEffect(() => {
     if (!ci) {
@@ -46,9 +62,9 @@ export function StudentDetailPage() {
     return (
       <div className="empty-hint">
         Estudiante no encontrado.{" "}
-        <Link to="/estudiantes" className="btn-secondary">
+        <button type="button" className="btn-secondary" onClick={handleBack}>
           Volver
-        </Link>
+        </button>
       </div>
     );
   }
@@ -59,14 +75,13 @@ export function StudentDetailPage() {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-
   return (
     <>
       <div className="sec-header">
         <h2></h2>
-        <Link to="/estudiantes" className="btn-secondary">
+        <button type="button" className="btn-secondary" onClick={handleBack}>
           ← Volver
-        </Link>
+        </button>
       </div>
       <div className="student-profile">
         <div className="student-avatar">{initials}</div>

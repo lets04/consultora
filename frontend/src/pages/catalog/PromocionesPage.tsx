@@ -1,31 +1,35 @@
-import { useEffect, useState } from 'react';
-import { apiGet, apiPut } from '../../api/client';
-import type { PromotionDto } from '../../types/api';
-import { PromoConfirm } from './PromoConfirm';
-import { PromoEditor } from './PromoEditor';
-import { PromoList } from './PromoList';
+import { useEffect, useState } from "react";
+import { apiGet, apiPut, apiDelete } from "../../api/client";
+import type { PromotionDto } from "../../types/api";
+import { PromoConfirm } from "./PromoConfirm";
+import { PromoEditor } from "./PromoEditor";
+import { PromoList } from "./PromoList";
 
-type View = 'list' | 'editor' | 'confirm';
+
+type View = "list" | "editor" | "confirm";
 
 export function PromocionesPage() {
-  const [view, setView] = useState<View>('list');
+  const [view, setView] = useState<View>("list");
   const [promotions, setPromotions] = useState<PromotionDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
-  const [editingPromotion, setEditingPromotion] = useState<PromotionDto | null>(null);
+  const [editingPromotion, setEditingPromotion] = useState<PromotionDto | null>(
+    null,
+  );
 
   useEffect(() => {
-    if (view !== 'list') return;
+    if (view !== "list") return;
     let cancelled = false;
     setLoading(true);
     setError(null);
-    apiGet<PromotionDto[]>('/api/promotions')
+    apiGet<PromotionDto[]>("/api/promotions")
       .then((data) => {
         if (!cancelled) setPromotions(data);
       })
       .catch((e) => {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Error al cargar');
+        if (!cancelled)
+          setError(e instanceof Error ? e.message : "Error al cargar");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -46,29 +50,56 @@ export function PromocionesPage() {
         ),
       );
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error al actualizar promoción');
+      setError(
+        e instanceof Error ? e.message : "Error al actualizar promoción",
+      );
     } finally {
       setUpdatingId(null);
     }
   }
 
-  if (view === 'editor') {
+  async function handleDelete(id: number) {
+    const confirmDelete = window.confirm(
+      "¿Seguro que deseas eliminar esta promoción?",
+    );
+
+    if (!confirmDelete) return;
+
+    setError(null);
+
+    try {
+      await apiDelete(`/api/promotions/${id}`);
+
+      setPromotions((current) =>
+        current.filter((promotion) => promotion.id !== id),
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error al eliminar promoción");
+    }
+  }
+
+  if (view === "editor") {
     return (
       <PromoEditor
         promotion={editingPromotion}
         onBack={() => {
           setEditingPromotion(null);
-          setView('list');
+          setView("list");
         }}
         onSave={() => {
           setEditingPromotion(null);
-          setView('confirm');
+          setView("confirm");
         }}
       />
     );
   }
-  if (view === 'confirm') {
-    return <PromoConfirm onList={() => setView('list')} onAnother={() => setView('editor')} />;
+  if (view === "confirm") {
+    return (
+      <PromoConfirm
+        onList={() => setView("list")}
+        onAnother={() => setView("editor")}
+      />
+    );
   }
   return (
     <PromoList
@@ -77,12 +108,15 @@ export function PromocionesPage() {
       error={error}
       onNueva={() => {
         setEditingPromotion(null);
-        setView('editor');
+        setView("editor");
       }}
       onEdit={(id) => {
-        setEditingPromotion(promotions.find((promotion) => promotion.id === id) ?? null);
-        setView('editor');
+        setEditingPromotion(
+          promotions.find((promotion) => promotion.id === id) ?? null,
+        );
+        setView("editor");
       }}
+      onDelete={handleDelete}
       onToggleActive={handleToggleActive}
       updatingId={updatingId}
     />
