@@ -140,6 +140,33 @@ export async function updatePromotionStatus(req: Request, res: Response): Promis
   }
 }
 
+export async function deletePromotion(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const promotionId = Number(id);
+
+  try {
+    const inscripcionesCount = await prisma.inscripcion.count({
+      where: { promocionId: promotionId },
+    });
+
+    if (inscripcionesCount > 0) {
+      res.status(400).json({
+        message: 'No se puede eliminar una promoción con inscripciones registradas',
+      });
+      return;
+    }
+
+    await prisma.$transaction([
+      prisma.promocionCurso.deleteMany({ where: { promocionId: promotionId } }),
+      prisma.promocion.delete({ where: { id: promotionId } }),
+    ]);
+
+    res.status(204).send();
+  } catch {
+    res.status(404).json({ message: 'Promoción no encontrada' });
+  }
+}
+
 export async function listAreas(_req: Request, res: Response): Promise<void> {
   const rows = await prisma.area.findMany({
     orderBy: { id: 'asc' },

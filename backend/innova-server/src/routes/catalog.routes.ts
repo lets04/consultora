@@ -36,6 +36,12 @@ catalogRouter.put(
   asyncHandler(catalogController.updatePromotionStatus)
 );
 
+catalogRouter.delete(
+  '/promotions/:id',
+  requireRole('gerente'),
+  asyncHandler(catalogController.deletePromotion)
+);
+
 catalogRouter.post(
   '/areas',
   requireRole('gerente'),
