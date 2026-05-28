@@ -1,20 +1,23 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { apiGet } from '../../api/client';
-import type { Estudiante } from '../../types/student';
-import { StudentCursosTab } from './detail/StudentCursosTab';
-import { StudentInfoTab } from './detail/StudentInfoTab';
-import { StudentNotasTab } from './detail/StudentNotasTab';
+import { useEffect, useState } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { apiGet } from "../../api/client";
+import type { Estudiante } from "../../types/student";
+import { StudentCursosTab } from "./detail/StudentCursosTab";
+import { StudentInfoTab } from "./detail/StudentInfoTab";
+import { StudentNotasTab } from "./detail/StudentNotasTab";
 
-type Tab = 'info' | 'cursos' | 'notas' ;
+type Tab = "info" | "cursos" | "notas";
 
 export function StudentDetailPage() {
   const { ci } = useParams<{ ci: string }>();
   const [searchParams] = useSearchParams();
-  const isConcluido = searchParams.get('from') === 'concluidos';
-  const isGerente = searchParams.get('from') === 'gerente';
+  const isConcluido = searchParams.get("from") === "concluidos";
+  const isGerente = searchParams.get("from") === "gerente";
+  const fromCursos = searchParams.get("from") === "cursos";
   const [e, setE] = useState<Estudiante | null | undefined>(undefined);
-  const [tab, setTab] = useState<Tab>(isConcluido ? 'notas' : 'info');
+  const [tab, setTab] = useState<Tab>(
+    isConcluido ? "notas" : fromCursos ? "cursos" : "info",
+  );
 
   useEffect(() => {
     if (!ci) {
@@ -42,7 +45,7 @@ export function StudentDetailPage() {
   if (!e) {
     return (
       <div className="empty-hint">
-        Estudiante no encontrado.{' '}
+        Estudiante no encontrado.{" "}
         <Link to="/estudiantes" className="btn-secondary">
           Volver
         </Link>
@@ -51,9 +54,9 @@ export function StudentDetailPage() {
   }
 
   const initials = e.nombre
-    .split(' ')
+    .split(" ")
     .map((p) => p[0])
-    .join('')
+    .join("")
     .slice(0, 2)
     .toUpperCase();
 
@@ -72,53 +75,61 @@ export function StudentDetailPage() {
           <div className="student-ci">CI: {e.ci}</div>
         </div>
       </div>
+
       <div className="detail-tabs">
-        {isConcluido ? (
-          [
-            ['notas', 'Notas'],
-            ['cursos', 'Cursos'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={'detail-tab' + (tab === id ? ' active' : '')}
-            onClick={() => setTab(id)}
-          >
-            {label}
-          </button>
-        )) : isGerente ? (
-          [
-            ['info', 'Información'],
-            ['cursos', 'Cursos'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={'detail-tab' + (tab === id ? ' active' : '')}
-            onClick={() => setTab(id)}
-          >
-            {label}
-          </button>
-        )) : (
-          [
-            ['info', 'Información'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={'detail-tab' + (tab === id ? ' active' : '')}
-            onClick={() => setTab(id)}
-          >
-            {label}
-          </button>
-        ))}
+        {isGerente
+          ? (
+              [
+                ["info", "Información"],
+                ["cursos", "Cursos"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                className={"detail-tab" + (tab === id ? " active" : "")}
+                onClick={() => setTab(id)}
+              >
+                {label}
+              </button>
+            ))
+          : fromCursos
+            ? ([["cursos", "Cursos"]] as const).map(([id, label]) => (
+                <button key={id} type="button" className={"detail-tab active"}>
+                  {label}
+                </button>
+              ))
+            : isConcluido
+              ? ([["notas", "Notas"]] as const).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={"detail-tab active"}
+                  >
+                    {label}
+                  </button>
+                ))
+              : ([["info", "Información"]] as const).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={"detail-tab active"}
+                  >
+                    {label}
+                  </button>
+                ))}
       </div>
-      {tab === 'info' && <StudentInfoTab e={e} />}
-      {(isConcluido || isGerente) && tab === 'cursos' && <StudentCursosTab e={e} />}
-      {isConcluido && tab === 'notas' && <StudentNotasTab e={e} />}
+      {tab === "info" && <StudentInfoTab e={e} />}
+      {isGerente && tab === "cursos" && <StudentCursosTab e={e} mode="all" />}
+
+      {fromCursos && tab === "cursos" && (
+        <StudentCursosTab e={e} mode="certificado" />
+      )}
+
+      {isConcluido && tab === "cursos" && (
+        <StudentCursosTab e={e} mode="examen" />
+      )}
+      {isConcluido && tab === "notas" && <StudentNotasTab e={e} />}
     </>
   );
 }

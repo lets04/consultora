@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { apiGet, apiPost } from "../../api/client";
 import { useRole } from "../../context/AuthContext";
 import type { InscripcionDto } from "../../types/api";
@@ -51,6 +51,7 @@ export function PaymentsPage({
   const [allItems, setAllItems] = useState<InscripcionDto[]>([]);
   const [items, setItems] = useState<InscripcionDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState("");
 
   const [openRow, setOpenRow] = useState<number | null>(null);
 
@@ -73,6 +74,17 @@ export function PaymentsPage({
     parcial: allItems.filter((i) => i.estadoPago === "parcial").length,
     pagado: allItems.filter((i) => i.estadoPago === "pagado").length,
   };
+
+  const filteredItems = useMemo(() => {
+    const search = q.trim().toLowerCase();
+    if (!search) return items;
+
+    return items.filter(
+      (item) =>
+        item.estudiante.toLowerCase().includes(search) ||
+        item.ci.toLowerCase().includes(search),
+    );
+  }, [items, q]);
 
   useEffect(() => {
     setFiltro(filterMap[filtroInicial]);
@@ -178,6 +190,16 @@ export function PaymentsPage({
 
       {/* 🔷 TABLA */}
       <div className="card">
+        <div className="search-bar" style={{ marginBottom: 16 }}>
+          <span style={{ color: "#94a3b8", fontSize: 13 }}>⌕</span>
+          <input
+            type="search"
+            placeholder="Buscar por nombre o CI"
+            value={q}
+            onChange={(ev) => setQ(ev.target.value)}
+          />
+        </div>
+
         <table>
           <thead>
             <tr>
@@ -198,7 +220,7 @@ export function PaymentsPage({
           </thead>
 
           <tbody>
-            {items.map((item) => {
+            {filteredItems.map((item) => {
               const montoNumber = Number(monto) || 0;
               const isInvalid =
                 !monto || Number(monto) <= 0 || Number(monto) > item.saldo;
@@ -208,7 +230,15 @@ export function PaymentsPage({
                 <Fragment key={item.id}>
                   {/* FILA */}
                   <tr>
-                    <td>{item.estudiante}</td>
+                    <td>
+                      <span style={{ fontWeight: 500, color: "#0B2A4A" }}>
+                        {item.estudiante}
+                      </span>
+                      <br />
+                      <span style={{ fontSize: 11, color: "#94a3b8" }}>
+                        CI: {item.ci}
+                      </span>
+                    </td>
                     <td>{item.curso}</td>
                     <td>{item.fecha}</td>
                     <td>{item.total} Bs</td>

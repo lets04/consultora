@@ -1,7 +1,12 @@
 import type { Estudiante } from "../../../types/student";
 
-export function StudentCursosTab({ e }: { e: Estudiante }) {
-  const cursos =
+type Props = {
+  e: Estudiante;
+  mode?: "all" | "certificado" | "examen";
+};
+
+export function StudentCursosTab({ e, mode = "all" }: Props) {
+  const baseCursos =
     e.cursos && e.cursos.length > 0
       ? e.cursos
       : [
@@ -16,6 +21,13 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
             nombrePromocion: undefined,
           },
         ];
+
+  const cursos =
+    mode === "certificado"
+      ? baseCursos.filter((c) => c.modalidad === "certificado")
+      : mode === "examen"
+        ? baseCursos.filter((c) => c.modalidad === "examen")
+        : baseCursos;
 
   return (
     <div className="card">
@@ -37,7 +49,9 @@ export function StudentCursosTab({ e }: { e: Estudiante }) {
           {cursos.map((curso) => (
             <tr key={`${curso.nombre}-${curso.inicio}-${curso.id}`}>
               <td>
-                <span className={`bs ${curso.tipo === "promocion" ? "info" : "success"}`}>
+                <span
+                  className={`bs ${curso.tipo === "promocion" ? "info" : "success"}`}
+                >
                   {curso.tipo === "promocion" ? "Promoción" : "Curso"}
                 </span>
               </td>

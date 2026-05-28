@@ -27,6 +27,7 @@ function mapInscripcionToStudent(item: {
   return {
     id: item.id,
     estudiante: `${item.estudiante.nombres} ${item.estudiante.apellidos}`,
+    ci: item.estudiante.ci,
     curso: item.cursos[0]?.curso.nombre ?? "Sin curso",
     fecha: formatDateEs(item.creadoEn),
     tipo: "",

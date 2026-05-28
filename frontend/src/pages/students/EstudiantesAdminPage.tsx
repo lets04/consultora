@@ -78,6 +78,7 @@ export function EstudiantesAdminPage() {
           onChange={(ev) => setQ(ev.target.value)}
         />
       </div>
+
       <table>
         <thead>
           <tr>

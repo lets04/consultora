@@ -197,3 +197,113 @@
   font-size: 1.4rem;
   font-weight: bold;
 }
+.records-container {
+  display: grid;
+  gap: 1rem;
+}
+
+.course-score-area {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 120px;
+}
+
+.cert-pill {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #ebf8ff;
+  color: #2b6cb0;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .header-inner {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .brand-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .content-wrapper {
+    padding: 2rem 1rem;
+  }
+
+  .info-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .course-card-modern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .course-score-area {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-header {
+    padding: 1rem 0;
+  }
+
+  .header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .brand-group {
+    justify-content: center;
+  }
+
+  .logout-minimal {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .content-wrapper {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .hero-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .user-name {
+    font-size: 1.2rem;
+  }
+
+  .user-meta {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .info-strip {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .info-cell {
+    border-right: none;
+    text-align: left;
+  }
+
+  .course-card-modern {
+    padding: 1rem;
+  }
+
+  .course-score-area {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}

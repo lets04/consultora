@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiGet } from "../../api/client";
 
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.jpeg";
 import "./StudentPortalLoginPage.css";
 
 export function StudentPortalLoginPage() {

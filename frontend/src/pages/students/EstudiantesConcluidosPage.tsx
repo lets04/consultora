@@ -104,8 +104,7 @@ export function EstudiantesConcluidosPage() {
             <th>CI</th>
             <th>Registro</th>
             <th>Modalidad</th>
-            <th>Curso</th>
-            {filtro !== "certificado" && <th>Acciones</th>}
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -128,18 +127,25 @@ export function EstudiantesConcluidosPage() {
                 <span className={`bs ${item.modalidad}`}>{item.modalidad}</span>
               </td>
 
-              <td>{item.curso}</td>
-
-              {filtro !== "certificado" && (
-                <td>
+              <td>
+                <div style={{ display: "flex", gap: 8 }}>
                   <Link
-                    to={`/estudiantes/ver/${encodeURIComponent(item.ci)}?from=concluidos`}
+                    to={`/estudiantes/ver/${encodeURIComponent(item.ci)}?from=cursos`}
                     className="ab"
                   >
-                    Agregar Nota
+                    Ver Cursos
                   </Link>
-                </td>
-              )}
+
+                  {filtro === "examen" && (
+                    <Link
+                      to={`/estudiantes/ver/${encodeURIComponent(item.ci)}?from=concluidos`}
+                      className="ab"
+                    >
+                      Agregar Nota
+                    </Link>
+                  )}
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>

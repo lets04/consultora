@@ -15,7 +15,6 @@ export interface DashboardAdminDto {
   totalEstudiantes: number;
   activos: number;
   pagoPendiente: number;
-  nuevosMes: number;
   cobradoMes: number;
   pendienteBs: number;
   parcialBs: number;
@@ -59,6 +58,7 @@ export interface AreaDto {
 export interface InscripcionDto {
   id: number;
   estudiante: string;
+  ci: string;
   curso: string;
   tipo: string;
   modalidad: string;

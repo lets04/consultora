@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth, useRole } from "../context/AuthContext";
 import { ROLE_LABELS } from "../types/role";
 import { apiPut } from "@/api/client";
@@ -7,8 +6,6 @@ import { apiPut } from "@/api/client";
 export function Topbar({ title }: { title: string }) {
   const role = useRole();
   const { userName } = useAuth();
-
-  const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [showRegistroInput, setShowRegistroInput] = useState(false);

@@ -35,6 +35,7 @@ export async function listInscriptions(
       return {
         id: r.id,
         estudiante: `${r.estudiante.nombres} ${r.estudiante.apellidos}`,
+        ci: r.estudiante.ci,
         curso:
           r.tipo === "promocion"
             ? `${r.promocion?.nombre ?? "Promoción"}: ${cursosTexto}`

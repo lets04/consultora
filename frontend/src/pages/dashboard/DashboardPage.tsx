@@ -113,10 +113,6 @@ export function DashboardPage() {
           <div className="sl">Pago pendiente</div>
           <div className="sn amber">{admin.pagoPendiente}</div>
         </div>
-        <div className="stat-card">
-          <div className="sl">Nuevos este mes</div>
-          <div className="sn">{admin.nuevosMes}</div>
-        </div>
       </div>
       <div className="grid-2">
         <div className="card">

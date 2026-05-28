@@ -194,19 +194,21 @@ export function NuevaInscripcionPage() {
           <>
             <div className="form-section-title">Selecciona el estudiante</div>
 
-            <div className="form-field">
-              <label>Buscar</label>
+            <div className="search-bar">
+              <span style={{ color: "#94a3b8", fontSize: 13 }}>⌕</span>
               <input
-                placeholder="CI o nombre"
+                type="search"
+                placeholder="Buscar por nombre o CI"
                 value={studentQuery}
                 onChange={(event) => setStudentQuery(event.target.value)}
               />
             </div>
-
             <div className="student-results">
               {filteredStudents.length === 0 && (
                 <div style={{ fontSize: 12, color: "#64748b" }}>
-                  {studentQuery ? "No se encontraron estudiantes" : "Ingresa un término para buscar"}
+                  {studentQuery
+                    ? "No se encontraron estudiantes"
+                    : "Ingresa un término para buscar"}
                 </div>
               )}
 
@@ -384,13 +386,15 @@ export function NuevaInscripcionPage() {
                     {promotions
                       .filter((promo) => promo.activa)
                       .map((promo) => (
-                      <option key={promo.id} value={promo.id}>
-                        {promo.titulo}
-                      </option>
-                    ))}
+                        <option key={promo.id} value={promo.id}>
+                          {promo.titulo}
+                        </option>
+                      ))}
                   </select>
                   {promotions.length === 0 && (
-                    <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>
+                    <div
+                      style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}
+                    >
                       No hay promociones activas disponibles.
                     </div>
                   )}

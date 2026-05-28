@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiGet } from "../../api/client";
 import type { StudentPortalDto } from "../../types/api";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.jpeg";
 import "./StudentPortalPage.css";
 
 export function StudentPortalPage() {
