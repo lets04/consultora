@@ -138,7 +138,7 @@ export function StudentDetailPage() {
       {isGerente && tab === "cursos" && <StudentCursosTab e={e} mode="all" />}
 
       {fromCursos && tab === "cursos" && (
-        <StudentCursosTab e={e} mode="certificado" />
+        <StudentCursosTab e={e} mode="all" />
       )}
 
       {isConcluido && tab === "cursos" && (

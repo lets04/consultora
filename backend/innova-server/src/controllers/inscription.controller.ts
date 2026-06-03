@@ -208,6 +208,31 @@ export async function updateNota(
   }
 }
 
+export async function updateModalidad(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id, modalidad } = req.body as {
+    id: number;
+    modalidad: "certificado" | "examen";
+  };
+
+  if (id == null || !modalidad || !["certificado", "examen"].includes(modalidad)) {
+    res.status(400).json({ message: "Datos inválidos" });
+    return;
+  }
+
+  try {
+    await prisma.inscripcion.update({
+      where: { id },
+      data: { modalidad },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar modalidad" });
+  }
+}
+
 // Endpoint para que el gerente vea inscripciones agrupadas por admin
 export async function listInscriptionsByAdmin(
   _req: Request,

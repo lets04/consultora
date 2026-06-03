@@ -29,3 +29,9 @@ inscriptionsRouter.put(
   requireRole('admin'),
   asyncHandler(inscriptionController.updateNota)
 );
+
+inscriptionsRouter.put(
+  '/inscriptions/modalidad',
+  requireRole('admin'),
+  asyncHandler(inscriptionController.updateModalidad)
+);

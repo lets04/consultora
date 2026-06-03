@@ -96,14 +96,14 @@ export function StudentNotasTab({ e }: { e: Estudiante }) {
                           handleChange(key, num);
                         }}
                         className={`input-nota 
-    ${nota >= 51 ? "aprobado" : "reprobado"} 
+    ${nota >= 70 ? "aprobado" : "reprobado"} 
     ${isInvalid ? "error" : ""}
   `}
                       />
                     </td>
 
                     <td>
-                      {nota >= 51 ? (
+                      {nota >= 70 ? (
                         <span className="bs success">Aprobado</span>
                       ) : (
                         <span className="bs danger">Reprobado</span>

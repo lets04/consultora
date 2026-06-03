@@ -141,7 +141,7 @@ export function StudentPortalPage() {
                       className={`score-badge ${Number(course.nota) >= 71 ? "pass" : "fail"}`}
                     >
                       <span className="score-label">
-                        {Number(course.nota) >= 71
+                        {Number(course.nota) >= 70
                           ? "NOTA DE APROBACIÓN:"
                           : "NOTA:"}
                       </span>

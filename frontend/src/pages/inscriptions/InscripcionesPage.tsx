@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiGet } from "../../api/client";
+import { apiGet, apiPut } from "../../api/client";
 import type { InscripcionDto } from "../../types/api";
 
 export function InscripcionesPage() {
@@ -8,6 +8,32 @@ export function InscripcionesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [displayLimit, setDisplayLimit] = useState(10);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
+
+  async function handleModalidadChange(
+    id: number,
+    selectedModalidad: string,
+  ): Promise<void> {
+    const modalidad = selectedModalidad === "Certificado" ? "certificado" : "examen";
+    setUpdatingId(id);
+    setError(null);
+
+    try {
+      await apiPut<{ success: true }, { id: number; modalidad: "certificado" | "examen" }>(
+        "/api/inscriptions/modalidad",
+        { id, modalidad },
+      );
+      setRows((current) =>
+        current.map((row) =>
+          row.id === id ? { ...row, modalidad: selectedModalidad } : row,
+        ),
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error actualizando modalidad");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -75,7 +101,30 @@ export function InscripcionesPage() {
                     {r.tipo}
                   </span>
                 </td>
-                <td style={{ fontSize: 11.5 }}>{r.modalidad}</td>
+                <td style={{ fontSize: 11.5 }}>
+                  {r.modalidad === "Certificado" ? (
+                    <select
+                      value={r.modalidad}
+                      disabled={updatingId === r.id}
+                      onChange={(event) =>
+                        handleModalidadChange(r.id, event.target.value)
+                      }
+                      style={{
+                        minWidth: 110,
+                        fontSize: 12,
+                        padding: "4px 6px",
+                        borderRadius: 8,
+                        border: "1px solid #cbd5e1",
+                        background: "white",
+                      }}
+                    >
+                      <option value="Certificado">Certificado</option>
+                      <option value="Examen">Examen</option>
+                    </select>
+                  ) : (
+                    r.modalidad
+                  )}
+                </td>
                 <td>{r.fecha}</td>
                 <td>
                   <span className={"bs " + r.estadoPago}>{r.estadoPago}</span>
