@@ -16,6 +16,7 @@ import { EstudiantesPage } from "./pages/students/EstudiantesPage";
 import { EstudiantesConcluidosPage } from "./pages/students/EstudiantesConcluidosPage";
 import { RegistrarEstudiantePage } from "./pages/students/RegistrarEstudiantePage";
 import { StudentDetailPage } from "./pages/students/StudentDetailPage";
+import { AdminManagementPage } from "./pages/admin/AdminManagementPage";
 
 export default function App() {
   return (
@@ -51,6 +52,15 @@ export default function App() {
             element={
               <RoleGuard allow={["gerente"]}>
                 <AreasCursosPage />
+              </RoleGuard>
+            }
+          />
+
+          <Route
+            path="administradores"
+            element={
+              <RoleGuard allow={["gerente"]}>
+                <AdminManagementPage />
               </RoleGuard>
             }
           />

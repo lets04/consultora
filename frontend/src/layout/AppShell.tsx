@@ -6,6 +6,7 @@ const TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/promociones': 'Promociones semanales',
   '/areas': 'Áreas y cursos',
+  '/administradores': 'Gestión de administradores',
   '/estudiantes': 'Estudiantes',
   '/estudiantes/nuevo': 'Registrar nuevo estudiante',
   '/inscripciones': 'Inscripciones',

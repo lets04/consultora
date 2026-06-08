@@ -72,11 +72,18 @@ export function Sidebar() {
               <span className="ni">◈</span>
               <span className="nl">Áreas y cursos</span>
             </NavLink>
+            
             <div className="nav-divider" />
             <div className="nav-section-label">Estudiantes</div>
             <NavLink to="/estudiantes" className={navClass}>
               <span className="ni">◎</span>
               <span className="nl">Gestión de estudiantes</span>
+            </NavLink>
+            <div className="nav-divider" />
+            <div className="nav-section-label">Sistema</div>
+            <NavLink to="/administradores" className={navClass}>
+              <span className="ni">⚙</span>
+              <span className="nl">Gestión de admins</span>
             </NavLink>
           </>
         )}
