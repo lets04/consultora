@@ -69,6 +69,8 @@ model Curso {
 
   inscripcionCursos InscripcionCurso[]
   promocionesCursos PromocionCurso[]
+
+  @@unique([nombre, areaId])
 }
 
 // ─────────────────────────────────────────
