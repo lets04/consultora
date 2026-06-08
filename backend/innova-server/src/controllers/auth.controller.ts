@@ -84,3 +84,81 @@ export async function me(req: Request, res: Response): Promise<void> {
 
   res.json({ userName: a.name, role: a.role });
 }
+
+export async function listAdmins(
+  _req: Request,
+  res: Response,
+): Promise<void> {
+  const admins = await prisma.user.findMany({
+    where: { role: "administrador" },
+    select: { id: true, email: true, role: true },
+  });
+
+  res.json(admins);
+}
+
+export async function createAdmin(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { email, password } = req.body as { email?: string; password?: string };
+
+  if (!email || !password) {
+    res.status(400).json({ message: "Usuario y contraseña requeridos" });
+    return;
+  }
+
+  const usernameTrimmed = email.trim().toLowerCase();
+
+  const exists = await prisma.user.findUnique({
+    where: { email: usernameTrimmed },
+  });
+
+  if (exists) {
+    res.status(409).json({ message: "El usuario ya está registrado" });
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newAdmin = await prisma.user.create({
+    data: {
+      email: usernameTrimmed,
+      password: hashedPassword,
+      role: "administrador",
+    },
+    select: { id: true, email: true, role: true },
+  });
+
+  res.status(201).json(newAdmin);
+}
+
+export async function deleteAdmin(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const adminId = Number(req.params.id);
+
+  if (!adminId || isNaN(adminId)) {
+    res.status(400).json({ message: "ID inválido" });
+    return;
+  }
+
+  const admin = await prisma.user.findUnique({ where: { id: adminId } });
+
+  if (!admin) {
+    res.status(404).json({ message: "Admin no encontrado" });
+    return;
+  }
+
+  if (admin.role !== "administrador") {
+    res
+      .status(400)
+      .json({ message: "El usuario no es un administrador" });
+    return;
+  }
+
+  await prisma.user.delete({ where: { id: adminId } });
+
+  res.json({ success: true });
+}

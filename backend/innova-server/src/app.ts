@@ -1,7 +1,7 @@
 import cors from "cors";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
-import { authPublicRouter, createAuthMeRouter } from "./routes/auth.routes.js";
+import { authPublicRouter, createAuthMeRouter, createAdminsRouter } from "./routes/auth.routes.js";
 import { catalogRouter } from "./routes/catalog.routes.js";
 import { dashboardRouter } from "./routes/dashboard.routes.js";
 import { inscriptionsRouter } from "./routes/inscription.routes.js";
@@ -45,6 +45,7 @@ export function createApp() {
   secured.use(authMiddleware);
 
   secured.use(createAuthMeRouter());
+  secured.use(createAdminsRouter());
   secured.use(dashboardRouter);
   secured.use(studentsRouter);
   secured.use(inscriptionsRouter);
