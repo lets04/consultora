@@ -232,6 +232,41 @@
 }
 
 @media (max-width: 820px) {
+  .catalog-toolbar,
+  .catalog-area-card {
+    padding: 14px;
+  }
+
+  .catalog-inline-form {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-inline-form .btn-primary,
+  .catalog-inline-form .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .area-section-header,
+  .course-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .catalog-area-actions,
+  .catalog-course-actions {
+    width: 100%;
+  }
+
+  .catalog-area-actions .btn-primary,
+  .catalog-area-actions .btn-secondary,
+  .catalog-course-actions .btn-primary,
+  .catalog-course-actions .btn-secondary,
+  .catalog-course-actions .ab {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
   .manager-filter-card {
     align-items: stretch;
     flex-direction: column;

@@ -15,8 +15,8 @@ export function Topbar({ title }: { title: string }) {
   return (
     <header className="topbar">
       <span className="topbar-title">{title}</span>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <span style={{ fontSize: 11.5, color: "#64748b" }}>
+      <div className="topbar-user">
+        <span className="topbar-user-label">
           {userName} · {ROLE_LABELS[role]}
         </span>
         <div className="topbar-profile-wrapper">
