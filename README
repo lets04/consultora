@@ -1,290 +1,149 @@
-# 🚀 Innova System - Full Stack (Frontend + Backend)
+# Innova System - Full Stack (Frontend + Backend)
 
-Este proyecto es una aplicación completa para la gestión de:
-
-* Estudiantes
-* Cursos
-* Áreas
-* Inscripciones
-* Pagos
-* Promociones
+Aplicación para la gestión de estudiantes, cursos, áreas, inscripciones, pagos y promociones.
 
 Stack principal:
 
 * **Frontend:** React + Vite + TypeScript
-* **Backend:** Node.js + Express + Prisma
-* **Base de datos:** PostgreSQL
+* **Backend:** PHP Laravel 13
+* **Base de datos:** MySQL
 
 ---
 
-# 📁 Estructura del Proyecto
+## Estructura del proyecto
 
 ```
 root/
  ├── backend/
- │    ├── prisma/
- │    │    ├── schema.prisma
- │    │    ├── seed.ts
- │    │    └── migrations/
- │    ├── src/
- │    │    ├── controllers/
- │    │    ├── routes/
- │    │    ├── services/
- │    │    ├── middleware/
- │    │    ├── lib/
- │    │    └── index.ts
- │    └── package.json
+ │    └── innova-api/          # API Laravel
+ │         ├── app/
+ │         ├── database/
+ │         ├── routes/
+ │         └── docker-compose.yml
  │
- ├── frontend/
- │    ├── src/
- │    └── package.json
+ ├── frontend/                 # React (sin cambios)
  │
- └── package.json (scripts globales)
+ └── README
 ```
 
 ---
 
-# ⚙️ Requisitos Previos
+## Requisitos previos
 
+* PHP >= 8.3
+* Composer
 * Node.js >= 18
-* PostgreSQL instalado
-* npm o yarn
+* MySQL 8 (o Docker)
 
 ---
 
-# 🧠 Configuración de Base de Datos
+## Base de datos MySQL
 
-## 1. Crear base de datos en PostgreSQL
+### Opción A: Docker (recomendado)
+
+```bash
+cd backend/innova-api
+docker compose up -d
+```
+
+Credenciales por defecto:
+
+* Host: `127.0.0.1`
+* Puerto: `3306`
+* Base de datos: `innova_db`
+* Usuario: `innova`
+* Contraseña: `innova`
+
+### Opción B: MySQL local
 
 ```sql
-CREATE DATABASE innova_db;
+CREATE DATABASE innova_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'innova'@'localhost' IDENTIFIED BY 'innova';
+GRANT ALL PRIVILEGES ON innova_db.* TO 'innova'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
 ---
 
-## 2. Configurar variables de entorno
-
-En `backend/.env`:
-
-```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/innova_db"
-PORT=3001
-JWT_SECRET=super_secret
-```
-
----
-
-# 🔄 Migraciones y Seed (PRISMA)
-
-Ir a la carpeta backend:
+## Backend (Laravel)
 
 ```bash
-cd backend
+cd backend/innova-api
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve --port=5075
 ```
+
+API disponible en: `http://localhost:5075/api`
+
+Health check: `http://localhost:5075/api/health`
+
+### Usuarios demo (tras el seed)
+
+| Usuario  | Contraseña   | Rol        |
+|----------|--------------|------------|
+| admin    | admin123     | admin      |
+| gerente  | gerente123   | gerente    |
 
 ---
 
-## 1. Instalar dependencias
+## Frontend (React)
 
 ```bash
+cd frontend
 npm install
 ```
 
----
+Crear `frontend/.env`:
 
-## 2. Generar cliente Prisma
-
-```bash
-npx prisma generate
+```env
+VITE_API_URL=http://localhost:5075
 ```
-
----
-
-## 3. Ejecutar migraciones
-
-```bash
-npx prisma migrate dev --name init
-```
-
-Esto:
-
-* Crea las tablas
-* Sincroniza el schema
-* Guarda historial en `/migrations`
-
----
-
-## 4. Ejecutar seed
-
-```bash
-npx ts-node prisma/seed.ts
-```
-
-Esto insertará:
-
-* Usuarios
-* Áreas
-* Cursos
-* Datos iniciales
-
----
-
-## 🧪 Ver base de datos
-
-```bash
-npx prisma studio
-```
-
----
-
-# ▶️ Ejecutar Backend
 
 ```bash
 npm run dev
 ```
 
-Servidor:
-
-```
-http://localhost:3001
-```
+Frontend: `http://localhost:5173`
 
 ---
 
-# 🎨 Ejecutar Frontend
+## Conexión Frontend → Backend
 
-Ir a frontend:
+El frontend usa cookies HTTP-only (`innova_token`) y `credentials: "include"` en todas las peticiones. La API mantiene los mismos endpoints que el backend anterior:
+
+* `POST /api/auth/login`
+* `GET /api/auth/me`
+* `GET /api/students`
+* `GET /api/dashboard/admin`
+* etc.
+
+---
+
+## Autenticación
+
+* Login con usuario/contraseña
+* JWT en cookie `innova_token` (compatible con el frontend React existente)
+* Roles: `admin` (administrador) y `gerente`
+
+---
+
+## Backend anterior (Node.js)
+
+El código Node.js/Express/Prisma/PostgreSQL permanece en `backend/innova-server/` como referencia. El backend activo es `backend/innova-api/`.
+
+---
+
+## Scripts útiles
 
 ```bash
-cd ../frontend
-npm install
+# Backend
+php artisan migrate:fresh --seed   # Reiniciar BD con datos demo
+php artisan serve --port=5075
+
+# Frontend
 npm run dev
+npm run build
 ```
-
-Frontend:
-
-```
-http://localhost:5173
-```
-
----
-
-# 🔗 Conexión Frontend → Backend
-
-En `frontend/.env`:
-
-```env
-VITE_API_URL=http://localhost:3001
-```
-
-Ejemplo:
-
-```ts
-fetch(`${import.meta.env.VITE_API_URL}/api/students`)
-```
-
----
-
-# 🚀 Ejecutar TODO con un solo comando
-
-Desde la raíz:
-
-```bash
-npm run start
-```
-
-Esto usa `concurrently` para levantar:
-
-* Backend → puerto 3001
-* Frontend → puerto 5173
-
----
-
-# 🔐 Autenticación
-
-El sistema incluye:
-
-* Registro de usuarios
-* Login
-* Roles:
-
-  * administrador
-  * gerente
-
-Las contraseñas se almacenan encriptadas.
-
----
-
-# 🧱 Arquitectura Backend
-
-* **Controllers**
-  → Manejan request/response
-
-* **Services**
-  → Lógica de negocio
-
-* **Prisma**
-  → Acceso a base de datos
-
-* **Middleware**
-  → Auth, errores, validaciones
-
----
-
-# ⚠️ Buenas Prácticas
-
-* No usar `models/` si usas Prisma
-* No mezclar lógica en controllers
-* Usar services para reglas de negocio
-* Validar inputs (recomendado: Zod)
-
----
-
-# 🛠️ Scripts útiles
-
-```json
-"scripts": {
-  "dev": "ts-node-dev --respawn src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
-  "prisma:migrate": "prisma migrate dev",
-  "prisma:generate": "prisma generate",
-  "prisma:seed": "ts-node prisma/seed.ts"
-}
-```
-
----
-
-# 🧨 Problemas comunes
-
-## ❌ Error conexión DB
-
-→ revisar `.env`
-
-## ❌ Prisma no detecta cambios
-
-```bash
-npx prisma generate
-```
-
-## ❌ Seed falla
-
-→ revisar imports de Prisma Client
-
----
-
-# 🎯 Estado del Proyecto
-
-✅ Backend funcional
-✅ Base de datos relacional correcta
-✅ Arquitectura escalable
-⚠️ Pendiente:
-
-* Validaciones
-* Manejo de errores global
-
----
-
-# 👨‍💻 Autor
-
-Proyecto desarrollado como sistema de gestión académica con arquitectura profesional.
