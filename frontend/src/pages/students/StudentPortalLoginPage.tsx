@@ -39,15 +39,28 @@ export function StudentPortalLoginPage() {
   return (
     <div className="innova-root">
       <div className="innova-card">
-        <div className="innova-header">
-          <div className="innova-logo-ring">
-            <img src={logo} alt="Logo" />
+        <div className="innova-info">
+          <div className="innova-info-content">
+            <img src={logo} alt="Logo" className="innova-info-logo" />
+
+            <h1>Portal del Participante</h1>
+
+            <p>
+              Consulta tus cursos, certificados y notas
+              académicos.
+            </p>
           </div>
         </div>
 
-        <div className="innova-divider" />
-       
-        <div className="innova-body">
+        <div className="innova-form">
+          
+          <h2>Consulta tus cursos</h2>
+          <div className="innova-logo-ring">
+            <img src={logo} alt="Logo" />
+          </div>
+          <p className="innova-subtitle">
+            Ingresa tu número de carnet para acceder a tus datos académicos.
+          </p>
           <form onSubmit={onSubmit}>
             <label className="innova-label">Carnet de identidad</label>
 
@@ -55,7 +68,7 @@ export function StudentPortalLoginPage() {
               className="innova-input"
               value={ci}
               onChange={(e) => setCi(e.target.value)}
-              placeholder=""
+              placeholder="Ej. 12345678"
             />
 
             {error && <div className="innova-error">{error}</div>}

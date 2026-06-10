@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import logo from '@/assets/logo.jpeg';
-import './LoginPage.css';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import logo from "@/assets/logo.jpeg";
+import "../auth/LoginPage.css";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const { login, ready, authenticated, role } = useAuth();
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (ready && authenticated && role) {
-      navigate('/dashboard', { replace: true });
+      navigate("/dashboard", { replace: true });
     }
   }, [ready, authenticated, role, navigate]);
 
@@ -24,9 +24,11 @@ export function LoginPage() {
     setPending(true);
     try {
       await login(userName, password);
-      navigate('/dashboard', { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión');
+      setError(
+        err instanceof Error ? err.message : "No se pudo iniciar sesión",
+      );
     } finally {
       setPending(false);
     }
@@ -35,7 +37,7 @@ export function LoginPage() {
   if (!ready) {
     return (
       <div className="login-page">
-        <div className="login-card" style={{ textAlign: 'center' }}>
+        <div className="login-card" style={{ textAlign: "center" }}>
           <div className="login-logo-ring">
             <img src={logo} alt="logo" />
           </div>
@@ -45,45 +47,59 @@ export function LoginPage() {
       </div>
     );
   }
-
   return (
     <div className="login-page">
       <div className="login-card">
+        {/* PANEL IZQUIERDO */}
+        <div className="login-info">
+          <img src={logo} alt="logo" className="login-info-logo" />
 
-        {/* 🔥 LOGO */}
-        <div className="login-logo-ring">
-          <img src={logo} alt="logo" />
+          <h1>Panel de Gestión Académica y Administrativa</h1>
+
+          <p>
+            Administra estudiantes, cursos, promociones y talleres
+            desde una sola plataforma.
+          </p>
         </div>
 
-        <div className="login-brand">INNV Ed.</div>
-        <p className="login-sub">Ingresa con tu usuario</p>
+        {/* PANEL DERECHO */}
+        <div className="login-form-container">
 
-        <form onSubmit={onSubmit} className="login-form">
-          <div className="form-field">
-            <label>Usuario</label>
-            <input
-              value={userName}
-              placeholder="Ingresa tu usuario"
-              onChange={(e) => setUserName(e.target.value)}
-            />
-          </div>
+          <div className="login-brand">CONSULTORA INNV Ed.</div>
 
-          <div className="form-field">
-            <label>Contraseña</label>
-            <input
-              type="password"
-              value={password}
-              placeholder="Ingresa tu contraseña"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          <p className="login-sub">Ingresa con tu usuario</p>
 
-          {error && <div className="login-error">{error}</div>}
+          <form onSubmit={onSubmit} className="login-form">
+            <div className="form-field">
+              <label>Usuario</label>
+              <input
+                value={userName}
+                placeholder="Ingresa tu usuario"
+                onChange={(e) => setUserName(e.target.value)}
+              />
+            </div>
 
-          <button type="submit" className="btn-primary login-submit" disabled={pending}>
-            {pending ? 'Ingresando…' : 'Ingresar'}
-          </button>
-        </form>
+            <div className="form-field">
+              <label>Contraseña</label>
+              <input
+                type="password"
+                value={password}
+                placeholder="Ingresa tu contraseña"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {error && <div className="login-error">{error}</div>}
+
+            <button
+              type="submit"
+              className="btn-primary login-submit"
+              disabled={pending}
+            >
+              {pending ? "Ingresando…" : "Ingresar"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
