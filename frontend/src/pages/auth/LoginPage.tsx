@@ -63,6 +63,7 @@ export function LoginPage() {
             <label>Usuario</label>
             <input
               value={userName}
+              placeholder="Ingresa tu usuario"
               onChange={(e) => setUserName(e.target.value)}
             />
           </div>
@@ -72,6 +73,7 @@ export function LoginPage() {
             <input
               type="password"
               value={password}
+              placeholder="Ingresa tu contraseña"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
