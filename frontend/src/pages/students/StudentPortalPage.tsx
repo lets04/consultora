@@ -95,6 +95,7 @@ export function StudentPortalPage() {
       </header>
 
       <main className="content-wrapper">
+      <h3 className="section-label">Información Académica</h3>
         {/* PERFIL: Centrado totalmente */}
         <section className="hero-section">
           <h2 className="user-name">{displayName}</h2>
@@ -121,7 +122,7 @@ export function StudentPortalPage() {
 
         {/* CURSOS: Centrados */}
         <section className="records-section">
-          <h3 className="section-label">Información Académica</h3>
+          <h3 className="section-label">Certificaciones Otorgadas</h3>
           <div className="records-container">
             {student.cursos.map((course) => (
               <div key={course.id} className="course-card-modern">

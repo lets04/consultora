@@ -44,20 +44,36 @@
 }
 
 .login-brand {
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 10px;
+}
 
+.brand-main {
+  font-size: 2.2rem;
+  font-weight: 300;
+  line-height: 1;
 }
 
 .brand-innv {
-  color: #0f4aa5; /* azul del logo */
+  color: #124ea8;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 .brand-ed {
-  color: #e3a11b; /* amarillo/dorado del logo */
+  color: #d89a17;
+  font-weight: 400;
 }
 
+.brand-sub {
+  margin-top: 4px;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  color: #333;
+  letter-spacing: 2px;
+}
 .innova-logo-ring img {
   width: 100%;
   height: 100%;

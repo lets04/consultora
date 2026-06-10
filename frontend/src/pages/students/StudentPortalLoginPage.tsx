@@ -54,14 +54,18 @@ export function StudentPortalLoginPage() {
             <img src={logo} alt="Logo" />
           </div>
           <div className="login-brand">
-            CONSULTORA <span className="brand-innv">INNV</span>
-            <span className="brand-ed"> Ed.</span>
+            <div className="brand-main">
+              <span className="brand-innv">INNV</span>
+              <span className="brand-ed"> Ed.</span>
+            </div>
+
+            <div className="brand-sub">CONSULTORA</div>
           </div>
 
-          <center><h3>Consulta tus cursos</h3></center>
+          
 
           <p className="innova-subtitle">
-            Ingresa tu número de carnet para acceder a tus datos académicos.
+            Ingresa tu número de carnet para acceder a tus datos académicos y certificaciones.
           </p>
           <form onSubmit={onSubmit}>
             <label className="innova-label">Carnet de identidad</label>

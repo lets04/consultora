@@ -57,17 +57,20 @@ export function LoginPage() {
           <h1>Panel de Gestión Académica y Administrativa</h1>
 
           <p>
-            Administra estudiantes, cursos, promociones y talleres
-            desde una sola plataforma.
+            Administra estudiantes, cursos, promociones y talleres desde una
+            sola plataforma.
           </p>
         </div>
 
         {/* PANEL DERECHO */}
         <div className="login-form-container">
-
         <div className="login-brand">
-            CONSULTORA <span className="brand-innv">INNV</span>
-            <span className="brand-ed"> Ed.</span>
+            <div className="brand-main">
+              <span className="brand-innv">INNV</span>
+              <span className="brand-ed"> Ed.</span>
+            </div>
+
+            <div className="brand-sub">CONSULTORA</div>
           </div>
 
           <p className="login-sub">Ingresa con tu usuario</p>
