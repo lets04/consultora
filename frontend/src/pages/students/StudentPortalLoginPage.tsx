@@ -45,19 +45,21 @@ export function StudentPortalLoginPage() {
 
             <h1>Portal del Participante</h1>
 
-            <p>
-              Consulta tus cursos, certificados y notas
-              académicos.
-            </p>
+            <p>Consulta tus cursos, certificados y notas académicos.</p>
           </div>
         </div>
 
         <div className="innova-form">
-          
-          <h2>Consulta tus cursos</h2>
           <div className="innova-logo-ring">
             <img src={logo} alt="Logo" />
           </div>
+          <div className="login-brand">
+            CONSULTORA <span className="brand-innv">INNV</span>
+            <span className="brand-ed"> Ed.</span>
+          </div>
+
+          <center><h3>Consulta tus cursos</h3></center>
+
           <p className="innova-subtitle">
             Ingresa tu número de carnet para acceder a tus datos académicos.
           </p>

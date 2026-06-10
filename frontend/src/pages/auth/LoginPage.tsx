@@ -65,7 +65,10 @@ export function LoginPage() {
         {/* PANEL DERECHO */}
         <div className="login-form-container">
 
-          <div className="login-brand">CONSULTORA INNV Ed.</div>
+        <div className="login-brand">
+            CONSULTORA <span className="brand-innv">INNV</span>
+            <span className="brand-ed"> Ed.</span>
+          </div>
 
           <p className="login-sub">Ingresa con tu usuario</p>
 

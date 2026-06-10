@@ -43,6 +43,21 @@
   display: none;
 }
 
+.login-brand {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+}
+
+.brand-innv {
+  color: #0f4aa5; /* azul del logo */
+}
+
+.brand-ed {
+  color: #e3a11b; /* amarillo/dorado del logo */
+}
+
 .innova-logo-ring img {
   width: 100%;
   height: 100%;
@@ -254,3 +269,4 @@
     flex-wrap: wrap;
   }
 }
+
