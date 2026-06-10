@@ -27,11 +27,12 @@ export function Topbar({ title }: { title: string }) {
             {initials}
           </button>
 
-          {menuOpen && (
+          {menuOpen && role === "gerente" && (
             <div className="topbar-dropdown">
               <button onClick={() => setShowRegistroInput(!showRegistroInput)}>
                 Registro Ministerial
               </button>
+
               {showRegistroInput && (
                 <div className="registro-mini-form">
                   <input
@@ -50,7 +51,6 @@ export function Topbar({ title }: { title: string }) {
                         });
 
                         alert("Registro ministerial actualizado");
-
                         setShowRegistroInput(false);
                       } catch {
                         alert("Error al guardar");
@@ -61,8 +61,6 @@ export function Topbar({ title }: { title: string }) {
                   </button>
                 </div>
               )}
-
-              {/* <button>Configuración</button> */}
             </div>
           )}
         </div>
