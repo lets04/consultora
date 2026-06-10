@@ -114,10 +114,6 @@ export function StudentPortalPage() {
             <strong>{student.telefono || "—"}</strong>
           </div>
           <div className="info-cell">
-            <label>Correo Electrónico</label>
-            <strong>{student.email || "—"}</strong>
-          </div>
-          <div className="info-cell">
             <label>Sede</label>
             <strong>{student.departamento || "Oruro"}</strong>
           </div>
@@ -130,10 +126,7 @@ export function StudentPortalPage() {
             {student.cursos.map((course) => (
               <div key={course.id} className="course-card-modern">
                 <div className="course-main-info">
-                  <h4>{course.nombre}</h4>
-                  <p>
-                    {course.area} • {course.promocionNombre}
-                  </p>
+                  <h2>{course.nombre}</h2>
                 </div>
                 <div className="course-score-area">
                   {course.modalidad === "examen" ? (
@@ -148,7 +141,7 @@ export function StudentPortalPage() {
                       <span className="score-value">{course.nota ?? "—"}</span>
                     </div>
                   ) : (
-                    <span className="cert-pill">Certificado</span>
+                    <p> </p>
                   )}
                 </div>
               </div>
