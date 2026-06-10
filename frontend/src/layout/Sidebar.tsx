@@ -32,7 +32,7 @@ export function Sidebar() {
     <aside className={'sidebar' + (menuOpen ? ' menu-open' : '')}>
       <div className="sidebar-logo">
         <div>
-          <div className="brand">INNOVA</div>
+          <div className="brand">INNV Ed.</div>
           <div className="sub">{isAdmin ? 'Panel de administración' : 'Panel de gerencia'}</div>
         </div>
         <button

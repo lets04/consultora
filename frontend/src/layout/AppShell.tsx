@@ -21,7 +21,7 @@ export function AppShell() {
   const { pathname } = useLocation();
   const title =
     TITLES[pathname] ??
-    (pathname.startsWith('/estudiantes/ver') ? 'Detalle del estudiante' : 'INNOVA');
+    (pathname.startsWith('/estudiantes/ver') ? 'Detalle del estudiante' : 'INNV Ed.');
 
   return (
     <div className="app">

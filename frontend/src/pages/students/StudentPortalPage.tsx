@@ -62,7 +62,7 @@ export function StudentPortalPage() {
               <img src={logo} alt="Innova" />
             </div>
             <div className="brand-titles">
-              <h1>CONSULTORA INNOVA</h1>
+              <h1>CONSULTORA INNV Ed.</h1>
 
               <p>
                 NIT: 700536037 | SEPREC: 700810038

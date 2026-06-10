@@ -39,7 +39,7 @@ export function LoginPage() {
           <div className="login-logo-ring">
             <img src={logo} alt="logo" />
           </div>
-          <div className="login-brand">INNOVA</div>
+          <div className="login-brand">INNV Ed.</div>
           <p className="login-sub">Verificando sesión…</p>
         </div>
       </div>
@@ -55,8 +55,8 @@ export function LoginPage() {
           <img src={logo} alt="logo" />
         </div>
 
-        <div className="login-brand">INNOVA</div>
-        <p className="login-sub">Ingresa con tu usuario institucional</p>
+        <div className="login-brand">INNV Ed.</div>
+        <p className="login-sub">Ingresa con tu usuario</p>
 
         <form onSubmit={onSubmit} className="login-form">
           <div className="form-field">
@@ -64,7 +64,6 @@ export function LoginPage() {
             <input
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
-              placeholder="admin o gerente"
             />
           </div>
 

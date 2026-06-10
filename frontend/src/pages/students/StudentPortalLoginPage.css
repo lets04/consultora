@@ -14,18 +14,17 @@
   content: '';
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #0c3260 0%, #1a5fa8 50%, #0c3260 100%);
-  clip-path: polygon(0 0, 55% 0, 35% 100%, 0 100%);
+  background: linear-gradient(
+    120deg,
+    #f8fbff 0%,
+    #eaf2ff 40%,
+    #d8e8ff 100%
+  );
   z-index: 0;
 }
 
 .innova-root::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: #eef2f8;
-  clip-path: polygon(55% 0, 100% 0, 100% 100%, 35% 100%);
-  z-index: 0;
+  display: none;
 }
 
 .innova-card {

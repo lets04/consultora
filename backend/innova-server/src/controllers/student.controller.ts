@@ -487,7 +487,7 @@ export async function updateRegistroMinisterial(
 
       create: {
         id: 1,
-        nombre: 'CONSULTORA INNOVA',
+        nombre: 'CONSULTORA INNV Ed.',
         registroMinisterial,
       },
     });
