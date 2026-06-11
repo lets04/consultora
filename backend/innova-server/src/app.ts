@@ -16,7 +16,7 @@ export function createApp() {
   const app = express();
   app.use(
     cors({
-      origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://consultora-innova.up.railway.app"],
+      origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://adaptable-rebirth-production-aa2c.up.railway.app"],
       credentials: true,
     }),
   );
